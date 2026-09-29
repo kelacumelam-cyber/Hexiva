@@ -8,7 +8,7 @@ const PALETTE: Array[Color] = [
 	Color("#a8df42"), Color("#6d7cff")
 ]
 
-const LEVEL_PROFILES := [
+const LEVEL_PROFILES: Array[Dictionary] = [
 	{"title":"Mini Atolye", "caps":[3,3,3], "empties":[3], "scramble":26, "locked_spare":false},
 	{"title":"Dar Alan", "caps":[3,3,3,3], "empties":[3], "scramble":36, "locked_spare":false},
 	{"title":"Boy Farki", "caps":[3,3,4,4], "empties":[4,3], "scramble":46, "locked_spare":false},
@@ -23,12 +23,12 @@ const LEVEL_PROFILES := [
 	{"title":"Usta Uzunluk", "caps":[5,5,5,5,5,5], "empties":[5,5], "scramble":140, "locked_spare":false}
 ]
 
-var current_level := 1
+var current_level: int = 1
 var bolts: Array = []
-var selected_bolt := -1
-var move_count := 0
+var selected_bolt: int = -1
+var move_count: int = 0
 var history: Array = []
-var won := false
+var won: bool = false
 
 var title_label: Label
 var level_label: Label
@@ -43,13 +43,13 @@ func _ready() -> void:
 	_load_level(1)
 
 func _build_ui() -> void:
-	var background := ColorRect.new()
+	var background: ColorRect = ColorRect.new()
 	background.color = Color("#0d0a27")
 	background.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 	background.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	add_child(background)
 
-	var margin := MarginContainer.new()
+	var margin: MarginContainer = MarginContainer.new()
 	margin.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 	margin.add_theme_constant_override("margin_left", 12)
 	margin.add_theme_constant_override("margin_right", 12)
@@ -57,15 +57,15 @@ func _build_ui() -> void:
 	margin.add_theme_constant_override("margin_bottom", 12)
 	add_child(margin)
 
-	var root_box := VBoxContainer.new()
+	var root_box: VBoxContainer = VBoxContainer.new()
 	root_box.add_theme_constant_override("separation", 8)
 	margin.add_child(root_box)
 
-	var top_row := HBoxContainer.new()
+	var top_row: HBoxContainer = HBoxContainer.new()
 	top_row.add_theme_constant_override("separation", 8)
 	root_box.add_child(top_row)
 
-	var restart_button := Button.new()
+	var restart_button: Button = Button.new()
 	restart_button.text = "Yeniden"
 	restart_button.pressed.connect(_restart_level)
 	top_row.add_child(restart_button)
@@ -77,12 +77,12 @@ func _build_ui() -> void:
 	title_label.add_theme_font_size_override("font_size", 23)
 	top_row.add_child(title_label)
 
-	var undo_button := Button.new()
+	var undo_button: Button = Button.new()
 	undo_button.text = "Geri Al"
 	undo_button.pressed.connect(_undo)
 	top_row.add_child(undo_button)
 
-	var info_box := VBoxContainer.new()
+	var info_box: VBoxContainer = VBoxContainer.new()
 	info_box.add_theme_constant_override("separation", 2)
 	root_box.add_child(info_box)
 
@@ -102,7 +102,7 @@ func _build_ui() -> void:
 	moves_label.add_theme_color_override("font_color", Color("#ffd45a"))
 	info_box.add_child(moves_label)
 
-	var board_center := CenterContainer.new()
+	var board_center: CenterContainer = CenterContainer.new()
 	board_center.size_flags_vertical = Control.SIZE_EXPAND_FILL
 	root_box.add_child(board_center)
 
@@ -138,9 +138,9 @@ func _load_level(level_number: int) -> void:
 	_set_status("Ayni renkteki somunlari ayni civatada topla.", Color("#c7d2fe"))
 
 func _profile_for_level(level_number: int) -> Dictionary:
-	var index := (level_number - 1) % LEVEL_PROFILES.size()
+	var index: int = (level_number - 1) % LEVEL_PROFILES.size()
 	var profile: Dictionary = LEVEL_PROFILES[index].duplicate(true)
-	var cycle := int((level_number - 1) / LEVEL_PROFILES.size())
+	var cycle: int = int((level_number - 1) / LEVEL_PROFILES.size())
 	if cycle > 0:
 		var caps: Array = profile["caps"].duplicate()
 		if caps.size() < 7:
@@ -155,14 +155,14 @@ func _profile_for_level(level_number: int) -> Dictionary:
 	return profile
 
 func _generate_level(level_number: int) -> Array:
-	var profile := _profile_for_level(level_number)
+	var profile: Dictionary = _profile_for_level(level_number)
 	var board: Array = []
-	var color_offset := (level_number * 3) % PALETTE.size()
+	var color_offset: int = (level_number * 3) % PALETTE.size()
 	var active_caps: Array = profile["caps"]
 
 	for i in range(active_caps.size()):
-		var cap := int(active_caps[i])
-		var color_id := (color_offset + i) % PALETTE.size()
+		var cap: int = int(active_caps[i])
+		var color_id: int = (color_offset + i) % PALETTE.size()
 		var nut_stack: Array[int] = []
 		for _j in range(cap):
 			nut_stack.append(color_id)
@@ -181,13 +181,13 @@ func _generate_level(level_number: int) -> Array:
 			"unlock_at": 0
 		})
 
-	var rng := RandomNumberGenerator.new()
+	var rng: RandomNumberGenerator = RandomNumberGenerator.new()
 	rng.seed = level_number * 104729 + 811
 	_reverse_scramble(board, int(profile["scramble"]), rng)
 	_shuffle_board(board, rng)
 
 	if bool(profile.get("locked_spare", false)):
-		var initial_complete := _complete_count(board)
+		var initial_complete: int = _complete_count(board)
 		board.append({
 			"capacity": 4 if level_number % 2 == 0 else 5,
 			"nuts": [],
@@ -204,15 +204,15 @@ func _reverse_scramble(board: Array, steps: int, rng: RandomNumberGenerator) -> 
 			var stack: Array = board[i]["nuts"]
 			if stack.is_empty():
 				continue
-			var top_color = stack.back()
+			var top_color: int = int(stack.back())
 			if stack.size() == 1 or stack[stack.size() - 2] == top_color:
 				sources.append(i)
 		if sources.is_empty():
 			return
 
-		var source_index := sources[rng.randi_range(0, sources.size() - 1)]
+		var source_index: int = sources[rng.randi_range(0, sources.size() - 1)]
 		var source: Dictionary = board[source_index]
-		var color_id = source["nuts"].back()
+		var color_id: int = int(source["nuts"].back())
 
 		var preferred_targets: Array[int] = []
 		var fallback_targets: Array[int] = []
@@ -226,17 +226,17 @@ func _reverse_scramble(board: Array, steps: int, rng: RandomNumberGenerator) -> 
 			if target["nuts"].is_empty() or target["nuts"].back() != color_id:
 				preferred_targets.append(j)
 
-		var target_pool := preferred_targets if not preferred_targets.is_empty() else fallback_targets
+		var target_pool: Array[int] = preferred_targets if not preferred_targets.is_empty() else fallback_targets
 		if target_pool.is_empty():
 			continue
-		var target_index := target_pool[rng.randi_range(0, target_pool.size() - 1)]
-		var moved = source["nuts"].pop_back()
+		var target_index: int = target_pool[rng.randi_range(0, target_pool.size() - 1)]
+		var moved: int = int(source["nuts"].pop_back())
 		board[target_index]["nuts"].append(moved)
 
 func _shuffle_board(board: Array, rng: RandomNumberGenerator) -> void:
 	for i in range(board.size() - 1, 0, -1):
-		var j := rng.randi_range(0, i)
-		var temp = board[i]
+		var j: int = rng.randi_range(0, i)
+		var temp: Variant = board[i]
 		board[i] = board[j]
 		board[j] = temp
 
@@ -244,20 +244,20 @@ func _refresh_board() -> void:
 	for child in board_grid.get_children():
 		child.queue_free()
 
-	var profile := _profile_for_level(current_level)
+	var profile: Dictionary = _profile_for_level(current_level)
 	level_label.text = "BOLUM %d" % current_level
 	profile_label.text = "%s  •  %s" % [profile["title"], _capacity_summary()]
 	moves_label.text = "Hamle: %d  •  Civata: %d" % [move_count, bolts.size()]
 
 	board_grid.columns = 3 if bolts.size() <= 6 else 4
 	for i in range(bolts.size()):
-		var view := BoltViewScene.new()
+		var view: BoltView = BoltViewScene.new()
 		view.setup(i, bolts[i], PALETTE, i == selected_bolt)
 		view.pressed.connect(_on_bolt_pressed)
 		board_grid.add_child(view)
 
 func _capacity_summary() -> String:
-	var seen := {}
+	var seen: Dictionary = {}
 	for bolt in bolts:
 		seen[int(bolt["capacity"])] = true
 	var parts: Array[String] = []
@@ -304,7 +304,7 @@ func _on_bolt_pressed(index: int) -> void:
 		_invalid_move(index, "Bu civatada yer yok.")
 		return
 
-	var color_id = source["nuts"].back()
+	var color_id: int = int(source["nuts"].back())
 	if not target["nuts"].is_empty() and target["nuts"].back() != color_id:
 		_invalid_move(index, "Farkli rengin ustune koyamazsin.")
 		return
@@ -314,7 +314,7 @@ func _on_bolt_pressed(index: int) -> void:
 		"moves": move_count
 	})
 
-	var run_count := 0
+	var run_count: int = 0
 	for i in range(source["nuts"].size() - 1, -1, -1):
 		if source["nuts"][i] == color_id:
 			run_count += 1
@@ -337,8 +337,8 @@ func _on_bolt_pressed(index: int) -> void:
 		_set_status("Iyi hamle.", Color("#8ef0bd"))
 
 func _update_locks() -> void:
-	var complete_now := _complete_count(bolts)
-	var unlocked_any := false
+	var complete_now: int = _complete_count(bolts)
+	var unlocked_any: bool = false
 	for bolt in bolts:
 		if bool(bolt.get("locked", false)) and complete_now >= int(bolt.get("unlock_at", 999)):
 			bolt["locked"] = false
@@ -351,7 +351,7 @@ func _invalid_move(index: int, message: String) -> void:
 	selected_bolt = -1
 	Input.vibrate_handheld(75)
 	_set_status(message, Color("#ff8ca0"))
-	var children := board_grid.get_children()
+	var children: Array[Node] = board_grid.get_children()
 	if index >= 0 and index < children.size() and children[index] is BoltView:
 		children[index].flash_error()
 	_refresh_board()
@@ -360,14 +360,14 @@ func _is_complete(bolt: Dictionary) -> bool:
 	var stack: Array = bolt["nuts"]
 	if stack.size() != int(bolt["capacity"]) or stack.is_empty():
 		return false
-	var first = stack[0]
+	var first: int = int(stack[0])
 	for value in stack:
 		if value != first:
 			return false
 	return true
 
 func _complete_count(board: Array) -> int:
-	var count := 0
+	var count: int = 0
 	for bolt in board:
 		if _is_complete(bolt):
 			count += 1
