@@ -27,13 +27,13 @@ func setup(index: int, bolt_data: Dictionary, colors: Array[Color], is_selected:
 
 func flash_error() -> void:
 	modulate = Color(1.0, 0.58, 0.58, 1.0)
-	var tween := create_tween()
+	var tween: Tween = create_tween()
 	tween.tween_property(self, "modulate", Color.WHITE, 0.22)
 
 func _is_complete() -> bool:
 	if nuts.size() != capacity or nuts.is_empty():
 		return false
-	var first := nuts[0]
+	var first: int = nuts[0]
 	for value in nuts:
 		if value != first:
 			return false
@@ -48,12 +48,12 @@ func _gui_input(event: InputEvent) -> void:
 		accept_event()
 
 func _draw() -> void:
-	var width := size.x
-	var height := size.y
-	var center_x := width * 0.5
-	var base_y := height - 18.0
-	var rod_top := 20.0
-	var rod_width := 15.0
+	var width: float = size.x
+	var height: float = size.y
+	var center_x: float = width * 0.5
+	var base_y: float = height - 18.0
+	var rod_top: float = 20.0
+	var rod_width: float = 15.0
 
 	# Selection glow.
 	if selected:
@@ -73,27 +73,27 @@ func _draw() -> void:
 	# Threaded metal rod. Drawn natively to avoid WebView/SVG artifacts.
 	draw_rect(Rect2(center_x - rod_width * 0.5, rod_top, rod_width, base_y - rod_top), Color(0.56, 0.62, 0.70, 1.0))
 	draw_rect(Rect2(center_x - 2.0, rod_top, 4.0, base_y - rod_top), Color(0.93, 0.96, 1.0, 0.80))
-	var thread_y := rod_top + 5.0
+	var thread_y: float = rod_top + 5.0
 	while thread_y < base_y - 2.0:
 		draw_line(Vector2(center_x - rod_width * 0.5, thread_y), Vector2(center_x + rod_width * 0.5, thread_y + 3.0), Color(0.22, 0.27, 0.35, 0.75), 1.0)
 		thread_y += 7.0
 	draw_circle(Vector2(center_x, rod_top), rod_width * 0.5, Color(0.85, 0.89, 0.94, 1.0))
 
-	var nut_height := 24.0
+	var nut_height: float = 24.0
 	if capacity == 3:
 		nut_height = 31.0
 	elif capacity == 5:
 		nut_height = 20.0
 
 	for i in range(nuts.size()):
-		var color_index := nuts[i] % max(1, palette.size())
-		var color := palette[color_index] if not palette.is_empty() else Color.CORNFLOWER_BLUE
-		var y_bottom := base_y - 5.0 - float(i) * nut_height
-		var y_top := y_bottom - nut_height + 3.0
-		var left := 8.0
-		var right := width - 8.0
-		var chamfer := 11.0
-		var points := PackedVector2Array([
+		var color_index: int = nuts[i] % maxi(1, palette.size())
+		var color: Color = palette[color_index] if not palette.is_empty() else Color.CORNFLOWER_BLUE
+		var y_bottom: float = base_y - 5.0 - float(i) * nut_height
+		var y_top: float = y_bottom - nut_height + 3.0
+		var left: float = 8.0
+		var right: float = width - 8.0
+		var chamfer: float = 11.0
+		var points: PackedVector2Array = PackedVector2Array([
 			Vector2(left + chamfer, y_top),
 			Vector2(right - chamfer, y_top),
 			Vector2(right, y_top + 6.0),
@@ -116,7 +116,7 @@ func _draw() -> void:
 
 	if locked:
 		draw_rect(Rect2(2, 2, width - 4, height - 4), Color(0.08, 0.10, 0.18, 0.58), true)
-		var lock_center := Vector2(center_x, height * 0.45)
+		var lock_center: Vector2 = Vector2(center_x, height * 0.45)
 		draw_arc(lock_center + Vector2(0, -7), 11.0, PI, TAU, 20, Color(0.78, 0.88, 1.0), 4.0)
 		draw_rect(Rect2(lock_center.x - 13, lock_center.y - 6, 26, 21), Color(0.47, 0.66, 0.93), true)
 		draw_circle(lock_center + Vector2(0, 3), 3.2, Color(0.08, 0.11, 0.19))
