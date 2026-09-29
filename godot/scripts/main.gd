@@ -1,11 +1,21 @@
 extends Control
 
 const BoltViewScene = preload("res://godot/scripts/bolt_view.gd")
+const GameBackgroundScene = preload("res://godot/scripts/game_background.gd")
 
-const PALETTE: Array[Color] = [
-	Color("#35bdf2"), Color("#24d18f"), Color("#ffd028"), Color("#ff4967"),
-	Color("#f44fa0"), Color("#ae62ff"), Color("#19d8dc"), Color("#ff8a2b"),
-	Color("#a8df42"), Color("#6d7cff")
+const NUT_STYLES: Array[Dictionary] = [
+	{"top":Color("#38bdf8"),"top_high":Color("#e0f2fe"),"front":Color("#0284c7"),"front_high":Color("#7dd3fc"),"left":Color("#0369a1"),"right":Color("#0c4a6e"),"hole":Color("#082f49")},
+	{"top":Color("#10e78c"),"top_high":Color("#d1fae5"),"front":Color("#059669"),"front_high":Color("#6ee7b7"),"left":Color("#047857"),"right":Color("#064e3b"),"hole":Color("#022c22")},
+	{"top":Color("#ffcc00"),"top_high":Color("#fef9c3"),"front":Color("#eab308"),"front_high":Color("#fde047"),"left":Color("#ca8a04"),"right":Color("#854d0e"),"hole":Color("#451a03")},
+	{"top":Color("#ff3b5c"),"top_high":Color("#ffe4e6"),"front":Color("#e11d48"),"front_high":Color("#fb7185"),"left":Color("#be123c"),"right":Color("#881337"),"hole":Color("#4c0519")},
+	{"top":Color("#f43f8e"),"top_high":Color("#fce7f3"),"front":Color("#db2777"),"front_high":Color("#f472b6"),"left":Color("#be185d"),"right":Color("#831843"),"hole":Color("#500724")},
+	{"top":Color("#b845ff"),"top_high":Color("#f3e8ff"),"front":Color("#9333ea"),"front_high":Color("#d8b4fe"),"left":Color("#7e22ce"),"right":Color("#581c87"),"hole":Color("#3b0764")},
+	{"top":Color("#00f2fe"),"top_high":Color("#ecfeff"),"front":Color("#06b6d4"),"front_high":Color("#67e8f9"),"left":Color("#0891b2"),"right":Color("#164e63"),"hole":Color("#083344")},
+	{"top":Color("#ff7700"),"top_high":Color("#ffedd5"),"front":Color("#ea580c"),"front_high":Color("#fdba74"),"left":Color("#c2410c"),"right":Color("#7c2d12"),"hole":Color("#431407")},
+	{"top":Color("#a3e635"),"top_high":Color("#f7fee7"),"front":Color("#84cc16"),"front_high":Color("#bef264"),"left":Color("#65a30d"),"right":Color("#365314"),"hole":Color("#1a2e05")},
+	{"top":Color("#2dd4bf"),"top_high":Color("#ccfbf1"),"front":Color("#14b8a6"),"front_high":Color("#5eead4"),"left":Color("#0f766e"),"right":Color("#134e4a"),"hole":Color("#042f2e")},
+	{"top":Color("#818cf8"),"top_high":Color("#e0e7ff"),"front":Color("#6366f1"),"front_high":Color("#a5b4fc"),"left":Color("#4f46e5"),"right":Color("#312e81"),"hole":Color("#1e1b4b")},
+	{"top":Color("#fb7185"),"top_high":Color("#fff1f2"),"front":Color("#f43f5e"),"front_high":Color("#fda4af"),"left":Color("#e11d48"),"right":Color("#9f1239"),"hole":Color("#4c0519")}
 ]
 
 const LEVEL_PROFILES: Array[Dictionary] = [
@@ -43,18 +53,16 @@ func _ready() -> void:
 	_load_level(1)
 
 func _build_ui() -> void:
-	var background: ColorRect = ColorRect.new()
-	background.color = Color("#0a0824")
+	var background: GameBackground = GameBackgroundScene.new()
 	background.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
-	background.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	add_child(background)
 
 	var margin: MarginContainer = MarginContainer.new()
 	margin.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
-	margin.add_theme_constant_override("margin_left", 10)
-	margin.add_theme_constant_override("margin_right", 10)
-	margin.add_theme_constant_override("margin_top", 10)
-	margin.add_theme_constant_override("margin_bottom", 10)
+	margin.add_theme_constant_override("margin_left", 8)
+	margin.add_theme_constant_override("margin_right", 8)
+	margin.add_theme_constant_override("margin_top", 8)
+	margin.add_theme_constant_override("margin_bottom", 8)
 	add_child(margin)
 
 	var root_box: VBoxContainer = VBoxContainer.new()
@@ -62,7 +70,7 @@ func _build_ui() -> void:
 	margin.add_child(root_box)
 
 	var header_panel: PanelContainer = PanelContainer.new()
-	header_panel.add_theme_stylebox_override("panel", _panel_style(Color("#161344"), Color("#4f46a8"), 18))
+	header_panel.add_theme_stylebox_override("panel", _panel_style(Color(0.06,0.05,0.18,0.88), Color(0.31,0.27,0.63,0.55), 18))
 	root_box.add_child(header_panel)
 
 	var header_margin: MarginContainer = MarginContainer.new()
@@ -109,7 +117,7 @@ func _build_ui() -> void:
 
 	var board_panel: PanelContainer = PanelContainer.new()
 	board_panel.size_flags_vertical = Control.SIZE_EXPAND_FILL
-	board_panel.add_theme_stylebox_override("panel", _panel_style(Color("#0f0c32"), Color("#252058"), 22))
+	board_panel.add_theme_stylebox_override("panel", _panel_style(Color(0.05,0.04,0.15,0.50), Color(0.25,0.23,0.55,0.22), 22))
 	root_box.add_child(board_panel)
 
 	var board_margin: MarginContainer = MarginContainer.new()
@@ -131,7 +139,7 @@ func _build_ui() -> void:
 
 	var status_panel: PanelContainer = PanelContainer.new()
 	status_panel.custom_minimum_size = Vector2(0, 46)
-	status_panel.add_theme_stylebox_override("panel", _panel_style(Color("#171441"), Color("#383273"), 16))
+	status_panel.add_theme_stylebox_override("panel", _panel_style(Color(0.05,0.04,0.14,0.90), Color(0.96,0.75,0.25,0.25), 999))
 	root_box.add_child(status_panel)
 
 	status_label = Label.new()
@@ -143,7 +151,7 @@ func _build_ui() -> void:
 	status_panel.add_child(status_label)
 
 	var action_panel: PanelContainer = PanelContainer.new()
-	action_panel.add_theme_stylebox_override("panel", _panel_style(Color("#161344"), Color("#4f46a8"), 18))
+	action_panel.add_theme_stylebox_override("panel", _panel_style(Color(0.05,0.04,0.14,0.88), Color(0.31,0.27,0.63,0.48), 18))
 	root_box.add_child(action_panel)
 
 	var action_margin: MarginContainer = MarginContainer.new()
@@ -251,12 +259,12 @@ func _profile_for_level(level_number: int) -> Dictionary:
 func _generate_level(level_number: int) -> Array:
 	var profile: Dictionary = _profile_for_level(level_number)
 	var board: Array = []
-	var color_offset: int = (level_number * 3) % PALETTE.size()
+	var color_offset: int = (level_number * 3) % NUT_STYLES.size()
 	var active_caps: Array = profile["caps"]
 
 	for i in range(active_caps.size()):
 		var cap: int = int(active_caps[i])
-		var color_id: int = (color_offset + i) % PALETTE.size()
+		var color_id: int = (color_offset + i) % NUT_STYLES.size()
 		var nut_stack: Array[int] = []
 		for _j in range(cap):
 			nut_stack.append(color_id)
@@ -346,7 +354,7 @@ func _refresh_board() -> void:
 	board_grid.columns = 3 if bolts.size() <= 6 else 4
 	for i in range(bolts.size()):
 		var view: BoltView = BoltViewScene.new()
-		view.setup(i, bolts[i], PALETTE, i == selected_bolt)
+		view.setup(i, bolts[i], NUT_STYLES, i == selected_bolt)
 		view.pressed.connect(_on_bolt_pressed)
 		board_grid.add_child(view)
 
