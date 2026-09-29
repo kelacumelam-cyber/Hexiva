@@ -168,8 +168,8 @@ func _draw_rod(cx: float, rod_top_y: float, base_y: float, rod_width: float) -> 
 		]), Color(0.58, 0.64, 0.72, 0.84))
 		draw_line(Vector2(left, y), Vector2(left + rod_width, y + 1.0), Color(1.0, 1.0, 1.0, 0.78), 0.8)
 		y += 6.5
-	draw_ellipse(Vector2(cx, rod_top_y), Vector2(rod_width * 0.5, 4.5), Color("#f8fafc"))
-	draw_ellipse(Vector2(cx, rod_top_y), Vector2(rod_width * 0.5 - 2.0, 2.2), Color("#cbd5e1"))
+	_draw_custom_ellipse(Vector2(cx, rod_top_y), Vector2(rod_width * 0.5, 4.5), Color("#f8fafc"))
+	_draw_custom_ellipse(Vector2(cx, rod_top_y), Vector2(rod_width * 0.5 - 2.0, 2.2), Color("#cbd5e1"))
 	draw_line(Vector2(cx - 4.0, rod_top_y), Vector2(cx + 4.0, rod_top_y), Color("#64748b"), 1.2)
 
 func _draw_nut(color_id: int, cx: float, bottom_y: float, h: float, floating: bool) -> void:
@@ -195,7 +195,7 @@ func _draw_nut(color_id: int, cx: float, bottom_y: float, h: float, floating: bo
 	var y_bottom_chamfer: float = bottom_y - 5.0
 
 	if floating:
-		draw_ellipse(Vector2(cx, bottom_y - 2.0), Vector2(11.5, 5.2), hole_color)
+		_draw_custom_ellipse(Vector2(cx, bottom_y - 2.0), Vector2(11.5, 5.2), hole_color)
 
 	var top_face: PackedVector2Array = PackedVector2Array([
 		Vector2(x_left, top_center_y),
@@ -249,7 +249,7 @@ func _draw_nut(color_id: int, cx: float, bottom_y: float, h: float, floating: bo
 		Vector2(cx - 12.0, bottom_y)
 	]), right_color)
 
-	draw_ellipse(Vector2(cx, top_center_y), Vector2(11.5, 5.2), hole_color)
+	_draw_custom_ellipse(Vector2(cx, top_center_y), Vector2(11.5, 5.2), hole_color)
 	draw_arc(Vector2(cx, top_center_y), 11.0, 0.0, TAU, 32, right_color, 1.4)
 
 func _draw_lock_overlay(cx: float, height: float) -> void:
@@ -259,7 +259,7 @@ func _draw_lock_overlay(cx: float, height: float) -> void:
 	draw_rect(Rect2(lock_center.x - 15.0, lock_center.y - 6.0, 30.0, 24.0), Color("#60a5fa"), true)
 	draw_circle(lock_center + Vector2(0, 4), 3.5, Color("#0f172a"))
 
-func draw_ellipse(center: Vector2, radii: Vector2, color: Color) -> void:
+func _draw_custom_ellipse(center: Vector2, radii: Vector2, color: Color) -> void:
 	var points: PackedVector2Array = PackedVector2Array()
 	for i in range(36):
 		var angle: float = TAU * float(i) / 36.0
