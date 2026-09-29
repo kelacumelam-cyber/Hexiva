@@ -320,8 +320,8 @@ func _on_bolt_pressed(index: int) -> void:
 			run_count += 1
 		else:
 			break
-	var free_space := int(target["capacity"]) - target["nuts"].size()
-	var transfer_count := min(run_count, free_space)
+	var free_space: int = int(target["capacity"]) - int(target["nuts"].size())
+	var transfer_count: int = mini(run_count, free_space)
 	for _n in range(transfer_count):
 		target["nuts"].append(source["nuts"].pop_back())
 
