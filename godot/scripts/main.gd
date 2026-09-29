@@ -191,17 +191,29 @@ func _panel_style(bg: Color, border: Color, radius: int) -> StyleBoxFlat:
 	var style: StyleBoxFlat = StyleBoxFlat.new()
 	style.bg_color = bg
 	style.border_color = border
-	style.set_border_width_all(1)
-	style.set_corner_radius_all(radius)
+	style.border_width_left = 1
+	style.border_width_top = 1
+	style.border_width_right = 1
+	style.border_width_bottom = 1
+	style.corner_radius_top_left = radius
+	style.corner_radius_top_right = radius
+	style.corner_radius_bottom_left = radius
+	style.corner_radius_bottom_right = radius
 	return style
+
+func _set_style_margin(style: StyleBoxFlat, amount: float) -> void:
+	style.content_margin_left = amount
+	style.content_margin_top = amount
+	style.content_margin_right = amount
+	style.content_margin_bottom = amount
 
 func _style_button(button: Button, base_color: Color) -> void:
 	var normal: StyleBoxFlat = _panel_style(base_color, base_color.lightened(0.22), 13)
-	normal.set_content_margin_all(10.0)
+	_set_style_margin(normal, 10.0)
 	var hover: StyleBoxFlat = _panel_style(base_color.lightened(0.10), base_color.lightened(0.34), 13)
-	hover.set_content_margin_all(10.0)
+	_set_style_margin(hover, 10.0)
 	var pressed: StyleBoxFlat = _panel_style(base_color.darkened(0.10), base_color.lightened(0.12), 13)
-	pressed.set_content_margin_all(10.0)
+	_set_style_margin(pressed, 10.0)
 	button.add_theme_stylebox_override("normal", normal)
 	button.add_theme_stylebox_override("hover", hover)
 	button.add_theme_stylebox_override("pressed", pressed)
@@ -433,10 +445,11 @@ func _invalid_move(index: int, message: String) -> void:
 	selected_bolt = -1
 	Input.vibrate_handheld(75)
 	_set_status(message, Color("#ff8ca0"))
+	_refresh_board()
 	var children: Array[Node] = board_grid.get_children()
 	if index >= 0 and index < children.size() and children[index] is BoltView:
-		children[index].flash_error()
-	_refresh_board()
+		var target_view: BoltView = children[index] as BoltView
+		target_view.flash_error()
 
 func _is_complete(bolt: Dictionary) -> bool:
 	var stack: Array = bolt["nuts"]
