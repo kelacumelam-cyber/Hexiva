@@ -1,4 +1,4 @@
-const FAMILY_COUNT = 6;
+const FAMILY_COUNT = 8;
 
 const D = [
   { q: 0, r: -1 },
@@ -39,7 +39,7 @@ function rotate(c, turns) {
   return out;
 }
 
-function baseDisk(radius = 3) {
+function baseDisk(radius = 2) {
   const cells = [];
   for (let q = -radius; q <= radius; q++) {
     for (let r = -radius; r <= radius; r++) {
@@ -50,28 +50,48 @@ function baseDisk(radius = 3) {
   return cells;
 }
 
-const FAMILY_CUTS = [
-  [{ q: 0, r: -3 }, { q: 3, r: -3 }, { q: -3, r: 1 }],
-  [{ q: -1, r: -2 }, { q: 3, r: -1 }, { q: -2, r: 3 }],
-  [{ q: 2, r: -3 }, { q: -3, r: 2 }, { q: 1, r: 2 }],
-  [{ q: -2, r: -1 }, { q: 2, r: -2 }, { q: 0, r: 3 }],
-  [{ q: 1, r: -3 }, { q: -3, r: 0 }, { q: 2, r: 1 }],
-  [{ q: -1, r: 3 }, { q: 3, r: -2 }, { q: -2, r: 0 }],
+// Ordered radius-3 / radius-4 perimeter cells. Families share only the compact
+// radius-2 chamber core; their outer profiles differ substantially so canonical
+// rotation/reflection comparison treats them as genuinely different footprints.
+const RING3 = [
+  [-3, 1], [-3, 0], [-2, -1], [-1, -2], [0, -3], [1, -3],
+  [2, -3], [3, -3], [3, -2], [3, -1], [3, 0], [2, 1],
+  [1, 2], [0, 3], [-1, 3], [-2, 3], [-3, 3], [-3, 2],
+].map(([q, r]) => ({ q, r }));
+
+const RING4 = [
+  [-4, 1], [-4, 0], [-3, -1], [-2, -2], [-1, -3], [0, -4],
+  [1, -4], [2, -4], [3, -4], [4, -4], [4, -3], [4, -2],
+  [4, -1], [4, 0], [3, 1], [2, 2], [1, 3], [0, 4],
+  [-1, 4], [-2, 4], [-3, 4], [-4, 4], [-4, 3], [-4, 2],
+].map(([q, r]) => ({ q, r }));
+
+const FAMILY_RING3 = [
+  [0, 1, 2, 3, 4, 5, 8, 9, 10, 13, 14],
+  [0, 1, 4, 5, 6, 7, 8, 11, 12, 13, 16],
+  [1, 2, 3, 6, 7, 10, 11, 12, 15, 16],
+  [1, 2, 4, 6, 8, 10, 11, 12, 14, 15],
+  [0, 3, 5, 6, 7, 8, 9, 10, 12, 13, 15],
+  [0, 1, 4, 7, 8, 11, 12, 13, 16, 17],
+  [2, 4, 5, 6, 8, 10, 11, 12, 13, 16],
+  [1, 3, 4, 5, 6, 8, 10, 15, 16, 17],
 ];
 
-const FAMILY_LOBES = [
-  [{ q: 0, r: -4 }, { q: 1, r: -4 }],
-  [{ q: 4, r: -2 }, { q: 4, r: -1 }],
-  [{ q: 3, r: 1 }, { q: 2, r: 2 }],
-  [{ q: 0, r: 4 }, { q: -1, r: 4 }],
-  [{ q: -4, r: 2 }, { q: -4, r: 1 }],
-  [{ q: -3, r: -1 }, { q: -2, r: -2 }],
+const FAMILY_RING4 = [
+  [0, 1, 5, 13],
+  [1, 6, 9, 17, 21],
+  [2, 3, 9, 14, 20],
+  [0, 3, 4, 12, 18],
+  [3, 4, 20, 23],
+  [0, 5, 9, 15, 21],
+  [2, 7, 11, 15, 17],
+  [4, 8, 12, 21, 23],
 ];
 
 function makeAnneGridShape(specialIndex, attempt = 0, options = {}) {
-  // Keep early attempts on the slot's preferred family, then rotate through the
-  // other chamber topologies. Recently used special families may be excluded so
-  // generation effort is never spent on a candidate that the last-8 audit must reject.
+  // Keep early attempts on the slot's preferred family, then rotate through
+  // other chamber topologies. Recently used families are skipped before any
+  // expensive arrow/mechanic construction begins.
   const familyBucket = Math.floor(attempt / 48);
   const preferredFamily =
     (specialIndex - 1 + familyBucket) % FAMILY_COUNT;
@@ -84,29 +104,17 @@ function makeAnneGridShape(specialIndex, attempt = 0, options = {}) {
       break;
     }
   }
+
+  const cells = [
+    ...baseDisk(2),
+    ...FAMILY_RING3[familyIndex].map((i) => RING3[i]),
+    ...FAMILY_RING4[familyIndex].map((i) => RING4[i]),
+  ].map((c) => ({ ...c }));
+
   const rotation =
     (Math.floor((specialIndex - 1) / FAMILY_COUNT) + attempt) % 6;
-  let cells = baseDisk(3);
-
-  const removeSet = new Set(FAMILY_CUTS[familyIndex].map(key));
-  cells = cells.filter((c) => !removeSet.has(key(c)));
-
-  for (const lobe of FAMILY_LOBES[familyIndex]) {
-    if (!cells.some((c) => key(c) === key(lobe))) cells.push({ ...lobe });
-  }
-
-  // A deterministic boundary notch varies siblings without copying a fixed reference shape.
-  const boundary = cells
-    .filter((c) => hexDistance(c) >= 3)
-    .sort((a, b) => key(a).localeCompare(key(b)));
-  const notch = boundary[(specialIndex * 7 + attempt * 11) % boundary.length];
-  if (notch) {
-    const candidate = cells.filter((c) => key(c) !== key(notch));
-    if (candidate.length >= 32 && connected(candidate)) cells = candidate;
-  }
-
-  cells = cells.map((c) => rotate(c, rotation));
-  const unique = [...new Map(cells.map((c) => [key(c), c])).values()];
+  const rotated = cells.map((c) => rotate(c, rotation));
+  const unique = [...new Map(rotated.map((c) => [key(c), c])).values()];
 
   if (!connected(unique)) throw new Error("anne-grid shape disconnected");
 
