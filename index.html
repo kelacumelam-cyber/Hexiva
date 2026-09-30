@@ -3233,25 +3233,63 @@
     momVoiceBtn.addEventListener('click', async () => {
       initAudio();
 
-      // Android WebView: force the real microphone permission flow through
-      // getUserMedia before starting Web Speech. Capacitor's WebChromeClient
-      // handles AUDIO_CAPTURE and requests RECORD_AUDIO natively.
-      let permissionStream = null;
-      if (navigator.mediaDevices?.getUserMedia) {
+      // Android APK: use the native Capacitor speech recognizer when the
+      // plugin is installed. It owns the RECORD_AUDIO permission flow and
+      // avoids relying on WebView's SpeechRecognition implementation.
+      const nativeSpeech =
+        window.Capacitor &&
+        window.Capacitor.Plugins &&
+        window.Capacitor.Plugins.SpeechRecognition;
+
+      if (nativeSpeech) {
         try {
-          permissionStream = await navigator.mediaDevices.getUserMedia({ audio: true });
-          permissionStream.getTracks().forEach((track) => track.stop());
+          const permission = await nativeSpeech.checkPermissions();
+          if (permission?.speechRecognition !== 'granted') {
+            const requested = await nativeSpeech.requestPermissions();
+            if (requested?.speechRecognition !== 'granted') {
+              showHint('Mikrofon izni gerekiyor 🎙️');
+              return;
+            }
+          }
+
+          const availability = await nativeSpeech.available();
+          if (!availability?.available) {
+            showHint('Bu cihazda sesli komut kullanılamıyor.');
+            return;
+          }
+
+          if (activeMomRecognition) {
+            try { await nativeSpeech.stop(); } catch (e) {}
+          }
+
+          activeMomRecognition = nativeSpeech;
+          showHint('Seni dinliyorum... 🎙️');
+
+          const result = await nativeSpeech.start({
+            language: 'tr-TR',
+            maxResults: 5,
+            partialResults: false,
+            popup: false,
+          });
+
+          activeMomRecognition = null;
+          rewardMomVoiceCheat(result?.matches || []);
+          return;
         } catch (error) {
-          console.error('Hexiva microphone permission failed:', error);
-          showHint('Mikrofon izni gerekiyor 🎙️');
+          activeMomRecognition = null;
+          console.error('Hexiva native speech failed:', error);
+          const message = String(error?.message || error || '').toLowerCase();
+          if (message.includes('permission') || message.includes('denied') || message.includes('not allowed')) {
+            showHint('Mikrofon izni gerekiyor 🎙️');
+          } else {
+            showHint('Ses anlaşılmadı, bir daha söyle 😄');
+          }
           return;
         }
       }
 
-      // Browser/WebView speech recognition. On Android this starts only after
-      // the native WebView microphone permission flow has completed.
+      // Browser fallback for the live web build.
       const SpeechRecognitionApi = window.SpeechRecognition || window.webkitSpeechRecognition;
-
       if (!SpeechRecognitionApi) {
         showHint('Bu tarayıcı sesli komutu desteklemiyor.');
         return;
