@@ -190,7 +190,7 @@ function draft(level, attempt, options = {}) {
         !P.D.some((_, d) => P.key(P.step(mechanism, d)) === P.key(c))),
   );
   const floorCount = options.anneGrid
-    ? Math.min(6, Math.max(4, Math.floor(cells.length / 7)))
+    ? Math.min(9, Math.max(7, Math.floor(cells.length / 5)))
     : level <= 4
       ? 0
       : Math.min(3, Math.floor(cells.length / 12));
