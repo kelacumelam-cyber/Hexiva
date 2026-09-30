@@ -113,7 +113,7 @@ const mainJavaPath = path.join(
   "MainActivity.java"
 );
 
-const microphonePluginDir = path.join(
+const microphonePluginPath = path.join(
   androidRoot,
   "app",
   "src",
@@ -121,69 +121,29 @@ const microphonePluginDir = path.join(
   "java",
   "com",
   "hexiva",
-  "game"
+  "game",
+  "HexivaMicrophonePlugin.java"
 );
 
-const microphonePluginPath = path.join(microphonePluginDir, "HexivaMicrophonePlugin.java");
+// The speech-recognition dependency is a normal Capacitor plugin and is
+// auto-registered by Capacitor. Remove any stale first-party bridge left by
+// earlier experiments and restore the generated MainActivity.
+try {
+  await access(microphonePluginPath);
+  const { unlink } = await import("node:fs/promises");
+  await unlink(microphonePluginPath);
+  console.log("Removed stale Hexiva microphone bridge.");
+} catch {}
 
-const microphonePluginSource = `package com.hexiva.game;
+const generatedMainActivity = `package com.hexiva.game;
 
-import android.Manifest;
-import com.getcapacitor.JSObject;
-import com.getcapacitor.PermissionState;
-import com.getcapacitor.Plugin;
-import com.getcapacitor.PluginCall;
-import com.getcapacitor.annotation.CapacitorPlugin;
-import com.getcapacitor.annotation.Permission;
-import com.getcapacitor.annotation.PermissionCallback;
-import com.getcapacitor.annotation.PluginMethod;
-
-@CapacitorPlugin(
-    name = "HexivaMicrophone",
-    permissions = @Permission(
-        alias = "microphone",
-        strings = { Manifest.permission.RECORD_AUDIO }
-    )
-)
-public class HexivaMicrophonePlugin extends Plugin {
-    @PluginMethod
-    public void requestPermission(PluginCall call) {
-        if (getPermissionState("microphone") == PermissionState.GRANTED) {
-            JSObject result = new JSObject();
-            result.put("granted", true);
-            call.resolve(result);
-            return;
-        }
-
-        requestPermissionForAlias("microphone", call, "microphonePermissionCallback");
-    }
-
-    @PermissionCallback
-    private void microphonePermissionCallback(PluginCall call) {
-        JSObject result = new JSObject();
-        result.put("granted", getPermissionState("microphone") == PermissionState.GRANTED);
-        call.resolve(result);
-    }
-}
-`;
-
-const mainActivitySource = `package com.hexiva.game;
-
-import android.os.Bundle;
 import com.getcapacitor.BridgeActivity;
 
-public class MainActivity extends BridgeActivity {
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        registerPlugin(HexivaMicrophonePlugin.class);
-    }
-}
+public class MainActivity extends BridgeActivity {}
 `;
 
-await writeFile(microphonePluginPath, microphonePluginSource, "utf8");
-await writeFile(mainJavaPath, mainActivitySource, "utf8");
-console.log("Hexiva native microphone permission bridge configured.");
+await writeFile(mainJavaPath, generatedMainActivity, "utf8");
+console.log("Android MainActivity restored to the Capacitor default.");
 
 await configureSdkLocation();
 
