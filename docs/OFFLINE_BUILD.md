@@ -71,3 +71,20 @@ com.hexiva.game
 ```
 
 Treat that ID as provisional until store publishing. Once an app is published under a package/application ID, changing identity requires a new store listing.
+
+
+## Release-only cleanup
+
+The live web source intentionally keeps development conveniences, but `npm run build:web` strips them from `dist/index.html`:
+
+- one-time +500 QA coin grant,
+- desktop A/S test shortcuts,
+- optional Firebase cloud module and its external imports.
+
+The offline build also fails if known CDN/Firebase tokens remain in the generated release HTML.
+
+Source structure can be sanity-checked with:
+
+```bash
+npm run verify:source
+```
