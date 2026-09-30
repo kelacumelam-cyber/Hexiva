@@ -14,9 +14,9 @@ Live test build: https://kelacumelam-cyber.github.io/Hexiva/
 - Generator V2 for level 35+
 - Local browser persistence through `localStorage`
 - Optional cloud persistence when Firebase configuration is supplied
-- Starting economy: 0 coins, 1 hammer, 1 rotate
+- Starting economy: 0 coins, 1 hammer, 1 rotate, 1 bomb
 - Level reward: 25 coins
-- Shop: +1 hammer for 75 coins, +1 rotate for 50 coins
+- Shop: +1 hammer for 75 coins, +1 rotate for 50 coins, +1 bomb for 125 coins
 - Daily gift: +25 coins, +1 hammer, +1 rotate, once per 24 hours
 
 ## Fundamental movement contract
@@ -33,6 +33,7 @@ A playable hex always moves in the direction of its visible arrow. Movement may 
 - Three-way cycle mechanism
 - Fixed obstacles
 - Visibly linked pairs
+- Bomb booster with one-cell-radius playable-block blast
 
 ## Level philosophy
 
