@@ -359,3 +359,13 @@ A non-destructive packaging path was added without changing the live GitHub Page
 - generated `dist/`, `node_modules/` and `android/` remain outside source control.
 
 Current Android application ID is provisional: `com.hexiva.game`.
+
+
+## V41.1 release artifact cleanup
+
+The offline/APK build now strips development-only behavior without removing it from the live QA page:
+- one-time +500 QA coin grant removed from release output,
+- A/S desktop test shortcuts removed from release output,
+- optional Firebase module removed from native release output; local save remains authoritative,
+- build fails if known CDN/Firebase release tokens remain,
+- source sanity verification script added.
