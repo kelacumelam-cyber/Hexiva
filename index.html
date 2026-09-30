@@ -3213,8 +3213,76 @@
     const momVoiceBtn = document.getElementById('mom-voice-btn');
     let activeMomRecognition = null;
 
-    momVoiceBtn.addEventListener('click', () => {
+    function rewardMomVoiceCheat(transcripts) {
+      const alternatives = Array.isArray(transcripts) ? transcripts : [transcripts || ''];
+      const matched = alternatives.some(matchesMomVoiceCheat);
+      if (!matched) {
+        showHint('Komut anlaşılmadı 😄');
+        return false;
+      }
+
+      coins += 200;
+      bombCount += 2;
+      updateUI();
+      updateMenuUI();
+      triggerSave();
+      showHint('200 Altın ve 2 Bomba kazandın! ❤️');
+      return true;
+    }
+
+    momVoiceBtn.addEventListener('click', async () => {
       initAudio();
+
+      // Android APK: use the native SpeechRecognizer plugin rather than the
+      // browser Web Speech API. Android WebView can expose SpeechRecognition
+      // but still reject it without a native permission/recognizer path.
+      const nativeSpeech =
+        window.Capacitor &&
+        window.Capacitor.Plugins &&
+        window.Capacitor.Plugins.SpeechRecognition;
+
+      if (nativeSpeech) {
+        try {
+          const permission = await nativeSpeech.checkPermissions();
+          if (permission?.speechRecognition !== 'granted') {
+            const requested = await nativeSpeech.requestPermissions();
+            if (requested?.speechRecognition !== 'granted') {
+              showHint('Mikrofon izni gerekiyor 🎙️');
+              return;
+            }
+          }
+
+          if (activeMomRecognition) {
+            try { await nativeSpeech.stop(); } catch (e) {}
+            activeMomRecognition = null;
+          }
+
+          activeMomRecognition = nativeSpeech;
+          showHint('Seni dinliyorum... 🎙️');
+
+          const result = await nativeSpeech.start({
+            language: 'tr-TR',
+            maxResults: 5,
+            partialResults: false,
+            popup: false,
+          });
+
+          if (activeMomRecognition === nativeSpeech) activeMomRecognition = null;
+          rewardMomVoiceCheat(result?.matches || []);
+          return;
+        } catch (error) {
+          activeMomRecognition = null;
+          const message = String(error?.message || error || '').toLowerCase();
+          if (message.includes('permission') || message.includes('denied') || message.includes('not allowed')) {
+            showHint('Mikrofon izni gerekiyor 🎙️');
+          } else {
+            showHint('Ses anlaşılmadı, bir daha söyle 😄');
+          }
+          return;
+        }
+      }
+
+      // Web fallback: keep the existing browser behavior for the live web build.
       const SpeechRecognitionApi = window.SpeechRecognition || window.webkitSpeechRecognition;
 
       if (!SpeechRecognitionApi) {
@@ -3234,7 +3302,6 @@
       recognition.interimResults = false;
       recognition.maxAlternatives = 5;
 
-      let rewarded = false;
       showHint('Seni dinliyorum... 🎙️');
 
       recognition.onresult = (event) => {
@@ -3245,20 +3312,7 @@
             alternatives.push(result[altIndex].transcript || '');
           }
         }
-
-        const matched = alternatives.some(matchesMomVoiceCheat);
-        if (!matched || rewarded) {
-          showHint('Komut anlaşılmadı 😄');
-          return;
-        }
-
-        rewarded = true;
-        coins += 200;
-        bombCount += 2;
-        updateUI();
-        updateMenuUI();
-        triggerSave();
-        showHint('200 Altın ve 2 Bomba kazandın! ❤️');
+        rewardMomVoiceCheat(alternatives);
       };
 
       recognition.onerror = (event) => {
