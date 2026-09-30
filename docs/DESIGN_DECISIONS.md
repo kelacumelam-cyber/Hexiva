@@ -83,3 +83,14 @@ Grey board slots are a distinct topology type from pits. A grey floor cell is em
 
 ### Dense collision-test layouts
 Reference images may guide density and topology without being copied. V22 adds three original dense test boards to validate collision-return movement before the broader generator redesign.
+
+
+### Level variety principle
+There must not be one dominant board template. Dense boards are only one family. A future generator should vary shape, density, internal empty spaces, traversable grey floors, true pits, corridors, asymmetry, and mechanic placement.
+
+A dense board may contain one or more internal holes/empty regions. Density does not mean fully filled.
+
+The target is that levels feel structurally distinct rather than like the same pattern recolored.
+
+### Reference-board policy
+V22 dense boards 29-31 are approved reference examples for future generator work. They are examples to preserve as quality targets, not templates to clone repeatedly.
