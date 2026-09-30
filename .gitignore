@@ -2,3 +2,6 @@ node_modules/
 dist/
 .DS_Store
 android/
+
+.catalog-checkpoint.json*
+catalog-failure.json

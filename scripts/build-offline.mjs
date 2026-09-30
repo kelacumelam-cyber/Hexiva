@@ -1,8 +1,26 @@
 import { cp, mkdir, readFile, rm, writeFile } from "node:fs/promises";
 import { execFileSync } from "node:child_process";
 import path from "node:path";
+import { runInNewContext } from "node:vm";
 
 const root = process.cwd();
+const catalogSource = await readFile(
+  path.join(root, "src", "catalog.js"),
+  "utf8",
+);
+const catalogContext = { window: {} };
+runInNewContext(catalogSource, catalogContext);
+if (
+  catalogContext.window.HEXIVA_CATALOG?.length !== 1000 ||
+  catalogContext.window.HEXIVA_CATALOG.some(
+    (level, i) =>
+      level.level !== i + 1 || !level.generationStats?.qualityAccepted,
+  )
+) {
+  throw new Error(
+    "Release requires 1000 ordered, quality-accepted catalog entries",
+  );
+}
 const dist = path.join(root, "dist");
 const vendor = path.join(dist, "vendor");
 
@@ -14,34 +32,44 @@ const tailwindCli = path.join(
   "node_modules",
   "tailwindcss",
   "lib",
-  "cli.js"
+  "cli.js",
 );
 
 execFileSync(
   process.execPath,
   [
     tailwindCli,
-    "-c", "tailwind.config.cjs",
-    "-i", "src/tailwind.css",
-    "-o", "dist/app.css",
-    "--minify"
+    "-c",
+    "tailwind.config.cjs",
+    "-i",
+    "src/tailwind.css",
+    "-o",
+    "dist/app.css",
+    "--minify",
   ],
-  { stdio: "inherit", cwd: root }
+  { stdio: "inherit", cwd: root },
 );
 
 await cp(
   path.join(root, "node_modules", "three", "build", "three.min.js"),
-  path.join(vendor, "three.min.js")
+  path.join(vendor, "three.min.js"),
 );
 
 await cp(
-  path.join(root, "node_modules", "@tweenjs", "tween.js", "dist", "tween.umd.js"),
-  path.join(vendor, "tween.umd.js")
+  path.join(
+    root,
+    "node_modules",
+    "@tweenjs",
+    "tween.js",
+    "dist",
+    "tween.umd.js",
+  ),
+  path.join(vendor, "tween.umd.js"),
 );
 
 await cp(
   path.join(root, "node_modules", "tone", "build", "Tone.js"),
-  path.join(vendor, "Tone.js")
+  path.join(vendor, "Tone.js"),
 );
 
 let html = await readFile(path.join(root, "index.html"), "utf8");
@@ -53,20 +81,20 @@ html = html.replace(/\r\n/g, "\n");
 const replacements = [
   [
     '<script src="https://cdn.tailwindcss.com"></script>',
-    '<link rel="stylesheet" href="./app.css">'
+    '<link rel="stylesheet" href="./app.css">',
   ],
   [
     '<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>',
-    '<script src="./vendor/three.min.js"></script>'
+    '<script src="./vendor/three.min.js"></script>',
   ],
   [
     '<script src="https://cdnjs.cloudflare.com/ajax/libs/tween.js/18.6.4/tween.umd.js"></script>',
-    '<script src="./vendor/tween.umd.js"></script>'
+    '<script src="./vendor/tween.umd.js"></script>',
   ],
   [
     '<script src="https://cdnjs.cloudflare.com/ajax/libs/tone/14.8.49/Tone.js"></script>',
-    '<script src="./vendor/Tone.js"></script>'
-  ]
+    '<script src="./vendor/Tone.js"></script>',
+  ],
 ];
 
 for (const [from, to] of replacements) {
@@ -80,7 +108,7 @@ for (const [from, to] of replacements) {
 // The existing CSS already has generic fallbacks after Fredoka.
 html = html.replace(
   /\s*<link href="https:\/\/fonts\.googleapis\.com\/css2\?family=Fredoka[^"]*" rel="stylesheet">\s*/,
-  "\n"
+  "\n",
 );
 
 function removeRange(source, startMarker, endMarker, replacement = "") {
@@ -98,16 +126,13 @@ function removeRange(source, startMarker, endMarker, replacement = "") {
 }
 
 // Release artifact must not contain development-only grants.
-html = html.replace(
-  "    const QA_COIN_GRANT_KEY = 'hexiva-qa-coin-grant-v1';\n",
-  ""
-);
+html = html.replace(/^    const QA_DEPLOY_MARKER_V43 = .*\n/m, "");
 
 html = removeRange(
   html,
   "        // Temporary development grant: once per browser/profile, never per refresh.\n",
   "      } catch (e) {",
-  ""
+  "",
 );
 
 // Desktop A/S navigation is useful for web QA, never for release.
@@ -115,36 +140,42 @@ html = removeRange(
   html,
   "    // TEMP DEBUG SHORTCUTS (desktop testing only)\n",
   "    const mainMenu = document.getElementById('main-menu');",
-  ""
+  "",
 );
 
 // Native release uses local persistence only. Remove dormant Firebase imports too.
 html = removeRange(
   html,
   '  <script type="module">\n    // Cloud persistence is optional.',
-  '  <script>\n    let audioEnabled = true;',
-  '  <script>window.cloudSaveHandler = null;<\/script>\n\n'
+  "  <script>\n    let audioEnabled = true;",
+  "  <script>window.cloudSaveHandler = null;<\/script>\n\n",
 );
 
 // Release sanity checks before writing the artifact.
 const forbidden = [
-  "QA_COIN_GRANT_KEY",
+  "QA_DEPLOY_MARKER",
   "TEMP DEBUG SHORTCUTS",
   "www.gstatic.com/firebase",
   "cdn.tailwindcss.com",
   "cdnjs.cloudflare.com",
-  "fonts.googleapis.com"
+  "fonts.googleapis.com",
 ];
 
 for (const token of forbidden) {
   if (html.includes(token)) {
-    throw new Error(`Release artifact still contains forbidden token: ${token}`);
+    throw new Error(
+      `Release artifact still contains forbidden token: ${token}`,
+    );
   }
 }
 
 // Validate every inline classic script in the generated release artifact.
 // This catches packaging-only syntax errors before an APK can be built.
-const inlineScripts = [...html.matchAll(/<script(?![^>]*\bsrc=)(?![^>]*\btype=["']module["'])[^>]*>([\s\S]*?)<\/script>/gi)]
+const inlineScripts = [
+  ...html.matchAll(
+    /<script(?![^>]*\bsrc=)(?![^>]*\btype=["']module["'])[^>]*>([\s\S]*?)<\/script>/gi,
+  ),
+]
   .map((match) => match[1])
   .filter((code) => code.trim().length > 0);
 
@@ -153,10 +184,23 @@ for (const [index, code] of inlineScripts.entries()) {
     // Parse without executing.
     new Function(code);
   } catch (error) {
-    throw new Error(`Release inline script #${index + 1} has invalid JavaScript: ${error.message}`);
+    throw new Error(
+      `Release inline script #${index + 1} has invalid JavaScript: ${error.message}`,
+    );
   }
 }
 
+await mkdir(path.join(dist, "src"), { recursive: true });
+await cp(
+  path.join(root, "src", "puzzle-engine.js"),
+  path.join(dist, "src", "puzzle-engine.js"),
+);
+await cp(
+  path.join(root, "src", "catalog.js"),
+  path.join(dist, "src", "catalog.js"),
+);
 await writeFile(path.join(dist, "index.html"), html, "utf8");
 
-console.log(`Hexiva offline web bundle created in dist/ (validated ${inlineScripts.length} inline scripts)`);
+console.log(
+  `Hexiva offline web bundle created in dist/ (validated ${inlineScripts.length} inline scripts)`,
+);

@@ -4,7 +4,7 @@ Last updated: 2026-09-30
 
 ## Current checkpoint
 
-The current playable baseline is `index.html`, at the V35.x productization stage under the final working name **Hexiva**.
+The current source checkpoint is **V43**, under the working name **Hexiva**: `index.html` consumes a deterministic, offline-generated 1000-level puzzle catalog. See `docs/GENERATOR_V43.md` and the V43 history entry below for the current rules and validation status.
 
 Live GitHub Pages test URL:
 https://kelacumelam-cyber.github.io/Hexiva/
@@ -43,14 +43,14 @@ The project is a mobile-first Three.js/WebGL puzzle game. The established visual
 - Restarting/replaying a level reproduces the same puzzle.
 - Level number is identity, not monotonic difficulty.
 - Difficulty may fluctuate naturally.
-- Levels 1–4 retain tutorial-friendly behavior.
-- Levels 1–34 preserve the authored/test ordering and approved mechanics.
-- Level 35+ uses Generator V2.
-- Generator V2 includes multiple topology families, internal floor/pit variation, deterministic mechanic placement, and reduced direct cliff-exit arrows.
+- Levels 1–4 are small constrained tutorials: at least two opening removals and two immediately unlocking actions, dependency depth at most five, at most two forced certificate steps.
+- V43 rebaselines levels 1–1000; the former 1–34 authored/checkpoint layouts remain historical references rather than mandatory playable identities.
+- Offline V43 construction uses the former topology library with real connectivity-preserving physical edits, strict same-direction limits, and mechanically necessary state transitions.
+- Every playable entry passes rejection-based quality screening; the phone reads the audited catalog instead of searching candidates.
 - Current catalog ceiling is 1000 levels and is designed to expand later.
 - The level selector renders a bounded preview instead of creating 1000 DOM buttons at once.
 
-## Generator V2 topology families
+## Original Generator V2 topology families (retained as construction seeds)
 
 - wide lens
 - tall spine
@@ -593,3 +593,61 @@ Changes:
 
 Reason:
 The previous definition matched graph adjacency, but not human visual grouping. The rule is now based on what the player actually sees, not only on direct hex connectivity.
+
+
+## V43 — constrained puzzle catalog and mechanical contribution
+
+### Root causes and evidence
+
+Baseline inspected: `main` commit `55ca8e3`, including the full PROJECT_STATE history, generator, runtime routes, swap/cycle transitions, linked removal, persistence and offline packaging.
+
+- V42.6's selector used `bestCompliant || best`. A violating board was still shipped when its 24 samples had no compliant candidate. The old radius-2 audit found 817 violations across 1–1000.
+- Player screenshot `image(20260930-140748).png` and source agree: level 43's five-arrow up-left row is `(0,-1)` through `(4,-1)`. It was detected as a five-stone violation and accepted anyway. The crop's approximate world projection and pixel/cell mapping are documented in `docs/GENERATOR_V43.md`.
+- The level 43 wall is `(1,0)`; its neighbours point away, and the certificate records no wall route. Its swap at `(-1,-1)` is unnecessary. This is an actual construction defect, not evidence of a coordinate-conversion or cache bug.
+- The baseline contribution audit found 339/340 nonfunctional walls, 239/240 unnecessary swaps, 200/200 unnecessary cycles, 198/429 nonfunctional redirects and 113/114 ineffective linked pairs. Counts are tied to the stated counterfactual criteria; they are not a subjective difficulty judgement.
+- Permanent walls cannot create temporary dependencies by ordinary stone removal. Old peeling excluded wall-bound directions and did not reverse required positional transitions.
+- The old route-only audit hid stalls whenever swap/cycle existed instead of proving a solution. Maximum dependency scoring also rewarded long forced chains. Its trivial-route probe could incorrectly keep tracing beyond a real cliff.
+
+### Architecture and decisions
+
+- Replaced runtime best-of-24 generation with an immutable complete catalog constructed offline from deterministic multiple candidates. This reduces phone work and ties the audit to the exact played data.
+- Introduced a pure rule engine with joint linked removal, actual swap/cycle positions, visible redirects, first-gap escape and permanent obstacles. It searches state transitions with explicit node budgets; budget exhaustion is never proof of necessity.
+- Arrow assignment is restricted to solvable peel routes **while** enforcing a conservative visual-group bound. No arbitrary direction-flip repair or noncompliant fallback remains.
+- Screen grouping uses the actual flat-top mapping/camera projection, projected proximity, axial alignment across gaps/interleaved stones and transitive components. All full rearrangement orientations pass the <=2 cap. Under this conservative relation, ordinary removals cannot create a larger group.
+- Swap/cycle puzzles reverse a solved positional state. Acceptance proves these operations are necessary by disabling them and solving again. Walls are combined with rearrangements and must change actual route clearance; individual redirects and links also need certified contribution.
+- Real physical silhouette edits and best translated/rotated/reflected overlap screen recent layouts. Same V2 family, exact equivalents and >0.84 near-overlap are rejected within eight preceding levels.
+- Candidate rejection reasons are recorded. Zero compliant candidates stops construction; it never populates a playable fallback. Atomic local checkpoints protect long generation across worker interruptions.
+- Two construction optimizations preserve semantics: squared projected distances matched 390,625 geometric pairs; cached fixed route traces matched 429 complete candidate outputs (182 successfully constructed).
+- The initial full audit passed the first screening bands but revealed a tutorial depth of 11 and 5–6 forced steps in several boards. Those were treated as real remaining weaknesses: tutorial depth was capped at five, two opening choices enforced from level 1, and certificate forced runs capped at four (two for tutorials). The final catalog is regenerated under these stricter gates.
+- The existing presentation, visible-arrow movement, animation, boosters, coin rewards, save identity, highest unlock and 1000-level ceiling are preserved. Catalog layouts change once in this rebaseline; replay/restart of a given V43 number is fixed.
+
+### QA deployment marker
+
+Fresh key: `hexiva-qa-v43-20260930-c74f9e21`.
+The web source adds exactly +100 to the player's loaded saved balance once per browser/profile. Historical +500/V42.6 grants are not replayed. A test verifies 275 -> 375 and no second-load grant. The offline/APK build strips the new grant/key and desktop QA controls.
+
+### Validation and acceptance limits
+
+Final automatic results and selected representatives are appended below after the stricter catalog is independently audited. Reports live in `docs/audits/`; `npm run audit:catalog` recomputes the proofs and compares every direction at solution/orientation states with the actual existing `checkCanTapAway` function.
+
+The remote Chrome browser fails to create a WebGL context on unchanged V42.6 and again after one reload. V43 has **not** been claimed visually played in that browser. Real Three.js geometry construction with a renderer stub is a separate CPU smoke test, not a substitute for web/GPU gameplay acceptance. The audit screens structural quality; it cannot prove human perception or enjoyment.
+
+
+### V43 final independent automatic audit (stricter catalog)
+
+- All 1000 levels solve; zero proof-budget exhaustion and zero quality-gate violations.
+- Maximum conservative visual group = 2; zero visual violations, including rearrangement orientations and certificate states.
+- Zero same-family/exact/near-footprint repeats within the preceding eight levels. There are 14 distant exact repeats; minimum exact recurrence gap is 14.
+- Zero excessive opening/trivial-escape ratios under the documented tutorial/normal bands.
+- 248 redirects, 372 swaps, 248 cycles, 124 linked pairs and 248 obstacles; zero nonfunctional instances and zero unaffected walls. 38 walls affect multiple distinct stones; the other 210 affect one distinct stone. Repeated observations of one stone are not represented as multiple stone relationships.
+- 1,419,150 route comparisons against the actual runtime `checkCanTapAway` all match.
+- 397 levels have at least one solvable-state opening action whose premature removal strands the puzzle; zero unknown opening outcomes.
+- Maximum certificate forced run = 4 (tutorial <=2). First-four opening counts are 2/3/2/3 and dependency depths 3/5/5/5.
+- Average dependency depth is 4.5 in tutorials, 5.4 in 5–34, 5.62 in 35–100 and about 6.07 in 301–1000. Difficulty is not monotonic by level.
+- 402,955 candidate evaluations; maximum search budget 6000. Per-candidate rejection categories can overlap. The recent-shape-or-family category explicitly covers the shared exact-equivalence/family screening gate.
+- 12 tests passed, including actual runtime swap/cycle callback transitions on all supported axes, save-credit idempotence, first-gap/pit/obstacle/link/loop cases, deterministic construction, and scene construction/cleanup of all 1000 boards using real Three.js geometry with a renderer stub.
+- Source verification passed (1000 entries and parsed inline scripts); offline web build passed and strips the new QA key/credit.
+- Representative automated checks: 1, 13, 15, 19, 20, 24, 43, 163, 863, 936 and 1000. These are not claimed played in the blocked WebGL browser.
+- Four-step forced segments and distant repeats remain explicitly visible. Current combinations are wall+swap, wall+cycle and redirect+swap; linked/rearrangement combinations await generalization of the coordinate-bound runtime link model.
+
+Turkish review report: `docs/audits/V43_REPORT_TR.md`. The structural audit passes; real web/GPU perceptual acceptance remains open due to the documented browser limitation.

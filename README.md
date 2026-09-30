@@ -55,3 +55,7 @@ Standalone HTML/ZIP delivery is only a fallback.
 - Release/debug separation for QA keyboard shortcuts
 - Local bundling of external CDN dependencies before standalone APK packaging
 - Final visual/background polish
+
+## Level catalog quality (V43)
+
+The 1000 playable levels are constructed offline and must pass rejection-based puzzle-quality checks. See [generator architecture and limits](docs/GENERATOR_V43.md). Run `npm test` and `npm run audit:catalog` to verify the checked-in catalog; use `npm run catalog:build` to reproduce it. Full catalog reports are in `docs/audits/`.
