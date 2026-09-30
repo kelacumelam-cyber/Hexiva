@@ -985,6 +985,7 @@
 
     const LOCAL_SAVE_KEY = 'hexiva-save-v1';
     const QA_COIN_GRANT_KEY = 'hexiva-qa-coin-grant-v1';
+    const QA_DEPLOY_MARKER_V42_6 = 'hexiva-qa-deploy-marker-v42-6';
     const DAILY_GIFT_COOLDOWN_MS = 24 * 60 * 60 * 1000;
     const LEVEL_REWARD_COINS = 25;
     const HAMMER_PRICE = 75;
@@ -1039,6 +1040,15 @@
           localStorage.setItem(QA_COIN_GRANT_KEY, '1');
           saveLocalState();
           showHint("TEST: +500 Altın 🪙");
+        }
+
+        // Deploy marker V42.6: one-time +100 coin grant so web testers can verify
+        // that the newest GitHub Pages build is actually active rather than cached.
+        if (!localStorage.getItem(QA_DEPLOY_MARKER_V42_6)) {
+          coins += 100;
+          localStorage.setItem(QA_DEPLOY_MARKER_V42_6, '1');
+          saveLocalState();
+          showHint("TEST BUILD V42.6: +100 Altın 🪙");
         }
       } catch (e) {
         console.warn('Local load failed:', e);
@@ -2123,6 +2133,33 @@
       };
     }
 
+    function computeSameDirectionVisualNeighborhoodMetrics(levelBlocks, radius = 2) {
+      let maxNeighborhoodSize = 0;
+      let violatingCenterCount = 0;
+
+      levelBlocks.forEach(center => {
+        let sameDirectionNearby = 0;
+        levelBlocks.forEach(other => {
+          if (other.dirIndex !== center.dirIndex) return;
+          const distance = (
+            Math.abs(center.q - other.q) +
+            Math.abs(center.r - other.r) +
+            Math.abs((center.q + center.r) - (other.q + other.r))
+          ) / 2;
+          if (distance <= radius) sameDirectionNearby++;
+        });
+
+        maxNeighborhoodSize = Math.max(maxNeighborhoodSize, sameDirectionNearby);
+        if (sameDirectionNearby > 2) violatingCenterCount++;
+      });
+
+      return {
+        maxSameDirectionVisualNeighborhoodSize: maxNeighborhoodSize,
+        sameDirectionVisualViolationCount: violatingCenterCount,
+        sameDirectionVisualCompliant: maxNeighborhoodSize <= 2
+      };
+    }
+
     function difficultyProfileForLevel(levelNum) {
       if (levelNum <= TUTORIAL_LEVEL_COUNT) return 'tutorial';
       const roll = hashLevelSeed(levelNum, 0xd1ff1c) % 100;
@@ -3030,6 +3067,7 @@
       });
 
       const directionClusterMetrics = computeSameDirectionClusterMetrics(levelBlocks);
+      const visualNeighborhoodMetrics = computeSameDirectionVisualNeighborhoodMetrics(levelBlocks, 2);
       const initialClearDirectionCount = initiallyClearDirectionCounts.filter(count => count > 0).length;
       const dominantInitialClearDirectionCount = Math.max(0, ...initiallyClearDirectionCounts);
 
@@ -3044,6 +3082,7 @@
         blockCount: levelBlocks.length,
         openingRepairCount,
         ...directionClusterMetrics,
+        ...visualNeighborhoodMetrics,
         initialClearDirectionCount,
         dominantInitialClearDirectionRatio: initiallyClearCount
           ? dominantInitialClearDirectionCount / initiallyClearCount
@@ -3115,6 +3154,13 @@
         penalty += 40 + (clusterSize - 3) * 20;
       }
 
+      // Human vision groups nearby arrows even across a one-cell gap. Treat 3+ same-direction
+      // blocks inside a radius-2 hex neighborhood as the same visual sweep group.
+      const visualNeighborhoodSize = stats.maxSameDirectionVisualNeighborhoodSize || 0;
+      if (visualNeighborhoodSize >= 3) {
+        penalty += 80 + (visualNeighborhoodSize - 3) * 30;
+      }
+
       // "Easy" must still contain a choice. One legal opener is a forced instruction, not a decision.
       if (stats.initiallyClearCount < 2) penalty += tutorial ? 2.0 : 3.5;
       if (stats.initiallyClearCount >= 2 && stats.initialClearDirectionCount < 2) {
@@ -3143,12 +3189,14 @@
         const candidate = generateSolvableLevelCandidate(levelNum, attempt);
         const penalty = levelQualityPenalty(candidate.generationStats);
         const clusterCompliant = (candidate.generationStats.maxSameDirectionClusterSize || 0) <= 2;
+        const visualCompliant = (candidate.generationStats.maxSameDirectionVisualNeighborhoodSize || 0) <= 2;
+        const fullyCompliant = clusterCompliant && visualCompliant;
 
         if (penalty < bestPenalty) {
           best = candidate;
           bestPenalty = penalty;
         }
-        if (clusterCompliant && penalty < bestCompliantPenalty) {
+        if (fullyCompliant && penalty < bestCompliantPenalty) {
           bestCompliant = candidate;
           bestCompliantPenalty = penalty;
         }
@@ -3160,6 +3208,8 @@
       chosen.generationStats.candidatesEvaluated = candidateCount;
       chosen.generationStats.sameDirectionClusterCompliant =
         (chosen.generationStats.maxSameDirectionClusterSize || 0) <= 2;
+      chosen.generationStats.sameDirectionVisualCompliant =
+        (chosen.generationStats.maxSameDirectionVisualNeighborhoodSize || 0) <= 2;
       return chosen;
     }
 
@@ -3262,6 +3312,22 @@
     }
 
     window.__hexivaAuditCatalog = auditGeneratedCatalog;
+    window.__hexivaDirectionViolations = function(limit = LEVEL_CATALOG_SIZE) {
+      const capped = Math.max(1, Math.min(LEVEL_CATALOG_SIZE, Math.floor(limit)));
+      const violations = [];
+      for (let levelNum = 1; levelNum <= capped; levelNum++) {
+        const stats = generateSolvableLevel(levelNum).generationStats || {};
+        if (!stats.sameDirectionVisualCompliant || !stats.sameDirectionClusterCompliant) {
+          violations.push({
+            level: levelNum,
+            patternKey: stats.patternKey,
+            connectedCluster: stats.maxSameDirectionClusterSize || 0,
+            visualNeighborhood: stats.maxSameDirectionVisualNeighborhoodSize || 0
+          });
+        }
+      }
+      return violations;
+    };
 
     let activeRedirectors = new Map();
     let activeRedirectorVisuals = [];
