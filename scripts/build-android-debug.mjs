@@ -43,10 +43,14 @@ async function detectJdk21() {
       path.join(programFiles, "Android", "Android Studio", "jre")
     );
 
-    const javaRoot = path.join(programFiles, "Java");
-    if (await pathExists(javaRoot)) {
-      for (const entry of await readdir(javaRoot, { withFileTypes: true })) {
-        if (entry.isDirectory()) candidates.push(path.join(javaRoot, entry.name));
+    for (const vendorRoot of [
+      path.join(programFiles, "Java"),
+      path.join(programFiles, "Eclipse Adoptium")
+    ]) {
+      if (await pathExists(vendorRoot)) {
+        for (const entry of await readdir(vendorRoot, { withFileTypes: true })) {
+          if (entry.isDirectory()) candidates.push(path.join(vendorRoot, entry.name));
+        }
       }
     }
   } else if (process.platform === "darwin") {
@@ -54,6 +58,20 @@ async function detectJdk21() {
       "/Applications/Android Studio.app/Contents/jbr/Contents/Home"
     );
   }
+
+  // Also trust the Java currently resolved by PATH. This avoids depending on
+  // vendor-specific installation directories such as Eclipse Adoptium.
+  try {
+    const command = process.platform === "win32" ? "where.exe" : "which";
+    const output = execFileSync(command, ["java"], {
+      encoding: "utf8",
+      stdio: ["ignore", "pipe", "ignore"]
+    });
+    const firstJava = output.split(/\r?\n/).find(Boolean);
+    if (firstJava) {
+      candidates.push(path.dirname(path.dirname(firstJava.trim())));
+    }
+  } catch {}
 
   const seen = new Set();
 
