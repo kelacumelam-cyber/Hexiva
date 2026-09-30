@@ -8,7 +8,8 @@
     "build:css": "tailwindcss -c tailwind.config.cjs -i src/tailwind.css -o dist/app.css --minify",
     "android:add": "npm run build:web && npx cap add android && node scripts/configure-android.mjs",
     "android:sync": "npm run build:web && npx cap sync android && node scripts/configure-android.mjs",
-    "android:open": "npx cap open android"
+    "android:open": "npx cap open android",
+    "verify:source": "node scripts/verify-source.mjs"
   },
   "dependencies": {
     "@tweenjs/tween.js": "18.6.4",
