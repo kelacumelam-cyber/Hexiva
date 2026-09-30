@@ -1334,7 +1334,7 @@
 
         const redirectArrow = new THREE.Mesh(arrowGeometry, redirectArrowMaterial.clone());
         redirectArrow.position.y = 0.09;
-        redirectArrow.rotation.y = -(HEX_DIRECTIONS[item.dirIndex].angleDeg * Math.PI / 180);
+        redirectArrow.rotation.y = -(HEX_DIRECTIONS[item.dirIndex].angleDeg * Math.PI / 180) - redirectGroup.rotation.y;
         redirectArrow.scale.set(0.72, 0.72, 0.72);
         redirectArrow.castShadow = false;
         arrowPivot.add(redirectArrow);
