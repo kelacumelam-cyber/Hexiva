@@ -129,3 +129,11 @@ Stage 1 is deterministic identity + measurement. Existing authored mechanic test
 Stage 2 will add new topology families and stronger cross-level diversity.
 
 Stage 3 will enforce/tune limits for excessive outward-facing arrows, excessive immediately playable blocks, and trivial direct escapes based on playtesting rather than arbitrary constants.
+
+
+### Generator V2 topology-family rule
+Levels 1-34 remain frozen authored/test checkpoints. Level 35+ draws from multiple topology families rather than cycling the old pattern list.
+
+Each level number remains fixed/deterministic, but different level numbers should vary strongly in size, density, silhouette, internal floor gaps, corridors, pits, and dependency structure.
+
+For level 35+, valid inward/sideways directions should generally be preferred over free outward exits when possible. Difficulty may fluctuate between levels instead of increasing monotonically.
