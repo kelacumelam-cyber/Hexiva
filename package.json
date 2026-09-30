@@ -15,7 +15,8 @@
     "audit:catalog": "node scripts/audit-catalog.cjs",
     "test": "node --test tests/*.test.cjs",
     "catalog:anne-preview": "node scripts/build-anne-grid-catalog.cjs",
-    "audit:anne-preview": "node scripts/audit-catalog.cjs src/catalog-anne-grid-preview.js 1250"
+    "audit:anne-preview": "node scripts/audit-catalog.cjs src/catalog-anne-grid-preview.js 1250",
+    "catalog:anne-promote": "node scripts/promote-anne-grid-preview.cjs"
   },
   "dependencies": {
     "@tweenjs/tween.js": "18.6.4",
