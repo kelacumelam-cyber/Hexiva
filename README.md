@@ -33,7 +33,7 @@ A playable hex always moves in the direction of its visible arrow. Movement may 
 - Three-way cycle mechanism
 - Fixed obstacles
 - Visibly linked pairs
-- Bomb booster with one-cell-radius playable-block blast
+- Single-target bomb booster
 
 ## Level philosophy
 
