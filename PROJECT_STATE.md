@@ -211,3 +211,33 @@ General consistency audit found and fixed:
 - Bomb now removes only the selected playable block.
 - If the selected block belongs to a linked pair, the link is detached first and the surviving block remains a normal playable block.
 - Fixed obstacles remain unaffected.
+
+
+## V38 deterministic difficulty + generator audit checkpoint
+
+Difficulty is now intentionally non-linear and deterministic:
+- tutorial: opening levels only,
+- relaxed: ~18%,
+- normal: ~50%,
+- hard: ~26%,
+- very hard: ~6%.
+
+Hard / very-hard profiles:
+- prefer deeper reverse-construction dependency routes,
+- favor board-internal route dependencies over easy direct cliff exits,
+- use denser two-mechanic combinations in Generator V2 when placement permits.
+
+Relaxed profiles:
+- prefer lighter dependency routes,
+- use cleaner/no-mechanic or single-mechanic boards more often.
+
+The visible-arrow contract and solvability-first reverse construction remain unchanged.
+
+Generator audit telemetry added:
+- difficultyProfile,
+- clearanceWaveCount,
+- maxClearanceWaveSize,
+- solvabilityStalled,
+- existing initial-clear/direct-cliff/trivial-escape metrics remain.
+
+A development helper `window.__hexivaAuditCatalog(start,end)` can scan deterministic generated levels without rendering them and reports stalled levels plus suspiciously easy hard-profile levels.
