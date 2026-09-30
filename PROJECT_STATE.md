@@ -462,3 +462,26 @@ Fixes:
 - sound control keeps a 44px minimum touch target even on narrow phones,
 - Fredoka / Google Fonts usage is removed from the source UI,
 - typography now uses the native system mobile stack for a conventional mobile-game interface.
+
+
+## V42 Level Quality Telemetry V1
+
+Physical playtesting of the first 22 levels exposed a repeat/"tap to clear" problem that solvability alone does not catch.
+
+Accepted level-design constraints now include:
+- avoid long same-direction sweep chains,
+- limit excessive free opening moves,
+- detect repeated footprints across translation, rotation and reflection,
+- prefer meaningful internal dependencies over raw block count,
+- keep taught mechanics returning and combining,
+- treat web playtesting as the final reality check for boredom/automation.
+
+This batch intentionally does not add guessed rejection thresholds yet. It adds measurement first:
+- canonical footprint fingerprint,
+- same-direction adjacency and largest connected same-direction cluster,
+- initially-clear ratio and opening direction diversity/dominance,
+- trivial direct-escape ratio,
+- catalog audit helper exposed as `window.__hexivaAuditCatalog(limit)`,
+- repeat-family reporting with exact level numbers and minimum recurrence gap.
+
+Next step: run the web/catalog audit, inspect the worst offenders and then turn the measured failure modes into generator candidate rejection/scoring rules.
