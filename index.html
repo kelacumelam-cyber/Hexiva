@@ -3013,7 +3013,7 @@
       penalty += stats.trivialDirectEscapeRatio * 1.5;
       penalty += stats.maxSameDirectionClusterRatio * 1.8;
       penalty += stats.sameDirectionAdjacencyRatio * 0.7;
-      penalty += stats.dominantInitialClearDirectionRatio * 0.45;
+      penalty += stats.dominantInitialClearDirectionRatio * 0.65;
 
       // Empirical red zones come from the first 100-level audit and the 22-level physical playtest.
       // They penalize the exact failure modes that surfaced there, while still allowing a fallback
@@ -3026,16 +3026,25 @@
       penalty += Math.max(0, stats.trivialDirectEscapeRatio - trivialRedZone) * 5.0;
       penalty += Math.max(0, stats.maxSameDirectionClusterRatio - clusterRedZone) * 6.0;
 
-      if (stats.initiallyClearCount >= 3 && stats.dominantInitialClearDirectionRatio >= 0.90) {
-        penalty += 1.5 + (stats.dominantInitialClearDirectionRatio - 0.90) * 4;
+      // "Easy" must still contain a choice. One legal opener is a forced instruction, not a decision.
+      if (stats.initiallyClearCount < 2) penalty += tutorial ? 2.0 : 3.5;
+      if (stats.initiallyClearCount >= 2 && stats.initialClearDirectionCount < 2) {
+        penalty += tutorial ? 2.5 : 4.5;
       }
-      if (stats.solvabilityStalled) penalty += 100;
 
+      // A fully dominant opening direction recreated the exact physical-playtest "finger sweep" feel.
+      if (stats.initiallyClearCount >= 2 && stats.dominantInitialClearDirectionRatio >= 0.90) {
+        penalty += 3.0 + (stats.dominantInitialClearDirectionRatio - 0.90) * 8;
+      } else if (stats.initiallyClearCount >= 3 && stats.dominantInitialClearDirectionRatio >= 0.70) {
+        penalty += 1.0 + (stats.dominantInitialClearDirectionRatio - 0.70) * 3;
+      }
+
+      if (stats.solvabilityStalled) penalty += 100;
       return penalty;
     }
 
     function generateSolvableLevel(levelNum) {
-      const candidateCount = levelNum <= TUTORIAL_LEVEL_COUNT ? 12 : 8;
+      const candidateCount = levelNum <= TUTORIAL_LEVEL_COUNT ? 24 : 16;
       let best = null;
       let bestPenalty = Infinity;
 
