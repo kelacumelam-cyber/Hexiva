@@ -988,6 +988,7 @@
     const LOCAL_SAVE_KEY = 'hexiva-save-v1';
     const QA_DEPLOY_MARKER_V43 = 'hexiva-qa-v43-20260930-c74f9e21';
     const QA_DEPLOY_MARKER_V43_FIT = 'hexiva-qa-v43-fit-20260930-7c6a2f1d';
+    const QA_DEPLOY_MARKER_V43_ARROW = 'hexiva-qa-v43-arrow-20260930-91d4b6ce';
     const DAILY_GIFT_COOLDOWN_MS = 24 * 60 * 60 * 1000;
     const LEVEL_REWARD_COINS = 25;
     const HAMMER_PRICE = 75;
@@ -1050,6 +1051,13 @@
           localStorage.setItem(QA_DEPLOY_MARKER_V43_FIT, '1');
           saveLocalState();
           showHint("TEST BUILD V43 FIT: +100 Altın 🪙");
+        }
+
+        if (!localStorage.getItem(QA_DEPLOY_MARKER_V43_ARROW)) {
+          coins += 100;
+          localStorage.setItem(QA_DEPLOY_MARKER_V43_ARROW, '1');
+          saveLocalState();
+          showHint("TEST BUILD V43 ARROW: +100 Altın 🪙");
         }
       } catch (e) {
         console.warn('Local load failed:', e);
@@ -1325,8 +1333,15 @@
     });
 
     const arrowMaterial = new THREE.MeshLambertMaterial({
-      color: 0xffffff,
-      roughness: 0.25
+      // Warm off-white reduces glare on yellow/orange blocks while staying bright on dark blocks.
+      color: 0xf2f0e8
+    });
+
+    const arrowOutlineMaterial = new THREE.MeshBasicMaterial({
+      color: 0x253047,
+      transparent: true,
+      opacity: 0.34,
+      depthWrite: false
     });
 
     // Direction changer visual identity:
@@ -1927,6 +1942,14 @@
         const arrowMesh = new THREE.Mesh(arrowGeometry, arrowMaterial);
         arrowMesh.position.set(0, (HEX_HEIGHT / 2) + 0.04, 0);
         arrowMesh.castShadow = false;
+
+        // Slightly enlarged, lowered dark underlay reads as a soft contour rather than a hard stroke.
+        // Keeping it as a child means every runtime arrow rotation stays perfectly in sync.
+        const arrowOutline = new THREE.Mesh(arrowGeometry, arrowOutlineMaterial);
+        arrowOutline.position.y = -0.028;
+        arrowOutline.scale.set(1.075, 1.075, 1.075);
+        arrowOutline.renderOrder = -1;
+        arrowMesh.add(arrowOutline);
 
         const dirData = HEX_DIRECTIONS[item.dirIndex];
         arrowMesh.rotation.y = -(dirData.angleDeg * Math.PI / 180);
