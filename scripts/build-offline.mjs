@@ -9,10 +9,18 @@ const vendor = path.join(dist, "vendor");
 await rm(dist, { recursive: true, force: true });
 await mkdir(vendor, { recursive: true });
 
+const tailwindCli = path.join(
+  root,
+  "node_modules",
+  "tailwindcss",
+  "lib",
+  "cli.js"
+);
+
 execFileSync(
-  process.platform === "win32" ? "npx.cmd" : "npx",
+  process.execPath,
   [
-    "tailwindcss",
+    tailwindCli,
     "-c", "tailwind.config.cjs",
     "-i", "src/tailwind.css",
     "-o", "dist/app.css",
