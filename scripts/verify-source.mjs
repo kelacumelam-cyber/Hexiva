@@ -25,6 +25,11 @@ if (html.includes("font-awesome")) {
   throw new Error("Font Awesome dependency unexpectedly returned");
 }
 
+const configureAndroid = await readFile("scripts/configure-android.mjs", "utf8");
+if (!configureAndroid.includes("android.permission.RECORD_AUDIO")) {
+  throw new Error("Android microphone permission is not declared by the packaging configuration");
+}
+
 const context = { window: {} };
 runInNewContext(await readFile("src/catalog.js", "utf8"), context);
 if (context.window.HEXIVA_CATALOG?.length !== 1000) {
