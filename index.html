@@ -328,7 +328,7 @@
         <div id="hammer-count" class="booster-badge absolute -top-3.5 z-20 text-white font-black text-xs px-2.5 py-0.5 rounded-md min-w-[24px] text-center">1</div>
         <button id="hammer-btn" class="game-btn booster-card w-[72px] h-[72px] sm:w-20 sm:h-20 rounded-2xl flex flex-col items-center justify-center text-slate-900 active:scale-95">
           <span class="text-3xl filter drop-shadow">🔨</span>
-          <span class="text-[10px] font-black tracking-wider mt-0.5 text-slate-900">HAMMER</span>
+          <span class="text-[10px] font-black tracking-wider mt-0.5 text-slate-900">ÇEKİÇ</span>
         </button>
       </div>
 
@@ -336,7 +336,7 @@
         <div id="rotate-count" class="booster-badge absolute -top-3.5 z-20 text-white font-black text-xs px-2.5 py-0.5 rounded-md min-w-[24px] text-center">1</div>
         <button id="rotate-btn" class="game-btn booster-card w-[72px] h-[72px] sm:w-20 sm:h-20 rounded-2xl flex flex-col items-center justify-center text-slate-900 active:scale-95">
           <span class="text-3xl filter drop-shadow">🔄</span>
-          <span class="text-[10px] font-black tracking-wider mt-0.5 text-slate-900">ROTATE</span>
+          <span class="text-[10px] font-black tracking-wider mt-0.5 text-slate-900">DÖNDÜR</span>
         </button>
       </div>
 
@@ -344,7 +344,7 @@
         <div id="bomb-count" class="booster-badge absolute -top-3.5 z-20 text-white font-black text-xs px-2.5 py-0.5 rounded-md min-w-[24px] text-center">1</div>
         <button id="bomb-btn" class="game-btn booster-card w-[72px] h-[72px] sm:w-20 sm:h-20 rounded-2xl flex flex-col items-center justify-center text-slate-900 active:scale-95">
           <span class="text-3xl filter drop-shadow">💣</span>
-          <span class="text-[10px] font-black tracking-wider mt-0.5 text-slate-900">BOMB</span>
+          <span class="text-[10px] font-black tracking-wider mt-0.5 text-slate-900">BOMBA</span>
         </button>
       </div>
     </div>
@@ -460,7 +460,7 @@
             <span class="text-3xl">💣</span>
             <div>
               <div class="font-black text-slate-800 text-sm">1x Bomba</div>
-              <div class="text-xs text-slate-500">Seçilen blok ve komşularını temizler</div>
+              <div class="text-xs text-slate-500">Seçilen tek bloğu temizler</div>
             </div>
           </div>
           <button id="buy-bomb-btn" class="game-btn px-3 py-2 bg-amber-400 text-slate-900 font-black rounded-xl text-xs flex items-center gap-1 border border-white">🪙 125</button>
@@ -3608,55 +3608,30 @@
     function bombBlastBlock(targetBlock) {
       playSound('hammer');
 
-      const affected = new Set([targetBlock]);
-      HEX_DIRECTIONS.forEach(dir => {
-        const neighbor = findLiveBlockAt(targetBlock.q + dir.dq, targetBlock.r + dir.dr);
-        if (neighbor) affected.add(neighbor);
-      });
+      // Bomb is intentionally a single-target booster.
+      // If the target belongs to a linked pair, detach the relationship first
+      // so the surviving member remains a normal playable block.
+      detachLinkedPairForSingleTargetBooster(targetBlock);
 
-      // Linked pairs should never be left half-alive by a booster.
-      const processedPairs = new Set();
-      Array.from(affected).forEach(block => {
-        const pair = getLinkedPairForBlock(block);
-        if (!pair || processedPairs.has(pair.id)) return;
-        processedPairs.add(pair.id);
+      targetBlock.isRemoved = true;
+      targetBlock.isAnimating = true;
 
-        const pairBlocks = getLinkedPairBlocks(pair);
-        if (pairBlocks.aBlock) affected.add(pairBlocks.aBlock);
-        if (pairBlocks.bBlock) affected.add(pairBlocks.bBlock);
-        fadeLinkedPair(pair);
-        linkedPairByCell.delete(`${pair.a.q},${pair.a.r}`);
-        linkedPairByCell.delete(`${pair.b.q},${pair.b.r}`);
-        activeLinkedPairs = activeLinkedPairs.filter(p => p !== pair);
-      });
+      new TWEEN.Tween(targetBlock.mesh.scale)
+        .to({ x: 1.28, y: 1.28, z: 1.28 }, 90)
+        .easing(TWEEN.Easing.Quadratic.Out)
+        .onComplete(() => {
+          new TWEEN.Tween(targetBlock.mesh.scale)
+            .to({ x: 0.02, y: 0.02, z: 0.02 }, 150)
+            .easing(TWEEN.Easing.Cubic.In)
+            .onComplete(() => {
+              boardGroup.remove(targetBlock.mesh);
+              checkLevelWin();
+            })
+            .start();
+        })
+        .start();
 
-      const liveAffected = Array.from(affected).filter(block => block && !block.isRemoved);
-      if (!liveAffected.length) return;
-
-      let completed = 0;
-      liveAffected.forEach((block, index) => {
-        block.isRemoved = true;
-        block.isAnimating = true;
-
-        new TWEEN.Tween(block.mesh.scale)
-          .to({ x: 1.28, y: 1.28, z: 1.28 }, 90)
-          .delay(index * 18)
-          .easing(TWEEN.Easing.Quadratic.Out)
-          .onComplete(() => {
-            new TWEEN.Tween(block.mesh.scale)
-              .to({ x: 0.02, y: 0.02, z: 0.02 }, 150)
-              .easing(TWEEN.Easing.Cubic.In)
-              .onComplete(() => {
-                boardGroup.remove(block.mesh);
-                completed++;
-                if (completed === liveAffected.length) checkLevelWin();
-              })
-              .start();
-          })
-          .start();
-      });
-
-      showHint(`Bomba: ${liveAffected.length} blok temizlendi! 💣`);
+      showHint("Blok Patlatıldı! 💣");
     }
 
     const raycaster = new THREE.Raycaster();
