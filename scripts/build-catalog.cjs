@@ -131,19 +131,13 @@ function draft(level, attempt, options = {}) {
       "redirectSwap",
       "obstacleCycle",
       "obstacle",
-      "redirectCycle",
       "swap",
       "cycle",
+      "redirectSwap",
     ];
     const anneIndex = ((options.specialIndex || level) - 1) % anneKinds.length;
     kind = options.forceKind || anneKinds[anneIndex];
 
-    // Some large sparse chambers cannot physically support a necessary wall+cycle
-    // arrangement on every deterministic notch/rotation. Try the harder combination
-    // first, then fall back to a real cycle puzzle instead of stalling construction
-    // or accepting a decorative wall.
-    if (!options.forceKind && kind === "obstacleCycle" && attempt >= 120)
-      kind = "cycle";
   } else {
     kind =
       level < 8
