@@ -88,3 +88,22 @@ Source structure can be sanity-checked with:
 ```bash
 npm run verify:source
 ```
+
+
+## Debug APK
+
+After the Android project has been created once with `npm run android:add`, build a fresh test APK with:
+
+```bash
+npm run android:debug
+```
+
+This rebuilds/syncs the offline web bundle first, then runs Gradle `assembleDebug`.
+
+Expected APK:
+
+```text
+android/app/build/outputs/apk/debug/app-debug.apk
+```
+
+See `docs/MOBILE_TEST.md` for the physical-device acceptance pass.
