@@ -2871,6 +2871,86 @@
         return { q: c.q, r: c.r, dirIndex, color };
       });
 
+      // Structural opening repair. Candidate scoring alone cannot help when every candidate
+      // inherits the same forced-looking opening. We only rewrite a direction when that block
+      // has a route that is already clear on the FULL starting board, so the edit cannot create
+      // a new dependency/deadlock. Removing an already-clear block earlier can only free space.
+      const openingProtectedKeys = new Set(Object.keys(forcedDirections));
+      const openingFullRemaining = new Set(cells.map(c => `${c.q},${c.r}`));
+      const blockByOpeningKey = new Map(levelBlocks.map(block => [`${block.q},${block.r}`, block]));
+
+      // Preserve deliberate pit/redirect teaching feeders.
+      levelBlocks.forEach(block => {
+        const d = HEX_DIRECTIONS[block.dirIndex];
+        const nextKey = `${block.q + d.dq},${block.r + d.dr}`;
+        if (pitSet.has(nextKey) || redirectMap.has(nextKey)) {
+          openingProtectedKeys.add(`${block.q},${block.r}`);
+        }
+      });
+
+      let openingRepairCount = 0;
+
+      function openingValidDirs(block) {
+        const dirs = [];
+        for (let d = 0; d < HEX_DIRECTIONS.length; d++) {
+          if (isDirectionClear(block.q, block.r, d, openingFullRemaining)) dirs.push(d);
+        }
+        return dirs;
+      }
+
+      function currentOpeningBlocks() {
+        return levelBlocks.filter(block =>
+          isDirectionClear(block.q, block.r, block.dirIndex, openingFullRemaining)
+        );
+      }
+
+      // Guarantee a real choice when the geometry allows it: at least two opening moves.
+      while (currentOpeningBlocks().length < 2) {
+        const currentDirs = new Set(currentOpeningBlocks().map(block => block.dirIndex));
+        const candidates = levelBlocks
+          .filter(block => !openingProtectedKeys.has(`${block.q},${block.r}`))
+          .map(block => ({
+            block,
+            dirs: openingValidDirs(block).filter(d => d !== block.dirIndex)
+          }))
+          .filter(item => item.dirs.length)
+          .sort((a, b) => {
+            const aNovel = a.dirs.some(d => !currentDirs.has(d)) ? 1 : 0;
+            const bNovel = b.dirs.some(d => !currentDirs.has(d)) ? 1 : 0;
+            return bNovel - aNovel || b.dirs.length - a.dirs.length;
+          });
+
+        if (!candidates.length) break;
+        const chosen = candidates[0];
+        const novelDirs = chosen.dirs.filter(d => !currentDirs.has(d));
+        chosen.block.dirIndex = (novelDirs.length ? novelDirs : chosen.dirs)[0];
+        openingProtectedKeys.add(`${chosen.block.q},${chosen.block.r}`);
+        openingRepairCount++;
+      }
+
+      // If all openers still point the same way, safely rotate one opener to another
+      // full-board-clear direction. This attacks the "finger sweep" failure mode directly.
+      const openingNow = currentOpeningBlocks();
+      const openingDirSet = new Set(openingNow.map(block => block.dirIndex));
+      if (openingNow.length >= 2 && openingDirSet.size === 1) {
+        const dominantDir = openingNow[0].dirIndex;
+        const repairCandidates = [
+          ...openingNow.filter(block => !openingProtectedKeys.has(`${block.q},${block.r}`)),
+          ...levelBlocks.filter(block =>
+            !openingNow.includes(block) &&
+            !openingProtectedKeys.has(`${block.q},${block.r}`)
+          )
+        ];
+
+        for (const block of repairCandidates) {
+          const alternate = openingValidDirs(block).find(d => d !== dominantDir && d !== block.dirIndex);
+          if (alternate === undefined) continue;
+          block.dirIndex = alternate;
+          openingRepairCount++;
+          break;
+        }
+      }
+
       function computeClearanceWaveMetrics() {
         const simRemaining = new Set(cells.map(c => `${c.q},${c.r}`));
         const blockByKey = new Map(levelBlocks.map(block => [`${block.q},${block.r}`, block]));
@@ -2962,6 +3042,7 @@
         difficultyProfile,
         topologyProfile: topologyVariation.profile,
         blockCount: levelBlocks.length,
+        openingRepairCount,
         ...directionClusterMetrics,
         initialClearDirectionCount,
         dominantInitialClearDirectionRatio: initiallyClearCount
