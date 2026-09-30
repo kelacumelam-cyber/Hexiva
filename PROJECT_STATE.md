@@ -349,3 +349,32 @@ Foundation changes:
 - the next phase is to add genuinely new topology families and then use these metrics to reduce trivial outward-arrow-heavy boards.
 
 Local candidate file: hexa_tap_away_game_mobile_v31.html
+
+
+## V32 Generator V2 topology families
+
+V31 foundation was user-tested successfully: sampled mechanics worked and restarting reproduced the same level.
+
+V32 begins actual cross-level variety work for level 35+ while freezing levels 1-34.
+
+Added eight V2 topology families:
+- wide lens
+- tall spine
+- twin lobes with bridge
+- offset/asymmetric mass
+- zig-zag band
+- stepped diamond
+- large crescent
+- compact maze
+
+V2 levels also receive deterministic internal topology variation:
+- traversable grey floor pockets,
+- short floor lanes,
+- split/compact void profiles,
+- occasional true pits.
+
+Each level remains fixed/deterministic by level number.
+
+For V2 levels, valid inward/sideways arrow directions are preferred when available, using a deterministic fluctuating difficulty mood rather than a monotonic difficulty curve. This is intended to reduce free outward escapes and increase internal movement/collision play.
+
+Generator QA metrics continue to record family, topology profile, outward-facing ratio, initially clear move count, and trivial direct escape count. Thresholds remain subject to playtesting.
