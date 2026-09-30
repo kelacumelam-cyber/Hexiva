@@ -335,3 +335,12 @@ Performance cleanup:
 - Linked ring/clamp update loops avoid temporary fallback arrays.
 
 These changes target battery, thermal load and garbage-collection pressure during long mobile sessions without changing gameplay visuals.
+
+
+## V40.3 APK dependency cleanup
+
+Removed Font Awesome as an external runtime dependency.
+- restart, sound, menu, play, level-select and lock icons now use local Unicode/emoji,
+- sound toggle updates text content instead of icon-library classes,
+- obsolete sync-status icon class mutations were replaced by a no-op hook because the visible sync bubble had already been removed,
+- one CDN/offline failure point is gone.
