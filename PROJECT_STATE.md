@@ -392,3 +392,27 @@ Accepted default testing flow:
 - GitHub Pages may take from seconds to a few minutes to publish a new commit.
 - Downloading standalone HTML/ZIP files is now only a fallback when Pages is unavailable or a local-file-specific test is needed.
 - Before telling the user a new web build is ready, make sure the full HTML was committed and not truncated.
+
+
+## V35 productization checkpoint
+
+First release-hardening pass after Generator V2.
+
+Economy:
+- new players start with 0 coins,
+- new players start with 1 hammer and 1 rotate booster,
+- level completion reward reduced to 25 coins,
+- hammer shop purchase is +1 for 75 coins,
+- rotate shop purchase is +1 for 50 coins,
+- unlimited +250 debug coin button removed,
+- daily gift is +25 coins, +1 hammer, +1 rotate, with a 24-hour cooldown.
+
+Persistence:
+- localStorage fallback added under key `hexiva-save-v1`,
+- local save persists level, highest unlocked, coins, booster counts, and daily gift timestamp,
+- cloud save remains optional when Firebase configuration exists.
+
+Movement polish:
+- edge escapes now travel only to the physical cliff lip and then fall vertically,
+- the previous forward launch beyond the edge was removed,
+- internal pit falls remain vertical.
