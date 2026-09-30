@@ -29,6 +29,9 @@ const configureAndroid = await readFile("scripts/configure-android.mjs", "utf8")
 if (!configureAndroid.includes("android.permission.RECORD_AUDIO")) {
   throw new Error("Android microphone permission is not declared by the packaging configuration");
 }
+if (configureAndroid.includes("HexivaMicrophonePlugin.java")) {
+  throw new Error("Stale custom microphone bridge must not be generated");
+}
 
 const context = { window: {} };
 runInNewContext(await readFile("src/catalog.js", "utf8"), context);
