@@ -562,3 +562,16 @@ Design intent:
 - 5-6+ sweep groups should almost never survive candidate selection unless geometry leaves no better solvable option.
 
 Next validation should focus on actual web play through levels 19-24 rather than another broad console audit first.
+
+
+## V42.5 Same-direction cluster hard cap = 2
+
+Web playtesting confirmed that even three connected blocks pointing the same direction still read as a sweep instruction. The accepted design rule is now stricter:
+
+- maximum preferred connected same-direction cluster size: 2,
+- any candidate with a 3+ cluster receives a near-rejection penalty,
+- candidate selection now explicitly prefers cluster-compliant candidates (<= 2) over non-compliant ones,
+- if no compliant candidate exists in the sampled pool, the generator still falls back to the least-bad solvable candidate instead of breaking generation,
+- telemetry records `sameDirectionClusterCompliant` on the chosen level.
+
+This turns the anti-sweep rule from a soft ratio preference into an explicit structural quality constraint.
