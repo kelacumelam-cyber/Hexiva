@@ -575,3 +575,21 @@ Web playtesting confirmed that even three connected blocks pointing the same dir
 - telemetry records `sameDirectionClusterCompliant` on the chosen level.
 
 This turns the anti-sweep rule from a soft ratio preference into an explicit structural quality constraint.
+
+
+## V42.6 Visual same-direction grouping + deploy marker
+
+Further web playtesting showed that the connected-cluster metric still missed groups that humans perceive as one sweep group when same-direction arrows are separated by a single hex/gap.
+
+Changes:
+- added a radius-2 visual-neighborhood metric for same-direction arrows,
+- any local visual neighborhood with 3+ same-direction blocks receives a near-rejection penalty,
+- candidate selection now explicitly prefers levels that satisfy BOTH:
+  - connected same-direction cluster <= 2,
+  - radius-2 same-direction visual neighborhood <= 2,
+- chosen-level telemetry records `sameDirectionVisualCompliant`,
+- added `window.__hexivaDirectionViolations(limit)` to scan the catalog for remaining violations,
+- added one-time QA deploy marker `V42.6`: +100 coins on first load of this build so testers can verify the latest GitHub Pages deployment is active rather than cached.
+
+Reason:
+The previous definition matched graph adjacency, but not human visual grouping. The rule is now based on what the player actually sees, not only on direct hex connectivity.
