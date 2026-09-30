@@ -238,10 +238,7 @@
       <!-- Coin Counter -->
       <div class="coin-pill flex items-center pl-2 pr-1.5 py-1 rounded-full">
         <span class="text-2xl mr-1.5 filter drop-shadow">🪙</span>
-        <span id="coin-counter" class="text-slate-800 font-extrabold text-base min-w-[50px]">9157</span>
-        <button id="add-coins-btn" class="ml-2 w-6 h-6 rounded-md bg-emerald-500 hover:bg-emerald-600 text-white font-black text-sm flex items-center justify-center shadow transition active:scale-90">
-          +
-        </button>
+        <span id="coin-counter" class="text-slate-800 font-extrabold text-base min-w-[50px]">0</span>
       </div>
 
       <!-- Level Pill -->
@@ -299,7 +296,7 @@
       <!-- Hammer Booster -->
       <div class="relative flex flex-col items-center">
         <div id="hammer-count" class="booster-badge absolute -top-3.5 z-20 text-white font-black text-xs px-2.5 py-0.5 rounded-md min-w-[24px] text-center">
-          3
+          1
         </div>
         <button id="hammer-btn" class="game-btn booster-card w-20 h-20 sm:w-22 sm:h-22 rounded-2xl flex flex-col items-center justify-center text-slate-900 active:scale-95">
           <span class="text-3xl filter drop-shadow">🔨</span>
@@ -310,7 +307,7 @@
       <!-- Rotate Booster -->
       <div class="relative flex flex-col items-center">
         <div id="rotate-count" class="booster-badge absolute -top-3.5 z-20 text-white font-black text-xs px-2.5 py-0.5 rounded-md min-w-[24px] text-center">
-          4
+          1
         </div>
         <button id="rotate-btn" class="game-btn booster-card w-20 h-20 sm:w-22 sm:h-22 rounded-2xl flex flex-col items-center justify-center text-slate-900 active:scale-95">
           <span class="text-3xl filter drop-shadow">🔄</span>
@@ -324,7 +321,7 @@
     <div class="w-full flex justify-between items-center text-white/80 pt-4 max-w-sm">
       <div class="flex items-center gap-2 bg-white/10 px-3 py-1.5 rounded-full border border-white/20">
         <span>🪙</span>
-        <span id="menu-coin-counter" class="font-extrabold text-amber-300">9157</span>
+        <span id="menu-coin-counter" class="font-extrabold text-amber-300">0</span>
       </div>
       <div class="flex items-center gap-2 bg-white/10 px-3 py-1.5 rounded-full border border-white/20 text-xs font-bold">
         <i class="fa-solid fa-gamepad text-emerald-400"></i>
@@ -405,12 +402,12 @@
           <div class="flex items-center gap-3">
             <span class="text-3xl">🔨</span>
             <div>
-              <div class="font-black text-slate-800 text-sm">3x Çekiç</div>
+              <div class="font-black text-slate-800 text-sm">1x Çekiç</div>
               <div class="text-xs text-slate-500">Önündeki engeli kır</div>
             </div>
           </div>
           <button id="buy-hammer-btn" class="game-btn px-3 py-2 bg-amber-400 text-slate-900 font-black rounded-xl text-xs flex items-center gap-1 border border-white">
-            🪙 200
+            🪙 75
           </button>
         </div>
 
@@ -418,12 +415,12 @@
           <div class="flex items-center gap-3">
             <span class="text-3xl">🔄</span>
             <div>
-              <div class="font-black text-slate-800 text-sm">3x Döndürme</div>
+              <div class="font-black text-slate-800 text-sm">1x Döndürme</div>
               <div class="text-xs text-slate-500">Ok yönünü değiştir</div>
             </div>
           </div>
           <button id="buy-rotate-btn" class="game-btn px-3 py-2 bg-amber-400 text-slate-900 font-black rounded-xl text-xs flex items-center gap-1 border border-white">
-            🪙 150
+            🪙 50
           </button>
         </div>
       </div>
@@ -434,11 +431,11 @@
     <div class="bg-gradient-to-b from-purple-700 to-indigo-900 rounded-3xl p-6 w-full max-w-xs text-center border-4 border-yellow-300 shadow-2xl animate-pop text-white">
       <div class="text-4xl mb-2 animate-bounce">🎁</div>
       <h2 class="text-2xl font-black text-yellow-300 mb-1">GÜNLÜK HEDİYE!</h2>
-      <p class="text-purple-200 text-xs font-bold mb-4">Ücretsiz altın ve güçlendiricilerini al!</p>
+      <p class="text-purple-200 text-xs font-bold mb-4">Günde bir kez küçük bir destek paketi al!</p>
       
       <div class="bg-white/10 rounded-2xl p-3 mb-5 border border-white/20">
-        <div class="text-lg font-black text-yellow-300">🪙 +500 Altın</div>
-        <div class="text-sm font-bold text-white mt-1">🔨 +2 Çekiç | 🔄 +2 Döndürme</div>
+        <div class="text-lg font-black text-yellow-300">🪙 +25 Altın</div>
+        <div class="text-sm font-bold text-white mt-1">🔨 +1 Çekiç | 🔄 +1 Döndürme</div>
       </div>
 
       <button id="claim-offer-btn" class="game-btn w-full py-3 bg-gradient-to-r from-yellow-400 to-amber-500 rounded-2xl text-slate-900 font-black text-base shadow-lg border-2 border-white">
@@ -527,6 +524,7 @@
           coins: state.coins,
           hammer: state.hammer,
           rotate: state.rotate,
+          lastDailyClaim: state.lastDailyClaim || 0,
           lastPlayed: Date.now()
         }, { merge: true });
         updateSyncStatus('saved');
@@ -602,14 +600,51 @@
       } catch (e) {}
     }
 
+    const LOCAL_SAVE_KEY = 'hexiva-save-v1';
+    const DAILY_GIFT_COOLDOWN_MS = 24 * 60 * 60 * 1000;
+    const LEVEL_REWARD_COINS = 25;
+    const HAMMER_PRICE = 75;
+    const ROTATE_PRICE = 50;
+
     let currentLevel = 1;
     let highestUnlocked = 1;
-    let coins = 9157;
-    let hammerCount = 3;
-    let rotateCount = 4;
+    let coins = 0;
+    let hammerCount = 1;
+    let rotateCount = 1;
+    let lastDailyClaim = 0;
     let activeBooster = null; // 'hammer' | 'rotate' | null
     let isGameActive = false;
     let levelCompleted = false;
+
+    function localSaveState() {
+      return {
+        level: currentLevel,
+        highest: highestUnlocked,
+        coins,
+        hammer: hammerCount,
+        rotate: rotateCount,
+        lastDailyClaim
+      };
+    }
+
+    function saveLocalState() {
+      try {
+        localStorage.setItem(LOCAL_SAVE_KEY, JSON.stringify(localSaveState()));
+      } catch (e) {
+        console.warn('Local save failed:', e);
+      }
+    }
+
+    function loadLocalState() {
+      try {
+        const raw = localStorage.getItem(LOCAL_SAVE_KEY);
+        if (!raw) return;
+        const data = JSON.parse(raw);
+        window.applyLoadedSave(data);
+      } catch (e) {
+        console.warn('Local load failed:', e);
+      }
+    }
 
     // Apply save data loaded from cloud
     window.applyLoadedSave = function(data) {
@@ -619,19 +654,17 @@
       coins = data.coins !== undefined ? data.coins : coins;
       hammerCount = data.hammer !== undefined ? data.hammer : hammerCount;
       rotateCount = data.rotate !== undefined ? data.rotate : rotateCount;
+      lastDailyClaim = data.lastDailyClaim !== undefined ? data.lastDailyClaim : lastDailyClaim;
       updateUI();
       updateMenuUI();
+      saveLocalState();
     };
 
     function triggerSave() {
+      const state = localSaveState();
+      saveLocalState();
       if (window.cloudSaveHandler) {
-        window.cloudSaveHandler({
-          level: currentLevel,
-          highest: highestUnlocked,
-          coins: coins,
-          hammer: hammerCount,
-          rotate: rotateCount
-        });
+        window.cloudSaveHandler(state);
       }
     }
 
@@ -2187,6 +2220,7 @@
         cyclers: cycleCells,
         obstacles: obstacleCells,
         linkedPairs,
+        footprint: baseCells.map(c => ({ ...c })),
         patternKey,
         generationStats
       };
@@ -2194,6 +2228,7 @@
 
     let blocks = [];
     let activePitCells = new Set();
+    let activeBoardFootprint = new Set();
     let activeRedirectors = new Map();
     let activeRedirectorVisuals = [];
     let activeRedirectorVisualMap = new Map();
@@ -2215,6 +2250,7 @@
         boardGroup.remove(boardGroup.children[0]);
       }
       blocks = [];
+      activeBoardFootprint = new Set();
       activeRedirectorVisuals = [];
       activeRedirectorVisualMap = new Map();
       activeSwappers = [];
@@ -2231,6 +2267,7 @@
       window.__hexaGeneratorStats = generatedLevel.generationStats || null;
       window.__hexaPatternKey = generatedLevel.patternKey;
       const levelData = generatedLevel.blocks;
+      activeBoardFootprint = new Set((generatedLevel.footprint || []).map(c => `${c.q},${c.r}`));
       activePitCells = new Set(generatedLevel.pits.map(c => `${c.q},${c.r}`));
       activeRedirectors = new Map(
         generatedLevel.redirectors.map(c => [`${c.q},${c.r}`, { ...c }])
@@ -3161,20 +3198,43 @@
         const pitWorld = hexToWorld(escapeInfo.pitQ, escapeInfo.pitR);
         waypoints.push({ x: pitWorld.x, z: pitWorld.z, pit: true });
       } else {
-        const finalDir = HEX_DIRECTIONS[finalDirIndex];
-        let lastX = block.mesh.position.x;
-        let lastZ = block.mesh.position.z;
-        if (waypoints.length) {
-          lastX = waypoints[waypoints.length - 1].x;
-          lastZ = waypoints[waypoints.length - 1].z;
+        // Edge escapes travel only to the real cliff lip and then fall vertically.
+        let q = block.q;
+        let r = block.r;
+        let dirIndex = block.dirIndex;
+        let cliffPoint = null;
+
+        for (let guard = 0; guard < 64; guard++) {
+          const dir = HEX_DIRECTIONS[dirIndex];
+          const nextQ = q + dir.dq;
+          const nextR = r + dir.dr;
+          const nextKey = `${nextQ},${nextR}`;
+
+          if (!activeBoardFootprint.has(nextKey)) {
+            const insideWorld = hexToWorld(q, r);
+            cliffPoint = {
+              x: insideWorld.x + dir.dx * 0.56,
+              z: insideWorld.z + dir.dz * 0.56,
+              edge: true
+            };
+            break;
+          }
+
+          q = nextQ;
+          r = nextR;
+          const redirect = activeRedirectors.get(nextKey);
+          if (redirect) dirIndex = redirect.dirIndex;
         }
 
-        // Preserve the familiar off-board slide distance after the final direction is known.
-        waypoints.push({
-          x: lastX + finalDir.dx * 3.0,
-          z: lastZ + finalDir.dz * 3.0,
-          edge: true
-        });
+        if (!cliffPoint) {
+          const finalDir = HEX_DIRECTIONS[finalDirIndex];
+          cliffPoint = {
+            x: block.mesh.position.x + finalDir.dx * 0.56,
+            z: block.mesh.position.z + finalDir.dz * 0.56,
+            edge: true
+          };
+        }
+        waypoints.push(cliffPoint);
       }
 
       function finishDrop(lastPoint) {
@@ -3182,9 +3242,8 @@
 
         const fallingIntoPit = escapeInfo && escapeInfo.escapeType === 'pit';
         const finalDir = HEX_DIRECTIONS[finalDirIndex];
-        const fallDistance = fallingIntoPit ? 0 : 2.0;
-        const fallX = lastPoint.x + finalDir.dx * fallDistance;
-        const fallZ = lastPoint.z + finalDir.dz * fallDistance;
+        const fallX = lastPoint.x;
+        const fallZ = lastPoint.z;
         const fallY = -15;
         const fallDuration = 360;
 
@@ -3581,7 +3640,7 @@
       if (remaining.length === 0) {
         levelCompleted = true;
         playSound('win');
-        coins += 100;
+        coins += LEVEL_REWARD_COINS;
         highestUnlocked = Math.max(highestUnlocked, currentLevel + 1);
         triggerSave();
         updateUI();
@@ -3708,46 +3767,64 @@
     });
 
     document.getElementById('buy-hammer-btn').addEventListener('click', () => {
-      if (coins < 200) { showHint("Yetersiz altın! 🪙"); return; }
-      coins -= 200;
-      hammerCount += 3;
+      if (coins < HAMMER_PRICE) { showHint("Yetersiz altın! 🪙"); return; }
+      coins -= HAMMER_PRICE;
+      hammerCount += 1;
       updateUI();
       triggerSave();
-      showHint("+3 Çekiç Eklendi! 🔨");
+      showHint("+1 Çekiç Eklendi! 🔨");
     });
 
     document.getElementById('buy-rotate-btn').addEventListener('click', () => {
-      if (coins < 150) { showHint("Yetersiz altın! 🪙"); return; }
-      coins -= 150;
-      rotateCount += 3;
+      if (coins < ROTATE_PRICE) { showHint("Yetersiz altın! 🪙"); return; }
+      coins -= ROTATE_PRICE;
+      rotateCount += 1;
       updateUI();
       triggerSave();
-      showHint("+3 Döndürme Eklendi! 🔄");
+      showHint("+1 Döndürme Eklendi! 🔄");
     });
 
-    /* Special Offer Logic */
+    /* Daily Gift Logic */
     const offerModal = document.getElementById('offer-modal');
+    const claimOfferBtn = document.getElementById('claim-offer-btn');
+
+    function dailyGiftRemainingMs() {
+      if (!lastDailyClaim) return 0;
+      return Math.max(0, DAILY_GIFT_COOLDOWN_MS - (Date.now() - lastDailyClaim));
+    }
+
+    function updateDailyGiftButton() {
+      const remaining = dailyGiftRemainingMs();
+      if (remaining <= 0) {
+        claimOfferBtn.disabled = false;
+        claimOfferBtn.classList.remove('opacity-60');
+        claimOfferBtn.innerText = 'ÖDÜLÜ AL';
+      } else {
+        const hours = Math.max(1, Math.ceil(remaining / (60 * 60 * 1000)));
+        claimOfferBtn.disabled = true;
+        claimOfferBtn.classList.add('opacity-60');
+        claimOfferBtn.innerText = `${hours} SAAT SONRA`;
+      }
+    }
+
     document.getElementById('special-offer-btn').addEventListener('click', () => {
       initAudio();
+      updateDailyGiftButton();
       offerModal.classList.remove('hidden');
     });
-    document.getElementById('claim-offer-btn').addEventListener('click', () => {
-      initAudio();
-      coins += 500;
-      hammerCount += 2;
-      rotateCount += 2;
-      updateUI();
-      triggerSave();
-      offerModal.classList.add('hidden');
-      showHint("Ödüller Çantana Eklendi! 🎁");
-    });
 
-    document.getElementById('add-coins-btn').addEventListener('click', () => {
+    claimOfferBtn.addEventListener('click', () => {
       initAudio();
-      coins += 250;
+      if (dailyGiftRemainingMs() > 0) return;
+      coins += 25;
+      hammerCount += 1;
+      rotateCount += 1;
+      lastDailyClaim = Date.now();
       updateUI();
       triggerSave();
-      showHint("+250 Altın Eklendi! 🪙");
+      updateDailyGiftButton();
+      offerModal.classList.add('hidden');
+      showHint("Günlük ödül alındı! 🎁");
     });
 
     /* Sound Toggle */
@@ -3800,6 +3877,7 @@
     }
 
     window.onload = function () {
+      loadLocalState();
       updateUI();
       updateMenuUI();
       animate(0);
