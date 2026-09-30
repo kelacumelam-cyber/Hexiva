@@ -276,7 +276,7 @@ function draft(level, attempt, options = {}) {
     // assignment impossible several steps later. Search only this special mode,
     // keep a strict node budget, and fail closed if no compliant peel is found.
     let searchNodes = 0;
-    const searchBudget = 12000;
+    const searchBudget = 2500;
 
     function anneGridLeafIsViable(candidateAssigned) {
       if (!mechanism) return true;
@@ -339,7 +339,7 @@ function draft(level, attempt, options = {}) {
 
       // Limit branching, but keep enough alternatives for the final rearranged
       // visual state and required-wall checks to influence the chosen assignment.
-      for (const candidate of candidates.slice(0, 18)) {
+      for (const candidate of candidates.slice(0, 10)) {
         const nextRemaining = currentRemaining.filter(
           (item) => item.id !== candidate.b.id,
         );
