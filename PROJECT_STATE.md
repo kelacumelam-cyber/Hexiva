@@ -377,3 +377,10 @@ The offline/APK build now strips development-only behavior without removing it f
 - Command rebuilds/syncs offline assets and runs Gradle `assembleDebug`.
 - Expected output path documented: `android/app/build/outputs/apk/debug/app-debug.apk`.
 - Added a focused 15-20 minute physical Android acceptance checklist covering portrait layout, mechanics, persistence, offline launch, thermal behavior and long-session slowdown.
+
+
+## V41.3 Windows Node 24 build compatibility
+
+- Replaced `spawnSync npx.cmd` Tailwind invocation with direct execution of the local Tailwind CLI through `process.execPath`.
+- Hardened debug APK Gradle invocation on Windows by routing `gradlew.bat` through `cmd.exe`.
+- This avoids Node 24 Windows `spawnSync ... EINVAL` failures while keeping the build fully local/pinned.
