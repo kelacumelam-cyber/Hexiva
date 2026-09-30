@@ -402,3 +402,15 @@ The offline builder now normalizes `\r\n` to `\n` immediately after reading `ind
 
 The debug APK helper now invokes `gradlew.bat` from the Android working directory using `cmd.exe /c call gradlew.bat assembleDebug`.
 This avoids nested-quote path parsing failures on Windows paths containing spaces.
+
+
+## V41.7 Android SDK auto-detection
+
+The Android configuration step now automatically creates `android/local.properties` when possible.
+Detection order:
+- `ANDROID_HOME`
+- `ANDROID_SDK_ROOT`
+- Windows: `%LOCALAPPDATA%/Android/Sdk`
+- macOS/Linux conventional SDK paths
+
+This removes the need for manual `sdk.dir` setup on standard Android Studio installations.
