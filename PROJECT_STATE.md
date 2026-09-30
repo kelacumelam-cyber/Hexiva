@@ -241,3 +241,26 @@ Generator audit telemetry added:
 - existing initial-clear/direct-cliff/trivial-escape metrics remain.
 
 A development helper `window.__hexivaAuditCatalog(start,end)` can scan deterministic generated levels without rendering them and reports stalled levels plus suspiciously easy hard-profile levels.
+
+
+## V38.1 exhaustive catalog audit semantics
+
+The generator audit was executed across levels 1-1000 after V38.
+
+Observed profile counts:
+- tutorial: 4
+- relaxed: 193
+- normal: 490
+- hard: 253
+- very hard: 60
+
+Hard-profile quality check:
+- no hard/very-hard level matched the "suspiciously easy" heuristic,
+- examples include very deep dependency chains (20+ clearance waves),
+- level 619: 39 blocks, 29 clearance waves, ~7.7% initially clear, redirect + swap,
+- level 673: 36 blocks, 27 clearance waves, ~5.6% initially clear, redirect + obstacle.
+
+Audit clarification:
+- level 33 was flagged by the route-only simulator because it is an authored swap-dependent puzzle,
+- route-only simulation does not activate swap/cycle mechanisms,
+- audit telemetry now separates mechanism-dependent stalls from true route stalls so these are not reported as generator failures.
