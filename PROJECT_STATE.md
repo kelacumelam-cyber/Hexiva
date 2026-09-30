@@ -438,3 +438,15 @@ This removes the previous vendor-directory blind spot that missed Temurin 21 eve
 
 JDK auto-detection now accounts for the fact that `java -version` writes its version banner to stderr even when the command succeeds.
 The build helper probes both stdout and stderr before rejecting a detected JDK candidate.
+
+
+## V41.11 APK input fix + release JS validation
+
+Root cause of the first physical-device APK input failure was found in the offline release transform:
+the Firebase-module removal replacement duplicated the opening of the main classic script, producing invalid JavaScript in the packaged HTML.
+CSS still rendered active button states, but the game listener script never initialized.
+
+Fix:
+- retain the existing main script opening exactly once after removing the cloud module,
+- parse-check all generated inline classic scripts during `build:web`,
+- abort packaging immediately if release-only transformation introduces JavaScript syntax damage.
