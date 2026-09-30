@@ -25,8 +25,7 @@
     "three": "0.128.0",
     "tone": "14.8.49",
     "@capacitor/android": "8.5.2",
-    "@capacitor/core": "8.5.2",
-    "@capawesome-team/capacitor-speech-recognition": "8.1.1"
+    "@capacitor/core": "8.5.2"
   },
   "devDependencies": {
     "tailwindcss": "3.4.17",
