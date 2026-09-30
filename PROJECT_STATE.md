@@ -414,3 +414,15 @@ Detection order:
 - macOS/Linux conventional SDK paths
 
 This removes the need for manual `sdk.dir` setup on standard Android Studio installations.
+
+
+## V41.8 JDK 21 Android build detection
+
+Debug APK builds now detect and use a JDK 21+ without requiring permanent Windows environment changes.
+Detection includes:
+- existing JAVA_HOME / JDK_HOME,
+- Android Studio bundled JBR,
+- installed JDK directories under Program Files/Java,
+- Android Studio JBR on macOS.
+
+The selected JDK is injected into the Gradle process only for the build.
