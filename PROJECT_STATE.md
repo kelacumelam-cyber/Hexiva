@@ -4,7 +4,7 @@ Last updated: 2026-09-30
 
 ## Current checkpoint
 
-The current playable baseline is `index.html`, now at the V11 camera/presentation candidate.
+The current playable baseline is `index.html`, now at V12. The V11 stronger top-down camera direction is visually approved.
 
 The game is working as a mobile-first Three.js/WebGL prototype. The current visual identity must be preserved while the board presentation, mechanics, level generation, and eventual Android packaging are improved.
 
