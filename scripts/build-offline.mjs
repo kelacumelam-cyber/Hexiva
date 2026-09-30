@@ -126,7 +126,7 @@ function removeRange(source, startMarker, endMarker, replacement = "") {
 }
 
 // Release artifact must not contain development-only grants.
-html = html.replace(/^    const QA_DEPLOY_MARKER_V43.*\n/gm, "");
+html = html.replace(/^    const QA_DEPLOY_MARKER_.*\n/gm, "");
 
 html = removeRange(
   html,
