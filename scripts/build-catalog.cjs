@@ -112,6 +112,7 @@ function draft(level, attempt, options = {}) {
     ks = new Set(cells.map(P.key));
   const l = {
     level,
+    mechanicKind: kind,
     patternKey: family,
     footprint: cells,
     pits: [],
@@ -142,7 +143,8 @@ function draft(level, attempt, options = {}) {
     // arrangement on every deterministic notch/rotation. Try the harder combination
     // first, then fall back to a real cycle puzzle instead of stalling construction
     // or accepting a decorative wall.
-    if (kind === "obstacleCycle" && attempt >= 120) kind = "cycle";
+    if (!options.forceKind && kind === "obstacleCycle" && attempt >= 120)
+      kind = "cycle";
   } else {
     kind =
       level < 8
