@@ -511,3 +511,21 @@ Next validation:
 - run `__hexivaAuditCatalog(100)`,
 - compare repeat gaps, direction dominance, same-direction clusters and trivial escape ratios against the previous baseline,
 - then physically/web-play the first 20-30 levels before tightening thresholds further.
+
+
+## V42.2 Opening-choice quality fix
+
+The post-V42.1 100-level audit showed that the anti-repeat footprint schedule worked for V2 levels (no adjacent V2 repeats; minimum recurrence gap moved to 5+ in the tested range), and trivial/direct-clear metrics improved. However, opening-direction dominance still hit 1.0 on several levels.
+
+Root cause: the quality ranker penalized too many free moves, but did not strongly penalize too few meaningful opening choices.
+
+Changes:
+- candidate ranking now penalizes fewer than two initially-clear moves,
+- if two or more openers exist but they all share one direction, a stronger penalty applies,
+- full opening-direction dominance (>= 0.90) is heavily penalized,
+- partial dominance (>= 0.70 with at least three openers) is also penalized,
+- candidate search increased from 12/8 to 24 tutorial / 16 non-tutorial candidates.
+
+This keeps the "easy != automatic" rule explicit: an opening should ideally present at least two plausible choices rather than a forced tap sequence.
+
+Next validation: rerun the 100-level audit and inspect the top opening-dominance, clear, trivial-escape and same-direction-cluster offenders before changing topology further.
