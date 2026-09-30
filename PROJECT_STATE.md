@@ -259,3 +259,36 @@ Awaiting gameplay feel approval.
 - Pit cell = true escape/drop space.
 - Each dense test board contains authored routes where a hex crosses grey empty space, reaches a blocker, collides, and returns.
 - These are test/checkpoint boards, not the final level-generation overhaul.
+
+
+## Approved V22 dense-board direction
+
+User approved the V22 dense test boards as strong examples.
+
+Important: these are NOT the only future board style.
+
+Accepted direction:
+- future levels should vary in density and topology,
+- dense boards may still contain one or multiple internal empty spaces,
+- boards may be asymmetric,
+- some can contain corridors or internal lanes,
+- some can be open and breathable,
+- some can be compact and crowded,
+- grey traversable floor cells and true drop pits remain distinct concepts,
+- the goal is not to repeat one template with different colors,
+- the goal is for each level to have its own board character.
+
+V22 levels 29-31 should be kept as reference examples when the generator is redesigned.
+
+## Later work backlog
+
+- Broaden the level generator beyond repeated fixed patterns.
+- Add seeded deterministic generation so restarting a level reproduces the same puzzle.
+- Support 1000+ levels without a fixed linear difficulty curve.
+- Increase topology variety: density, holes, corridors, asymmetric shapes, internal floor spaces.
+- Mix approved mechanics only after each is individually stable.
+- Keep swap visuals as a good working checkpoint; optional further polish later.
+- Keep direction changer visuals as a good working checkpoint; optional further polish later.
+- Final visual-quality polish after gameplay/mechanics stabilize.
+- Add local/offline persistence and remove release dependence on injected Firebase config.
+- Bundle external CDN dependencies locally before standalone APK release.
