@@ -12,6 +12,11 @@ const manifestPath = path.join(
 );
 
 let manifest;
+
+// Web Speech / microphone access needs the Android dangerous permission in the
+// generated Capacitor manifest. Keep this idempotent because android:sync may
+// run configure-android more than once.
+const microphonePermission = '<uses-permission android:name="android.permission.RECORD_AUDIO" />';
 try {
   manifest = await readFile(manifestPath, "utf8");
 } catch (error) {
@@ -19,6 +24,10 @@ try {
     "AndroidManifest.xml not found. Run 'npm run android:add' after npm install.",
     { cause: error }
   );
+}
+
+if (!manifest.includes(microphonePermission)) {
+  manifest = manifest.replace(/<manifest\b[^>]*>/, (full) => full + "\n    " + microphonePermission);
 }
 
 const activityPattern = /<activity\b([^>]*android:name="\.MainActivity"[^>]*)>/;
