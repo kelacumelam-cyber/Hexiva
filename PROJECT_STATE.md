@@ -193,3 +193,12 @@ Third booster added:
 - fixed metal obstacles are not destroyed by the bomb,
 - if a linked-pair member is caught in the blast, both linked members are removed so no half-linked state remains,
 - bomb count is persisted locally and in optional cloud saves.
+
+
+## V37.1 general gameplay audit fixes
+
+General consistency audit found and fixed:
+- Generator route validation now treats missing physical footprint cells as immediate cliffs, exactly like runtime movement.
+- This removes a generator/runtime physics mismatch around concave boards and internal true gaps.
+- Hammering one member of a linked pair now explicitly removes the link relationship and visual, leaving the surviving member as a normal playable block instead of a half-linked stuck state.
+- Bomb processing deduplicates linked-pair cleanup and removes affected pair relationships from active state.
