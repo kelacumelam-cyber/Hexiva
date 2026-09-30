@@ -2449,7 +2449,9 @@
         trivialDirectEscapeRatio: levelBlocks.length ? trivialDirectEscapeCount / levelBlocks.length : 0,
         clearanceWaveCount: clearanceMetrics.clearanceWaveCount,
         maxClearanceWaveSize: clearanceMetrics.maxClearanceWaveSize,
-        solvabilityStalled: clearanceMetrics.solvabilityStalled
+        routeSimulationStalled: clearanceMetrics.solvabilityStalled,
+        mechanismDependentStall: clearanceMetrics.solvabilityStalled && (swapCells.length > 0 || cycleCells.length > 0),
+        solvabilityStalled: clearanceMetrics.solvabilityStalled && !(swapCells.length > 0 || cycleCells.length > 0)
       };
 
       return {
@@ -2472,6 +2474,7 @@
       const end = Math.min(LEVEL_CATALOG_SIZE, Math.max(start, Math.floor(endLevel)));
       const profileCounts = { tutorial: 0, relaxed: 0, normal: 0, hard: 0, veryHard: 0 };
       const stalledLevels = [];
+      const mechanismDependentLevels = [];
       const suspiciouslyEasyHardLevels = [];
       let totalBlocks = 0;
       let totalWaves = 0;
@@ -2484,6 +2487,7 @@
         totalWaves += stats.clearanceWaveCount || 0;
 
         if (stats.solvabilityStalled) stalledLevels.push(level);
+        if (stats.mechanismDependentStall) mechanismDependentLevels.push(level);
         if ((stats.difficultyProfile === 'hard' || stats.difficultyProfile === 'veryHard') &&
             stats.blockCount >= 8 &&
             stats.clearanceWaveCount <= 2 &&
@@ -2497,6 +2501,7 @@
         checked: end - start + 1,
         profileCounts,
         stalledLevels,
+        mechanismDependentLevels,
         suspiciouslyEasyHardLevels,
         averageBlockCount: totalBlocks / (end - start + 1),
         averageClearanceWaves: totalWaves / (end - start + 1)
