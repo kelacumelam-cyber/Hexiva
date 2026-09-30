@@ -384,3 +384,9 @@ The offline/APK build now strips development-only behavior without removing it f
 - Replaced `spawnSync npx.cmd` Tailwind invocation with direct execution of the local Tailwind CLI through `process.execPath`.
 - Hardened debug APK Gradle invocation on Windows by routing `gradlew.bat` through `cmd.exe`.
 - This avoids Node 24 Windows `spawnSync ... EINVAL` failures while keeping the build fully local/pinned.
+
+
+## V41.4 robust release cleanup
+
+The release builder no longer relies on fragile nested-brace regular expressions for QA/cloud stripping.
+It now removes known source ranges using explicit start/end markers, which is more stable across formatting and Node versions.
