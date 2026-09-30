@@ -817,3 +817,16 @@ The voice button now:
 - requires no third-party speech-recognition dependency.
 
 This is deliberately smaller than adding a custom native speech plugin and uses the permission path Capacitor already provides.
+
+
+## V43.3.6 — use native Android speech recognition for APK
+
+The WebView `getUserMedia` permission trigger did not solve the device behavior. The APK needs a native speech-recognition path rather than depending on Android WebView's `SpeechRecognition` implementation.
+
+Changes:
+- Added `@capacitor-community/speech-recognition@7.0.1` back as the Android speech-recognition implementation.
+- The plugin is used only when present in the native APK; the browser Web Speech API remains the web fallback.
+- Android permission is requested through the plugin's `checkPermissions()` / `requestPermissions()` flow before recognition starts.
+- Recognition uses Turkish `tr-TR`, up to five results, one-shot mode and no popup.
+- The existing phrase matcher and reward logic are unchanged.
+- The repository issue tracker shows the plugin currently has an open Capacitor 8 support request, but also documents real Android use with Capacitor 8. Therefore this is a deliberate compatibility-tested fallback rather than the earlier paid-plugin route. A future dedicated native implementation can replace it if necessary.
