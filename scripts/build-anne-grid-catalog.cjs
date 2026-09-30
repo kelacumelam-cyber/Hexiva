@@ -15,6 +15,7 @@ const {
 const SOURCE_CATALOG = "src/catalog.js";
 const OUTPUT_CATALOG = "src/catalog-anne-grid-preview.js";
 const OUTPUT_AUDIT = "docs/audits/anne-grid-generation.json";
+const CHECKPOINT = "docs/audits/anne-grid-checkpoint.json";
 const MAX_ATTEMPTS = 12000;
 const REQUIRED_ACCEPTED = 3;
 
@@ -29,13 +30,17 @@ function clone(value) {
   return JSON.parse(JSON.stringify(value));
 }
 
-function recentShapeViolation(levels, candidate) {
-  return levels.slice(-8).some((other) => {
+function shapeViolationAgainst(levels, candidate) {
+  return levels.some((other) => {
     if (P.fingerprint(other.footprint) === P.fingerprint(candidate.footprint))
       return true;
     if (other.patternKey === candidate.patternKey) return true;
     return P.similarity(other.footprint, candidate.footprint) > 0.84;
   });
+}
+
+function recentShapeViolation(levels, candidate) {
+  return shapeViolationAgainst(levels.slice(-8), candidate);
 }
 
 function buildSpecial(finalLevel, specialIndex, acceptedLevels, buildOptions = {}) {
@@ -47,6 +52,7 @@ function buildSpecial(finalLevel, specialIndex, acceptedLevels, buildOptions = {
   let accepted = 0;
   const reasons = {};
   const recent = acceptedLevels.slice(-8);
+  const futureLevels = buildOptions.futureLevels || [];
   const avoidFamilyIndexes = recent
     .map((level) => {
       const match = /^anneGridChamber(\d+)$/.exec(level.patternKey || "");
@@ -63,7 +69,10 @@ function buildSpecial(finalLevel, specialIndex, acceptedLevels, buildOptions = {
       footprint: previewShape.cells,
       patternKey: previewShape.family,
     };
-    if (recentShapeViolation(acceptedLevels, preview)) {
+    if (
+      recentShapeViolation(acceptedLevels, preview) ||
+      shapeViolationAgainst(futureLevels, preview)
+    ) {
       reasons["recent-shape-or-family"] =
         (reasons["recent-shape-or-family"] || 0) + 1;
       continue;
@@ -150,10 +159,29 @@ function main() {
   }
 
   const layout = buildCatalogLayout();
-  const output = [];
-  const specialStats = [];
+  let output = [];
+  let specialStats = [];
+  let startIndex = 0;
 
-  for (const slot of layout) {
+  if (fs.existsSync(CHECKPOINT)) {
+    const checkpoint = JSON.parse(fs.readFileSync(CHECKPOINT, "utf8"));
+    if (
+      checkpoint.generatorVersion === "V43-ANNE-GRID-V1" &&
+      checkpoint.baseLevels === NORMAL_LEVEL_COUNT &&
+      Array.isArray(checkpoint.output) &&
+      Array.isArray(checkpoint.specialStats)
+    ) {
+      output = checkpoint.output;
+      specialStats = checkpoint.specialStats;
+      startIndex = output.length;
+      console.log(
+        `Resuming anne-grid generation at final level ${startIndex + 1}; ${specialStats.length}/${SPECIAL_LEVEL_COUNT} specials already checkpointed.`,
+      );
+    }
+  }
+
+  for (let layoutIndex = startIndex; layoutIndex < layout.length; layoutIndex++) {
+    const slot = layout[layoutIndex];
     if (slot.kind === "normal") {
       const normal = clone(base[slot.normalLevel - 1]);
       normal.level = slot.finalLevel;
@@ -166,10 +194,16 @@ function main() {
       continue;
     }
 
+    const futureLevels = layout
+      .slice(layoutIndex + 1, layoutIndex + 9)
+      .filter((futureSlot) => futureSlot.kind === "normal")
+      .map((futureSlot) => base[futureSlot.normalLevel - 1]);
+
     const special = buildSpecial(
       slot.finalLevel,
       slot.specialIndex,
       output,
+      { futureLevels },
     );
     special.level = slot.finalLevel;
     output.push(special);
@@ -188,6 +222,19 @@ function main() {
       })),
       attempts: special.generationStats.attempts,
     });
+
+    fs.mkdirSync("docs/audits", { recursive: true });
+    fs.writeFileSync(
+      CHECKPOINT,
+      JSON.stringify(
+        {
+          generatorVersion: "V43-ANNE-GRID-V1",
+          baseLevels: NORMAL_LEVEL_COUNT,
+          output,
+          specialStats,
+        },
+      ),
+    );
 
     if (slot.specialIndex % 10 === 0)
       console.log(
@@ -226,10 +273,15 @@ function main() {
     ),
   );
 
+  if (fs.existsSync(CHECKPOINT)) fs.unlinkSync(CHECKPOINT);
   console.log(
     `Preview saved: ${OUTPUT_CATALOG} (${NORMAL_LEVEL_COUNT} preserved normal + ${SPECIAL_LEVEL_COUNT} anne-grid)`,
   );
 }
 
 if (require.main === module) main();
-module.exports = { buildSpecial, recentShapeViolation };
+module.exports = {
+  buildSpecial,
+  recentShapeViolation,
+  shapeViolationAgainst,
+};
