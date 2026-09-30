@@ -53,6 +53,7 @@ function buildSpecial(finalLevel, specialIndex, acceptedLevels, buildOptions = {
     const candidate = draft(finalLevel, attempt, {
       anneGrid: true,
       specialIndex,
+      forceKind: buildOptions.forceKind,
       failureStats: reasons,
     });
     if (!candidate) {
