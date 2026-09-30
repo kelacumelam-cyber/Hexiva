@@ -432,3 +432,9 @@ The selected JDK is injected into the Gradle process only for the build.
 
 The debug APK helper now detects JDK 21+ installations under `Program Files/Eclipse Adoptium` and also derives a JDK home from the `java` executable currently resolved by PATH.
 This removes the previous vendor-directory blind spot that missed Temurin 21 even when `java -version` worked.
+
+
+## V41.10 Java version stderr detection
+
+JDK auto-detection now accounts for the fact that `java -version` writes its version banner to stderr even when the command succeeds.
+The build helper probes both stdout and stderr before rejecting a detected JDK candidate.
