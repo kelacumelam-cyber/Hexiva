@@ -161,6 +161,6 @@ Bomb is an explicit limited booster, not a board mechanic:
 - start with 1,
 - buy +1 for 125 coins,
 - target a playable block,
-- remove that block and immediately adjacent playable blocks,
+- remove only that selected block,
 - do not destroy fixed obstacles,
-- if a linked pair is affected, remove both linked members to avoid a broken half-pair state.
+- if the selected block belongs to a linked pair, detach the link first so the surviving member becomes a normal playable block.
