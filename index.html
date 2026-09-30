@@ -22,7 +22,13 @@
         const Easings = {
           Quadratic: {
             In: k => k * k,
-            Out: k => k * (2 - k)
+            Out: k => k * (2 - k),
+            InOut: k => {
+              k *= 2;
+              if (k < 1) return 0.5 * k * k;
+              k -= 1;
+              return -0.5 * (k * (k - 2) - 1);
+            }
           },
           Cubic: {
             In: k => k * k * k
@@ -620,13 +626,13 @@
       <!-- Special Offer Button -->
       <button id="special-offer-btn" class="utility-card game-btn side-card-btn p-1.5 rounded-xl flex flex-col items-center justify-center text-white text-center">
         <span class="utility-icon text-2xl leading-none">🎁</span>
-        <span class="utility-label text-[8.5px] font-black tracking-tight leading-none mt-1">SPECIAL<br>OFFER</span>
+        <span class="utility-label text-[8.5px] font-black tracking-tight leading-none mt-1">GÜNLÜK<br>HEDİYE</span>
       </button>
 
       <!-- Shop Button -->
       <button id="shop-btn" class="utility-card game-btn side-card-btn p-1.5 rounded-xl flex flex-col items-center justify-center text-white text-center">
         <span class="utility-icon text-2xl leading-none">🏪</span>
-        <span class="utility-label text-[9px] font-black tracking-wider leading-none mt-1">SHOP</span>
+        <span class="utility-label text-[9px] font-black tracking-wider leading-none mt-1">DÜKKAN</span>
       </button>
 
       <!-- Quick Audio Toggle -->
@@ -640,7 +646,7 @@
       <!-- Home Button -->
       <button id="home-btn" class="home-card game-btn side-card-btn p-1.5 rounded-xl flex flex-col items-center justify-center text-white text-center">
         <span class="utility-icon text-2xl leading-none">🏡</span>
-        <span class="utility-label text-[9px] font-black tracking-wider leading-none mt-1">HOME</span>
+        <span class="utility-label text-[9px] font-black tracking-wider leading-none mt-1">ANA</span>
       </button>
 
     </div>
@@ -3875,33 +3881,50 @@
         const fallX = lastPoint.x;
         const fallZ = lastPoint.z;
         const fallY = -15;
-        const fallDuration = 360;
-
-        new TWEEN.Tween(block.mesh.position)
-          .to({ x: fallX, y: fallY, z: fallZ }, fallDuration)
-          .easing(TWEEN.Easing.Cubic.In)
-          .onComplete(() => {
-            boardGroup.remove(block.mesh);
-            checkLevelWin();
-          })
-          .start();
+        const fallDuration = fallingIntoPit ? 330 : 380;
 
         const stepUnit = Math.sqrt(3) * HEX_RADIUS;
         const uX = finalDir.dx / stepUnit;
         const uZ = finalDir.dz / stepUnit;
 
+        // Edge exits tip very slightly before gravity; pit drops stay straighter.
+        const tipX = fallingIntoPit ? 0 : uZ * 0.16;
+        const tipZ = fallingIntoPit ? 0 : -uX * 0.16;
+
         new TWEEN.Tween(block.mesh.rotation)
           .to({
-            x: block.mesh.rotation.x + uZ * 2.2,
-            z: block.mesh.rotation.z - uX * 2.2,
-            y: block.mesh.rotation.y + (Math.random() - 0.5) * 0.6
-          }, fallDuration)
-          .easing(TWEEN.Easing.Quadratic.In)
-          .start();
+            x: block.mesh.rotation.x + tipX,
+            z: block.mesh.rotation.z + tipZ
+          }, fallingIntoPit ? 55 : 85)
+          .easing(TWEEN.Easing.Quadratic.Out)
+          .onComplete(() => {
+            new TWEEN.Tween(block.mesh.position)
+              .to({ x: fallX, y: fallY, z: fallZ }, fallDuration)
+              .easing(TWEEN.Easing.Cubic.In)
+              .onComplete(() => {
+                boardGroup.remove(block.mesh);
+                checkLevelWin();
+              })
+              .start();
 
-        new TWEEN.Tween(block.mesh.scale)
-          .to({ x: 0.3, y: 0.3, z: 0.3 }, fallDuration)
-          .easing(TWEEN.Easing.Quadratic.In)
+            new TWEEN.Tween(block.mesh.rotation)
+              .to({
+                x: block.mesh.rotation.x + uZ * (fallingIntoPit ? 0.7 : 2.0),
+                z: block.mesh.rotation.z - uX * (fallingIntoPit ? 0.7 : 2.0),
+                y: block.mesh.rotation.y + (fallingIntoPit ? 0.18 : 0.36)
+              }, fallDuration)
+              .easing(TWEEN.Easing.Quadratic.In)
+              .start();
+
+            new TWEEN.Tween(block.mesh.scale)
+              .to({
+                x: fallingIntoPit ? 0.26 : 0.30,
+                y: fallingIntoPit ? 0.26 : 0.30,
+                z: fallingIntoPit ? 0.26 : 0.30
+              }, fallDuration)
+              .easing(TWEEN.Easing.Quadratic.In)
+              .start();
+          })
           .start();
       }
 
@@ -3983,7 +4006,7 @@
         const dirLen = Math.sqrt(finalDir.dx * finalDir.dx + finalDir.dz * finalDir.dz) || 1;
         const ux = finalDir.dx / dirLen;
         const uz = finalDir.dz / dirLen;
-        const bump = 0.20;
+        const bump = 0.16;
 
         outward.push({
           x: previousWorld.x + ux * bump,
@@ -4039,7 +4062,7 @@
           playSound('blocked');
           // Tiny squash/impact before the rebound starts.
           new TWEEN.Tween(block.mesh.scale)
-            .to({ x: 1.04, y: 0.96, z: 1.04 }, 70)
+            .to({ x: 1.05, y: 0.94, z: 1.05 }, 65)
             .easing(TWEEN.Easing.Quadratic.Out)
             .yoyo(true)
             .repeat(1)
