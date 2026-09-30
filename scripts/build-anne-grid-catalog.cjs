@@ -35,7 +35,9 @@ function recentShapeViolation(levels, candidate) {
   });
 }
 
-function buildSpecial(finalLevel, specialIndex, acceptedLevels) {
+function buildSpecial(finalLevel, specialIndex, acceptedLevels, buildOptions = {}) {
+  const maxAttempts = buildOptions.maxAttempts || MAX_ATTEMPTS;
+  const requiredAccepted = buildOptions.requiredAccepted || REQUIRED_ACCEPTED;
   let best = null;
   let bestMetrics = null;
   let bestScore = Infinity;
@@ -43,7 +45,7 @@ function buildSpecial(finalLevel, specialIndex, acceptedLevels) {
   const reasons = {};
   let attempt = 0;
 
-  for (; attempt < MAX_ATTEMPTS; attempt++) {
+  for (; attempt < maxAttempts; attempt++) {
     const beforeConstructionRejects = Object.values(reasons).reduce(
       (sum, value) => sum + value,
       0,
@@ -94,7 +96,7 @@ function buildSpecial(finalLevel, specialIndex, acceptedLevels) {
       bestScore = candidateScore;
       best.solution = proof.solution;
     }
-    if (accepted >= REQUIRED_ACCEPTED) break;
+    if (accepted >= requiredAccepted) break;
   }
 
   if (!best) {
@@ -109,7 +111,7 @@ function buildSpecial(finalLevel, specialIndex, acceptedLevels) {
     generatorVersion: "V43-ANNE-GRID-V1",
     anneGrid: true,
     specialIndex,
-    attempts: Math.min(attempt + 1, MAX_ATTEMPTS),
+    attempts: Math.min(attempt + 1, maxAttempts),
     acceptedCandidates: accepted,
     rejections: reasons,
     qualityPenalty: bestScore,
