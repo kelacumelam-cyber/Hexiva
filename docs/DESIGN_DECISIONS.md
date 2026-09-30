@@ -154,3 +154,13 @@ These values may be tuned after real-phone playtesting.
 
 ### Edge fall animation
 A block escaping over the board edge travels only to the physical cliff lip and then falls vertically. It must not launch far beyond the board before dropping.
+
+
+### Bomb booster
+Bomb is an explicit limited booster, not a board mechanic:
+- start with 1,
+- buy +1 for 125 coins,
+- target a playable block,
+- remove that block and immediately adjacent playable blocks,
+- do not destroy fixed obstacles,
+- if a linked pair is affected, remove both linked members to avoid a broken half-pair state.
