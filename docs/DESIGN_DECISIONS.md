@@ -44,3 +44,13 @@ A/S keyboard shortcuts are temporary development aids and must not change real p
 
 ### Immediate next decision
 Camera / board viewing angle is the next implementation target. Mechanics are paused until that visual checkpoint is approved.
+
+
+### Reference clarification — direction changer vs swap mechanism
+A previous visual reference was misclassified.
+
+Correct interpretation:
+- Direction changer: low-profile board-mounted special cell with a visible double-chevron/direction symbol. It redirects a moving hex only after the hex reaches that cell.
+- Swap mechanism: the larger central mechanism with two arms. Its arms hold two hexes and swap their positions when activated. Its center can also function as a real empty/escape cell.
+
+Do not reuse the arm-based swap visual language for the direction changer.
