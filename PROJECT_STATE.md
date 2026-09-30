@@ -41,7 +41,7 @@ The game is working as a mobile-first Three.js/WebGL prototype. The current visu
 
 ## Current visual checkpoint
 
-The current V10 direction changer is a proof-of-concept special mechanism with glow/idle animation. Its final design is NOT approved yet.
+The previous V10/V12 glowing direction-changer device was a visual misinterpretation and is no longer the target. The correct direction-changer reference is a low-profile board-mounted special cell with a clear double-chevron direction symbol. The earlier arm-based reference belongs to the future swap mechanism.
 
 User-provided references established the desired presentation direction:
 - The board should be viewed more from above.
@@ -60,6 +60,17 @@ Approved presentation checkpoint:
 - no block geometry, colors, shadows, mechanics, UI identity, or direction rules were changed in this checkpoint.
 - User approved the stronger top-down framing.
 - Direction-changer visual arrow alignment bug fixed: the mechanism frame no longer rotates the displayed arrow away from its logical `dirIndex`.
+
+## Current visual-mechanic checkpoint (V13)
+
+Direction-changer visual concept corrected:
+- previous glowing central device concept discarded,
+- now rendered as a low-profile pink board-mounted mechanic cell,
+- uses a double-chevron symbol to communicate redirect direction,
+- keeps subtle breathing/activation light only,
+- movement logic is unchanged.
+
+The earlier two-arm reference is reserved for the future swap mechanism.
 
 ## NEXT TASK
 
@@ -82,10 +93,23 @@ After the camera/presentation checkpoint is approved:
 Already in progress. A block whose valid route reaches an internal empty escape cell may fall through it.
 
 ### Direction changer
-Already implemented as V1. Final visual design pending.
+Already implemented as V1.
+Correct visual concept:
+- low-profile special board cell,
+- clearly distinct from a playable colored hex,
+- visible double-chevron/direction symbol,
+- subtle glow/activation feedback,
+- no large arm mechanism.
+
+The arm-based mechanism reference is NOT the direction changer; it belongs to the future swap mechanic.
 
 ### Swap mechanism
 Planned.
+
+Visual reference clarification:
+- the earlier central mechanism with two arms belongs here,
+- its arms hold the two hexes that will exchange positions,
+- the center remains both the mechanism/button and a real empty/escape cell.
 
 Conceptual layout:
 
