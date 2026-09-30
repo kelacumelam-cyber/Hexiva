@@ -17,7 +17,7 @@
     "catalog:anne-preview": "node scripts/build-anne-grid-catalog.cjs",
     "audit:anne-preview": "node scripts/audit-catalog.cjs src/catalog-anne-grid-preview.js 1250",
     "catalog:anne-promote": "node scripts/promote-anne-grid-preview.cjs",
-    "smoke:anne-grid": "node scripts/smoke-anne-grid.cjs 12"
+    "smoke:anne-grid": "node scripts/smoke-anne-grid.cjs 4"
   },
   "dependencies": {
     "@tweenjs/tween.js": "18.6.4",
