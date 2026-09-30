@@ -284,3 +284,12 @@ Performance constraints:
 - Three.js canvas now renders with transparent alpha over the static background.
 
 The board, camera, gameplay, touch handling, HUD and mechanics were not intentionally changed.
+
+
+## V39.1 floating island tree refinement
+
+Background islands were refined after visual review:
+- removed the abstract icon-like pavilion shapes,
+- replaced simple green circles with small tree silhouettes using trunks and clustered foliage,
+- added several trees across the distant islands,
+- kept all decoration static and inline SVG to preserve mobile performance.
