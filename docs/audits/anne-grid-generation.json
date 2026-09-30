@@ -1,0 +1,4926 @@
+{
+  "generatorVersion": "V43-ANNE-GRID-V1",
+  "finalLevels": 1250,
+  "normalLevels": 1000,
+  "specialLevels": 250,
+  "specialStats": [
+    {
+      "level": 5,
+      "specialIndex": 1,
+      "patternKey": "anneGridChamber2",
+      "blockCount": 22,
+      "dependencyDepth": 7,
+      "decisionSteps": 20,
+      "initiallyClearRatio": 0.18181818181818182,
+      "trivialEscapeRatio": 0,
+      "mechanisms": [
+        {
+          "type": "redirect",
+          "functional": true
+        },
+        {
+          "type": "swap",
+          "functional": true
+        }
+      ],
+      "attempts": 394
+    },
+    {
+      "level": 9,
+      "specialIndex": 2,
+      "patternKey": "anneGridChamber3",
+      "blockCount": 21,
+      "dependencyDepth": 7,
+      "decisionSteps": 20,
+      "initiallyClearRatio": 0.23809523809523808,
+      "trivialEscapeRatio": 0.047619047619047616,
+      "mechanisms": [
+        {
+          "type": "cycle",
+          "functional": true
+        },
+        {
+          "type": "obstacle",
+          "functional": true
+        }
+      ],
+      "attempts": 385
+    },
+    {
+      "level": 13,
+      "specialIndex": 3,
+      "patternKey": "anneGridChamber4",
+      "blockCount": 20,
+      "dependencyDepth": 7,
+      "decisionSteps": 20,
+      "initiallyClearRatio": 0.25,
+      "trivialEscapeRatio": 0.1,
+      "mechanisms": [
+        {
+          "type": "swap",
+          "functional": true
+        },
+        {
+          "type": "obstacle",
+          "functional": true
+        }
+      ],
+      "attempts": 164
+    },
+    {
+      "level": 18,
+      "specialIndex": 4,
+      "patternKey": "anneGridChamber5",
+      "blockCount": 22,
+      "dependencyDepth": 7,
+      "decisionSteps": 22,
+      "initiallyClearRatio": 0.22727272727272727,
+      "trivialEscapeRatio": 0.13636363636363635,
+      "mechanisms": [
+        {
+          "type": "swap",
+          "functional": true
+        }
+      ],
+      "attempts": 89
+    },
+    {
+      "level": 24,
+      "specialIndex": 5,
+      "patternKey": "anneGridChamber1",
+      "blockCount": 22,
+      "dependencyDepth": 8,
+      "decisionSteps": 21,
+      "initiallyClearRatio": 0.13636363636363635,
+      "trivialEscapeRatio": 0.045454545454545456,
+      "mechanisms": [
+        {
+          "type": "cycle",
+          "functional": true
+        }
+      ],
+      "attempts": 236
+    },
+    {
+      "level": 29,
+      "specialIndex": 6,
+      "patternKey": "anneGridChamber5",
+      "blockCount": 20,
+      "dependencyDepth": 6,
+      "decisionSteps": 18,
+      "initiallyClearRatio": 0.25,
+      "trivialEscapeRatio": 0.1,
+      "mechanisms": [
+        {
+          "type": "redirect",
+          "functional": true
+        },
+        {
+          "type": "swap",
+          "functional": true
+        }
+      ],
+      "attempts": 356
+    },
+    {
+      "level": 32,
+      "specialIndex": 7,
+      "patternKey": "anneGridChamber3",
+      "blockCount": 21,
+      "dependencyDepth": 5,
+      "decisionSteps": 19,
+      "initiallyClearRatio": 0.09523809523809523,
+      "trivialEscapeRatio": 0.047619047619047616,
+      "mechanisms": [
+        {
+          "type": "redirect",
+          "functional": true
+        },
+        {
+          "type": "swap",
+          "functional": true
+        }
+      ],
+      "attempts": 210
+    },
+    {
+      "level": 38,
+      "specialIndex": 8,
+      "patternKey": "anneGridChamber1",
+      "blockCount": 21,
+      "dependencyDepth": 5,
+      "decisionSteps": 20,
+      "initiallyClearRatio": 0.14285714285714285,
+      "trivialEscapeRatio": 0.09523809523809523,
+      "mechanisms": [
+        {
+          "type": "cycle",
+          "functional": true
+        },
+        {
+          "type": "obstacle",
+          "functional": true
+        }
+      ],
+      "attempts": 938
+    },
+    {
+      "level": 43,
+      "specialIndex": 9,
+      "patternKey": "anneGridChamber2",
+      "blockCount": 21,
+      "dependencyDepth": 5,
+      "decisionSteps": 19,
+      "initiallyClearRatio": 0.23809523809523808,
+      "trivialEscapeRatio": 0.09523809523809523,
+      "mechanisms": [
+        {
+          "type": "swap",
+          "functional": true
+        },
+        {
+          "type": "obstacle",
+          "functional": true
+        }
+      ],
+      "attempts": 80
+    },
+    {
+      "level": 49,
+      "specialIndex": 10,
+      "patternKey": "anneGridChamber4",
+      "blockCount": 22,
+      "dependencyDepth": 9,
+      "decisionSteps": 21,
+      "initiallyClearRatio": 0.13636363636363635,
+      "trivialEscapeRatio": 0.09090909090909091,
+      "mechanisms": [
+        {
+          "type": "swap",
+          "functional": true
+        }
+      ],
+      "attempts": 122
+    },
+    {
+      "level": 52,
+      "specialIndex": 11,
+      "patternKey": "anneGridChamber6",
+      "blockCount": 22,
+      "dependencyDepth": 6,
+      "decisionSteps": 22,
+      "initiallyClearRatio": 0.22727272727272727,
+      "trivialEscapeRatio": 0.09090909090909091,
+      "mechanisms": [
+        {
+          "type": "cycle",
+          "functional": true
+        }
+      ],
+      "attempts": 161
+    },
+    {
+      "level": 57,
+      "specialIndex": 12,
+      "patternKey": "anneGridChamber5",
+      "blockCount": 20,
+      "dependencyDepth": 7,
+      "decisionSteps": 19,
+      "initiallyClearRatio": 0.2,
+      "trivialEscapeRatio": 0.15,
+      "mechanisms": [
+        {
+          "type": "redirect",
+          "functional": true
+        },
+        {
+          "type": "swap",
+          "functional": true
+        }
+      ],
+      "attempts": 217
+    },
+    {
+      "level": 63,
+      "specialIndex": 13,
+      "patternKey": "anneGridChamber6",
+      "blockCount": 21,
+      "dependencyDepth": 7,
+      "decisionSteps": 21,
+      "initiallyClearRatio": 0.23809523809523808,
+      "trivialEscapeRatio": 0.14285714285714285,
+      "mechanisms": [
+        {
+          "type": "redirect",
+          "functional": true
+        },
+        {
+          "type": "swap",
+          "functional": true
+        }
+      ],
+      "attempts": 237
+    },
+    {
+      "level": 68,
+      "specialIndex": 14,
+      "patternKey": "anneGridChamber3",
+      "blockCount": 21,
+      "dependencyDepth": 8,
+      "decisionSteps": 21,
+      "initiallyClearRatio": 0.23809523809523808,
+      "trivialEscapeRatio": 0.09523809523809523,
+      "mechanisms": [
+        {
+          "type": "cycle",
+          "functional": true
+        },
+        {
+          "type": "obstacle",
+          "functional": true
+        }
+      ],
+      "attempts": 271
+    },
+    {
+      "level": 74,
+      "specialIndex": 15,
+      "patternKey": "anneGridChamber1",
+      "blockCount": 20,
+      "dependencyDepth": 7,
+      "decisionSteps": 20,
+      "initiallyClearRatio": 0.25,
+      "trivialEscapeRatio": 0.1,
+      "mechanisms": [
+        {
+          "type": "swap",
+          "functional": true
+        },
+        {
+          "type": "obstacle",
+          "functional": true
+        }
+      ],
+      "attempts": 134
+    },
+    {
+      "level": 79,
+      "specialIndex": 16,
+      "patternKey": "anneGridChamber2",
+      "blockCount": 23,
+      "dependencyDepth": 5,
+      "decisionSteps": 22,
+      "initiallyClearRatio": 0.21739130434782608,
+      "trivialEscapeRatio": 0.08695652173913043,
+      "mechanisms": [
+        {
+          "type": "swap",
+          "functional": true
+        }
+      ],
+      "attempts": 157
+    },
+    {
+      "level": 82,
+      "specialIndex": 17,
+      "patternKey": "anneGridChamber3",
+      "blockCount": 22,
+      "dependencyDepth": 6,
+      "decisionSteps": 21,
+      "initiallyClearRatio": 0.18181818181818182,
+      "trivialEscapeRatio": 0.09090909090909091,
+      "mechanisms": [
+        {
+          "type": "cycle",
+          "functional": true
+        }
+      ],
+      "attempts": 61
+    },
+    {
+      "level": 88,
+      "specialIndex": 18,
+      "patternKey": "anneGridChamber4",
+      "blockCount": 20,
+      "dependencyDepth": 5,
+      "decisionSteps": 18,
+      "initiallyClearRatio": 0.25,
+      "trivialEscapeRatio": 0.05,
+      "mechanisms": [
+        {
+          "type": "redirect",
+          "functional": true
+        },
+        {
+          "type": "swap",
+          "functional": true
+        }
+      ],
+      "attempts": 132
+    },
+    {
+      "level": 93,
+      "specialIndex": 19,
+      "patternKey": "anneGridChamber3",
+      "blockCount": 21,
+      "dependencyDepth": 7,
+      "decisionSteps": 21,
+      "initiallyClearRatio": 0.14285714285714285,
+      "trivialEscapeRatio": 0.047619047619047616,
+      "mechanisms": [
+        {
+          "type": "redirect",
+          "functional": true
+        },
+        {
+          "type": "swap",
+          "functional": true
+        }
+      ],
+      "attempts": 157
+    },
+    {
+      "level": 99,
+      "specialIndex": 20,
+      "patternKey": "anneGridChamber4",
+      "blockCount": 21,
+      "dependencyDepth": 5,
+      "decisionSteps": 21,
+      "initiallyClearRatio": 0.23809523809523808,
+      "trivialEscapeRatio": 0.14285714285714285,
+      "mechanisms": [
+        {
+          "type": "cycle",
+          "functional": true
+        },
+        {
+          "type": "obstacle",
+          "functional": true
+        }
+      ],
+      "attempts": 1026
+    },
+    {
+      "level": 102,
+      "specialIndex": 21,
+      "patternKey": "anneGridChamber5",
+      "blockCount": 20,
+      "dependencyDepth": 6,
+      "decisionSteps": 19,
+      "initiallyClearRatio": 0.2,
+      "trivialEscapeRatio": 0.1,
+      "mechanisms": [
+        {
+          "type": "swap",
+          "functional": true
+        },
+        {
+          "type": "obstacle",
+          "functional": true
+        }
+      ],
+      "attempts": 30
+    },
+    {
+      "level": 107,
+      "specialIndex": 22,
+      "patternKey": "anneGridChamber3",
+      "blockCount": 22,
+      "dependencyDepth": 8,
+      "decisionSteps": 21,
+      "initiallyClearRatio": 0.18181818181818182,
+      "trivialEscapeRatio": 0.13636363636363635,
+      "mechanisms": [
+        {
+          "type": "swap",
+          "functional": true
+        }
+      ],
+      "attempts": 345
+    },
+    {
+      "level": 113,
+      "specialIndex": 23,
+      "patternKey": "anneGridChamber1",
+      "blockCount": 22,
+      "dependencyDepth": 7,
+      "decisionSteps": 21,
+      "initiallyClearRatio": 0.22727272727272727,
+      "trivialEscapeRatio": 0.09090909090909091,
+      "mechanisms": [
+        {
+          "type": "cycle",
+          "functional": true
+        }
+      ],
+      "attempts": 518
+    },
+    {
+      "level": 118,
+      "specialIndex": 24,
+      "patternKey": "anneGridChamber8",
+      "blockCount": 20,
+      "dependencyDepth": 7,
+      "decisionSteps": 18,
+      "initiallyClearRatio": 0.15,
+      "trivialEscapeRatio": 0.05,
+      "mechanisms": [
+        {
+          "type": "redirect",
+          "functional": true
+        },
+        {
+          "type": "swap",
+          "functional": true
+        }
+      ],
+      "attempts": 389
+    },
+    {
+      "level": 124,
+      "specialIndex": 25,
+      "patternKey": "anneGridChamber5",
+      "blockCount": 21,
+      "dependencyDepth": 8,
+      "decisionSteps": 19,
+      "initiallyClearRatio": 0.23809523809523808,
+      "trivialEscapeRatio": 0.14285714285714285,
+      "mechanisms": [
+        {
+          "type": "redirect",
+          "functional": true
+        },
+        {
+          "type": "swap",
+          "functional": true
+        }
+      ],
+      "attempts": 227
+    },
+    {
+      "level": 129,
+      "specialIndex": 26,
+      "patternKey": "anneGridChamber3",
+      "blockCount": 21,
+      "dependencyDepth": 7,
+      "decisionSteps": 21,
+      "initiallyClearRatio": 0.19047619047619047,
+      "trivialEscapeRatio": 0.14285714285714285,
+      "mechanisms": [
+        {
+          "type": "cycle",
+          "functional": true
+        },
+        {
+          "type": "obstacle",
+          "functional": true
+        }
+      ],
+      "attempts": 78
+    },
+    {
+      "level": 132,
+      "specialIndex": 27,
+      "patternKey": "anneGridChamber4",
+      "blockCount": 20,
+      "dependencyDepth": 5,
+      "decisionSteps": 20,
+      "initiallyClearRatio": 0.25,
+      "trivialEscapeRatio": 0.05,
+      "mechanisms": [
+        {
+          "type": "swap",
+          "functional": true
+        },
+        {
+          "type": "obstacle",
+          "functional": true
+        }
+      ],
+      "attempts": 119
+    },
+    {
+      "level": 138,
+      "specialIndex": 28,
+      "patternKey": "anneGridChamber6",
+      "blockCount": 22,
+      "dependencyDepth": 6,
+      "decisionSteps": 19,
+      "initiallyClearRatio": 0.18181818181818182,
+      "trivialEscapeRatio": 0.09090909090909091,
+      "mechanisms": [
+        {
+          "type": "swap",
+          "functional": true
+        }
+      ],
+      "attempts": 136
+    },
+    {
+      "level": 143,
+      "specialIndex": 29,
+      "patternKey": "anneGridChamber1",
+      "blockCount": 22,
+      "dependencyDepth": 7,
+      "decisionSteps": 22,
+      "initiallyClearRatio": 0.18181818181818182,
+      "trivialEscapeRatio": 0.13636363636363635,
+      "mechanisms": [
+        {
+          "type": "cycle",
+          "functional": true
+        }
+      ],
+      "attempts": 1385
+    },
+    {
+      "level": 149,
+      "specialIndex": 30,
+      "patternKey": "anneGridChamber6",
+      "blockCount": 20,
+      "dependencyDepth": 5,
+      "decisionSteps": 20,
+      "initiallyClearRatio": 0.25,
+      "trivialEscapeRatio": 0.05,
+      "mechanisms": [
+        {
+          "type": "redirect",
+          "functional": true
+        },
+        {
+          "type": "swap",
+          "functional": true
+        }
+      ],
+      "attempts": 270
+    },
+    {
+      "level": 152,
+      "specialIndex": 31,
+      "patternKey": "anneGridChamber7",
+      "blockCount": 21,
+      "dependencyDepth": 6,
+      "decisionSteps": 21,
+      "initiallyClearRatio": 0.19047619047619047,
+      "trivialEscapeRatio": 0.14285714285714285,
+      "mechanisms": [
+        {
+          "type": "redirect",
+          "functional": true
+        },
+        {
+          "type": "swap",
+          "functional": true
+        }
+      ],
+      "attempts": 141
+    },
+    {
+      "level": 157,
+      "specialIndex": 32,
+      "patternKey": "anneGridChamber1",
+      "blockCount": 21,
+      "dependencyDepth": 7,
+      "decisionSteps": 20,
+      "initiallyClearRatio": 0.19047619047619047,
+      "trivialEscapeRatio": 0.047619047619047616,
+      "mechanisms": [
+        {
+          "type": "cycle",
+          "functional": true
+        },
+        {
+          "type": "obstacle",
+          "functional": true
+        }
+      ],
+      "attempts": 454
+    },
+    {
+      "level": 163,
+      "specialIndex": 33,
+      "patternKey": "anneGridChamber3",
+      "blockCount": 20,
+      "dependencyDepth": 7,
+      "decisionSteps": 19,
+      "initiallyClearRatio": 0.15,
+      "trivialEscapeRatio": 0.15,
+      "mechanisms": [
+        {
+          "type": "swap",
+          "functional": true
+        },
+        {
+          "type": "obstacle",
+          "functional": true
+        }
+      ],
+      "attempts": 110
+    },
+    {
+      "level": 168,
+      "specialIndex": 34,
+      "patternKey": "anneGridChamber4",
+      "blockCount": 22,
+      "dependencyDepth": 8,
+      "decisionSteps": 22,
+      "initiallyClearRatio": 0.18181818181818182,
+      "trivialEscapeRatio": 0.09090909090909091,
+      "mechanisms": [
+        {
+          "type": "swap",
+          "functional": true
+        }
+      ],
+      "attempts": 110
+    },
+    {
+      "level": 174,
+      "specialIndex": 35,
+      "patternKey": "anneGridChamber5",
+      "blockCount": 22,
+      "dependencyDepth": 6,
+      "decisionSteps": 22,
+      "initiallyClearRatio": 0.22727272727272727,
+      "trivialEscapeRatio": 0.13636363636363635,
+      "mechanisms": [
+        {
+          "type": "cycle",
+          "functional": true
+        }
+      ],
+      "attempts": 775
+    },
+    {
+      "level": 179,
+      "specialIndex": 36,
+      "patternKey": "anneGridChamber1",
+      "blockCount": 20,
+      "dependencyDepth": 6,
+      "decisionSteps": 17,
+      "initiallyClearRatio": 0.15,
+      "trivialEscapeRatio": 0.1,
+      "mechanisms": [
+        {
+          "type": "redirect",
+          "functional": true
+        },
+        {
+          "type": "swap",
+          "functional": true
+        }
+      ],
+      "attempts": 250
+    },
+    {
+      "level": 182,
+      "specialIndex": 37,
+      "patternKey": "anneGridChamber6",
+      "blockCount": 21,
+      "dependencyDepth": 5,
+      "decisionSteps": 20,
+      "initiallyClearRatio": 0.23809523809523808,
+      "trivialEscapeRatio": 0.047619047619047616,
+      "mechanisms": [
+        {
+          "type": "redirect",
+          "functional": true
+        },
+        {
+          "type": "swap",
+          "functional": true
+        }
+      ],
+      "attempts": 214
+    },
+    {
+      "level": 188,
+      "specialIndex": 38,
+      "patternKey": "anneGridChamber3",
+      "blockCount": 21,
+      "dependencyDepth": 7,
+      "decisionSteps": 21,
+      "initiallyClearRatio": 0.23809523809523808,
+      "trivialEscapeRatio": 0.047619047619047616,
+      "mechanisms": [
+        {
+          "type": "cycle",
+          "functional": true
+        },
+        {
+          "type": "obstacle",
+          "functional": true
+        }
+      ],
+      "attempts": 272
+    },
+    {
+      "level": 193,
+      "specialIndex": 39,
+      "patternKey": "anneGridChamber1",
+      "blockCount": 20,
+      "dependencyDepth": 10,
+      "decisionSteps": 20,
+      "initiallyClearRatio": 0.15,
+      "trivialEscapeRatio": 0,
+      "mechanisms": [
+        {
+          "type": "swap",
+          "functional": true
+        },
+        {
+          "type": "obstacle",
+          "functional": true
+        }
+      ],
+      "attempts": 128
+    },
+    {
+      "level": 199,
+      "specialIndex": 40,
+      "patternKey": "anneGridChamber2",
+      "blockCount": 23,
+      "dependencyDepth": 8,
+      "decisionSteps": 19,
+      "initiallyClearRatio": 0.13043478260869565,
+      "trivialEscapeRatio": 0.08695652173913043,
+      "mechanisms": [
+        {
+          "type": "swap",
+          "functional": true
+        }
+      ],
+      "attempts": 99
+    },
+    {
+      "level": 202,
+      "specialIndex": 41,
+      "patternKey": "anneGridChamber1",
+      "blockCount": 22,
+      "dependencyDepth": 7,
+      "decisionSteps": 22,
+      "initiallyClearRatio": 0.22727272727272727,
+      "trivialEscapeRatio": 0.09090909090909091,
+      "mechanisms": [
+        {
+          "type": "cycle",
+          "functional": true
+        }
+      ],
+      "attempts": 446
+    },
+    {
+      "level": 207,
+      "specialIndex": 42,
+      "patternKey": "anneGridChamber3",
+      "blockCount": 20,
+      "dependencyDepth": 7,
+      "decisionSteps": 19,
+      "initiallyClearRatio": 0.15,
+      "trivialEscapeRatio": 0.05,
+      "mechanisms": [
+        {
+          "type": "redirect",
+          "functional": true
+        },
+        {
+          "type": "swap",
+          "functional": true
+        }
+      ],
+      "attempts": 130
+    },
+    {
+      "level": 213,
+      "specialIndex": 43,
+      "patternKey": "anneGridChamber1",
+      "blockCount": 21,
+      "dependencyDepth": 5,
+      "decisionSteps": 20,
+      "initiallyClearRatio": 0.23809523809523808,
+      "trivialEscapeRatio": 0.14285714285714285,
+      "mechanisms": [
+        {
+          "type": "redirect",
+          "functional": true
+        },
+        {
+          "type": "swap",
+          "functional": true
+        }
+      ],
+      "attempts": 309
+    },
+    {
+      "level": 218,
+      "specialIndex": 44,
+      "patternKey": "anneGridChamber6",
+      "blockCount": 21,
+      "dependencyDepth": 9,
+      "decisionSteps": 21,
+      "initiallyClearRatio": 0.19047619047619047,
+      "trivialEscapeRatio": 0.047619047619047616,
+      "mechanisms": [
+        {
+          "type": "cycle",
+          "functional": true
+        },
+        {
+          "type": "obstacle",
+          "functional": true
+        }
+      ],
+      "attempts": 158
+    },
+    {
+      "level": 224,
+      "specialIndex": 45,
+      "patternKey": "anneGridChamber5",
+      "blockCount": 21,
+      "dependencyDepth": 11,
+      "decisionSteps": 20,
+      "initiallyClearRatio": 0.19047619047619047,
+      "trivialEscapeRatio": 0.14285714285714285,
+      "mechanisms": [
+        {
+          "type": "swap",
+          "functional": true
+        },
+        {
+          "type": "obstacle",
+          "functional": true
+        }
+      ],
+      "attempts": 214
+    },
+    {
+      "level": 229,
+      "specialIndex": 46,
+      "patternKey": "anneGridChamber6",
+      "blockCount": 22,
+      "dependencyDepth": 5,
+      "decisionSteps": 20,
+      "initiallyClearRatio": 0.22727272727272727,
+      "trivialEscapeRatio": 0.09090909090909091,
+      "mechanisms": [
+        {
+          "type": "swap",
+          "functional": true
+        }
+      ],
+      "attempts": 185
+    },
+    {
+      "level": 232,
+      "specialIndex": 47,
+      "patternKey": "anneGridChamber3",
+      "blockCount": 22,
+      "dependencyDepth": 9,
+      "decisionSteps": 22,
+      "initiallyClearRatio": 0.18181818181818182,
+      "trivialEscapeRatio": 0.13636363636363635,
+      "mechanisms": [
+        {
+          "type": "cycle",
+          "functional": true
+        }
+      ],
+      "attempts": 1005
+    },
+    {
+      "level": 238,
+      "specialIndex": 48,
+      "patternKey": "anneGridChamber4",
+      "blockCount": 20,
+      "dependencyDepth": 6,
+      "decisionSteps": 18,
+      "initiallyClearRatio": 0.15,
+      "trivialEscapeRatio": 0.1,
+      "mechanisms": [
+        {
+          "type": "redirect",
+          "functional": true
+        },
+        {
+          "type": "swap",
+          "functional": true
+        }
+      ],
+      "attempts": 166
+    },
+    {
+      "level": 243,
+      "specialIndex": 49,
+      "patternKey": "anneGridChamber3",
+      "blockCount": 21,
+      "dependencyDepth": 9,
+      "decisionSteps": 18,
+      "initiallyClearRatio": 0.14285714285714285,
+      "trivialEscapeRatio": 0.047619047619047616,
+      "mechanisms": [
+        {
+          "type": "redirect",
+          "functional": true
+        },
+        {
+          "type": "swap",
+          "functional": true
+        }
+      ],
+      "attempts": 119
+    },
+    {
+      "level": 249,
+      "specialIndex": 50,
+      "patternKey": "anneGridChamber8",
+      "blockCount": 21,
+      "dependencyDepth": 7,
+      "decisionSteps": 21,
+      "initiallyClearRatio": 0.23809523809523808,
+      "trivialEscapeRatio": 0.09523809523809523,
+      "mechanisms": [
+        {
+          "type": "cycle",
+          "functional": true
+        },
+        {
+          "type": "obstacle",
+          "functional": true
+        }
+      ],
+      "attempts": 1487
+    },
+    {
+      "level": 252,
+      "specialIndex": 51,
+      "patternKey": "anneGridChamber3",
+      "blockCount": 20,
+      "dependencyDepth": 7,
+      "decisionSteps": 18,
+      "initiallyClearRatio": 0.1,
+      "trivialEscapeRatio": 0.05,
+      "mechanisms": [
+        {
+          "type": "swap",
+          "functional": true
+        },
+        {
+          "type": "obstacle",
+          "functional": true
+        }
+      ],
+      "attempts": 17
+    },
+    {
+      "level": 257,
+      "specialIndex": 52,
+      "patternKey": "anneGridChamber6",
+      "blockCount": 22,
+      "dependencyDepth": 5,
+      "decisionSteps": 20,
+      "initiallyClearRatio": 0.22727272727272727,
+      "trivialEscapeRatio": 0.09090909090909091,
+      "mechanisms": [
+        {
+          "type": "swap",
+          "functional": true
+        }
+      ],
+      "attempts": 124
+    },
+    {
+      "level": 263,
+      "specialIndex": 53,
+      "patternKey": "anneGridChamber1",
+      "blockCount": 22,
+      "dependencyDepth": 5,
+      "decisionSteps": 22,
+      "initiallyClearRatio": 0.18181818181818182,
+      "trivialEscapeRatio": 0.045454545454545456,
+      "mechanisms": [
+        {
+          "type": "cycle",
+          "functional": true
+        }
+      ],
+      "attempts": 319
+    },
+    {
+      "level": 268,
+      "specialIndex": 54,
+      "patternKey": "anneGridChamber3",
+      "blockCount": 20,
+      "dependencyDepth": 8,
+      "decisionSteps": 19,
+      "initiallyClearRatio": 0.15,
+      "trivialEscapeRatio": 0.1,
+      "mechanisms": [
+        {
+          "type": "redirect",
+          "functional": true
+        },
+        {
+          "type": "swap",
+          "functional": true
+        }
+      ],
+      "attempts": 279
+    },
+    {
+      "level": 274,
+      "specialIndex": 55,
+      "patternKey": "anneGridChamber1",
+      "blockCount": 21,
+      "dependencyDepth": 5,
+      "decisionSteps": 20,
+      "initiallyClearRatio": 0.19047619047619047,
+      "trivialEscapeRatio": 0.047619047619047616,
+      "mechanisms": [
+        {
+          "type": "redirect",
+          "functional": true
+        },
+        {
+          "type": "swap",
+          "functional": true
+        }
+      ],
+      "attempts": 325
+    },
+    {
+      "level": 279,
+      "specialIndex": 56,
+      "patternKey": "anneGridChamber3",
+      "blockCount": 21,
+      "dependencyDepth": 9,
+      "decisionSteps": 21,
+      "initiallyClearRatio": 0.19047619047619047,
+      "trivialEscapeRatio": 0.09523809523809523,
+      "mechanisms": [
+        {
+          "type": "cycle",
+          "functional": true
+        },
+        {
+          "type": "obstacle",
+          "functional": true
+        }
+      ],
+      "attempts": 576
+    },
+    {
+      "level": 282,
+      "specialIndex": 57,
+      "patternKey": "anneGridChamber2",
+      "blockCount": 21,
+      "dependencyDepth": 10,
+      "decisionSteps": 21,
+      "initiallyClearRatio": 0.19047619047619047,
+      "trivialEscapeRatio": 0.09523809523809523,
+      "mechanisms": [
+        {
+          "type": "swap",
+          "functional": true
+        },
+        {
+          "type": "obstacle",
+          "functional": true
+        }
+      ],
+      "attempts": 62
+    },
+    {
+      "level": 288,
+      "specialIndex": 58,
+      "patternKey": "anneGridChamber3",
+      "blockCount": 22,
+      "dependencyDepth": 6,
+      "decisionSteps": 22,
+      "initiallyClearRatio": 0.13636363636363635,
+      "trivialEscapeRatio": 0.045454545454545456,
+      "mechanisms": [
+        {
+          "type": "swap",
+          "functional": true
+        }
+      ],
+      "attempts": 52
+    },
+    {
+      "level": 293,
+      "specialIndex": 59,
+      "patternKey": "anneGridChamber1",
+      "blockCount": 22,
+      "dependencyDepth": 8,
+      "decisionSteps": 21,
+      "initiallyClearRatio": 0.13636363636363635,
+      "trivialEscapeRatio": 0.045454545454545456,
+      "mechanisms": [
+        {
+          "type": "cycle",
+          "functional": true
+        }
+      ],
+      "attempts": 1073
+    },
+    {
+      "level": 299,
+      "specialIndex": 60,
+      "patternKey": "anneGridChamber4",
+      "blockCount": 20,
+      "dependencyDepth": 5,
+      "decisionSteps": 20,
+      "initiallyClearRatio": 0.25,
+      "trivialEscapeRatio": 0.15,
+      "mechanisms": [
+        {
+          "type": "redirect",
+          "functional": true
+        },
+        {
+          "type": "swap",
+          "functional": true
+        }
+      ],
+      "attempts": 205
+    },
+    {
+      "level": 302,
+      "specialIndex": 61,
+      "patternKey": "anneGridChamber1",
+      "blockCount": 21,
+      "dependencyDepth": 5,
+      "decisionSteps": 19,
+      "initiallyClearRatio": 0.19047619047619047,
+      "trivialEscapeRatio": 0.14285714285714285,
+      "mechanisms": [
+        {
+          "type": "redirect",
+          "functional": true
+        },
+        {
+          "type": "swap",
+          "functional": true
+        }
+      ],
+      "attempts": 216
+    },
+    {
+      "level": 307,
+      "specialIndex": 62,
+      "patternKey": "anneGridChamber3",
+      "blockCount": 22,
+      "dependencyDepth": 9,
+      "decisionSteps": 22,
+      "initiallyClearRatio": 0.22727272727272727,
+      "trivialEscapeRatio": 0.09090909090909091,
+      "mechanisms": [
+        {
+          "type": "cycle",
+          "functional": true
+        },
+        {
+          "type": "obstacle",
+          "functional": true
+        }
+      ],
+      "attempts": 640
+    },
+    {
+      "level": 313,
+      "specialIndex": 63,
+      "patternKey": "anneGridChamber8",
+      "blockCount": 20,
+      "dependencyDepth": 7,
+      "decisionSteps": 20,
+      "initiallyClearRatio": 0.15,
+      "trivialEscapeRatio": 0.1,
+      "mechanisms": [
+        {
+          "type": "swap",
+          "functional": true
+        },
+        {
+          "type": "obstacle",
+          "functional": true
+        }
+      ],
+      "attempts": 116
+    },
+    {
+      "level": 318,
+      "specialIndex": 64,
+      "patternKey": "anneGridChamber1",
+      "blockCount": 22,
+      "dependencyDepth": 11,
+      "decisionSteps": 21,
+      "initiallyClearRatio": 0.22727272727272727,
+      "trivialEscapeRatio": 0.045454545454545456,
+      "mechanisms": [
+        {
+          "type": "swap",
+          "functional": true
+        }
+      ],
+      "attempts": 252
+    },
+    {
+      "level": 324,
+      "specialIndex": 65,
+      "patternKey": "anneGridChamber3",
+      "blockCount": 22,
+      "dependencyDepth": 8,
+      "decisionSteps": 22,
+      "initiallyClearRatio": 0.18181818181818182,
+      "trivialEscapeRatio": 0.09090909090909091,
+      "mechanisms": [
+        {
+          "type": "cycle",
+          "functional": true
+        }
+      ],
+      "attempts": 1030
+    },
+    {
+      "level": 329,
+      "specialIndex": 66,
+      "patternKey": "anneGridChamber2",
+      "blockCount": 21,
+      "dependencyDepth": 5,
+      "decisionSteps": 18,
+      "initiallyClearRatio": 0.19047619047619047,
+      "trivialEscapeRatio": 0.047619047619047616,
+      "mechanisms": [
+        {
+          "type": "redirect",
+          "functional": true
+        },
+        {
+          "type": "swap",
+          "functional": true
+        }
+      ],
+      "attempts": 29
+    },
+    {
+      "level": 332,
+      "specialIndex": 67,
+      "patternKey": "anneGridChamber5",
+      "blockCount": 21,
+      "dependencyDepth": 8,
+      "decisionSteps": 20,
+      "initiallyClearRatio": 0.14285714285714285,
+      "trivialEscapeRatio": 0.09523809523809523,
+      "mechanisms": [
+        {
+          "type": "redirect",
+          "functional": true
+        },
+        {
+          "type": "swap",
+          "functional": true
+        }
+      ],
+      "attempts": 172
+    },
+    {
+      "level": 338,
+      "specialIndex": 68,
+      "patternKey": "anneGridChamber3",
+      "blockCount": 21,
+      "dependencyDepth": 7,
+      "decisionSteps": 20,
+      "initiallyClearRatio": 0.09523809523809523,
+      "trivialEscapeRatio": 0.047619047619047616,
+      "mechanisms": [
+        {
+          "type": "cycle",
+          "functional": true
+        },
+        {
+          "type": "obstacle",
+          "functional": true
+        }
+      ],
+      "attempts": 355
+    },
+    {
+      "level": 343,
+      "specialIndex": 69,
+      "patternKey": "anneGridChamber5",
+      "blockCount": 20,
+      "dependencyDepth": 7,
+      "decisionSteps": 20,
+      "initiallyClearRatio": 0.25,
+      "trivialEscapeRatio": 0.15,
+      "mechanisms": [
+        {
+          "type": "swap",
+          "functional": true
+        },
+        {
+          "type": "obstacle",
+          "functional": true
+        }
+      ],
+      "attempts": 91
+    },
+    {
+      "level": 349,
+      "specialIndex": 70,
+      "patternKey": "anneGridChamber6",
+      "blockCount": 22,
+      "dependencyDepth": 9,
+      "decisionSteps": 19,
+      "initiallyClearRatio": 0.22727272727272727,
+      "trivialEscapeRatio": 0.09090909090909091,
+      "mechanisms": [
+        {
+          "type": "swap",
+          "functional": true
+        }
+      ],
+      "attempts": 102
+    },
+    {
+      "level": 352,
+      "specialIndex": 71,
+      "patternKey": "anneGridChamber5",
+      "blockCount": 22,
+      "dependencyDepth": 9,
+      "decisionSteps": 18,
+      "initiallyClearRatio": 0.13636363636363635,
+      "trivialEscapeRatio": 0.13636363636363635,
+      "mechanisms": [
+        {
+          "type": "cycle",
+          "functional": true
+        }
+      ],
+      "attempts": 1096
+    },
+    {
+      "level": 357,
+      "specialIndex": 72,
+      "patternKey": "anneGridChamber3",
+      "blockCount": 20,
+      "dependencyDepth": 5,
+      "decisionSteps": 20,
+      "initiallyClearRatio": 0.2,
+      "trivialEscapeRatio": 0.05,
+      "mechanisms": [
+        {
+          "type": "redirect",
+          "functional": true
+        },
+        {
+          "type": "swap",
+          "functional": true
+        }
+      ],
+      "attempts": 151
+    },
+    {
+      "level": 363,
+      "specialIndex": 73,
+      "patternKey": "anneGridChamber6",
+      "blockCount": 21,
+      "dependencyDepth": 6,
+      "decisionSteps": 20,
+      "initiallyClearRatio": 0.19047619047619047,
+      "trivialEscapeRatio": 0.09523809523809523,
+      "mechanisms": [
+        {
+          "type": "redirect",
+          "functional": true
+        },
+        {
+          "type": "swap",
+          "functional": true
+        }
+      ],
+      "attempts": 280
+    },
+    {
+      "level": 368,
+      "specialIndex": 74,
+      "patternKey": "anneGridChamber3",
+      "blockCount": 21,
+      "dependencyDepth": 8,
+      "decisionSteps": 21,
+      "initiallyClearRatio": 0.23809523809523808,
+      "trivialEscapeRatio": 0.047619047619047616,
+      "mechanisms": [
+        {
+          "type": "cycle",
+          "functional": true
+        },
+        {
+          "type": "obstacle",
+          "functional": true
+        }
+      ],
+      "attempts": 126
+    },
+    {
+      "level": 374,
+      "specialIndex": 75,
+      "patternKey": "anneGridChamber1",
+      "blockCount": 20,
+      "dependencyDepth": 11,
+      "decisionSteps": 19,
+      "initiallyClearRatio": 0.1,
+      "trivialEscapeRatio": 0,
+      "mechanisms": [
+        {
+          "type": "swap",
+          "functional": true
+        },
+        {
+          "type": "obstacle",
+          "functional": true
+        }
+      ],
+      "attempts": 398
+    },
+    {
+      "level": 379,
+      "specialIndex": 76,
+      "patternKey": "anneGridChamber5",
+      "blockCount": 22,
+      "dependencyDepth": 8,
+      "decisionSteps": 22,
+      "initiallyClearRatio": 0.18181818181818182,
+      "trivialEscapeRatio": 0.09090909090909091,
+      "mechanisms": [
+        {
+          "type": "swap",
+          "functional": true
+        }
+      ],
+      "attempts": 90
+    },
+    {
+      "level": 382,
+      "specialIndex": 77,
+      "patternKey": "anneGridChamber6",
+      "blockCount": 22,
+      "dependencyDepth": 7,
+      "decisionSteps": 22,
+      "initiallyClearRatio": 0.22727272727272727,
+      "trivialEscapeRatio": 0.13636363636363635,
+      "mechanisms": [
+        {
+          "type": "cycle",
+          "functional": true
+        }
+      ],
+      "attempts": 95
+    },
+    {
+      "level": 388,
+      "specialIndex": 78,
+      "patternKey": "anneGridChamber1",
+      "blockCount": 20,
+      "dependencyDepth": 8,
+      "decisionSteps": 20,
+      "initiallyClearRatio": 0.2,
+      "trivialEscapeRatio": 0.1,
+      "mechanisms": [
+        {
+          "type": "redirect",
+          "functional": true
+        },
+        {
+          "type": "swap",
+          "functional": true
+        }
+      ],
+      "attempts": 188
+    },
+    {
+      "level": 393,
+      "specialIndex": 79,
+      "patternKey": "anneGridChamber4",
+      "blockCount": 21,
+      "dependencyDepth": 8,
+      "decisionSteps": 20,
+      "initiallyClearRatio": 0.23809523809523808,
+      "trivialEscapeRatio": 0.09523809523809523,
+      "mechanisms": [
+        {
+          "type": "redirect",
+          "functional": true
+        },
+        {
+          "type": "swap",
+          "functional": true
+        }
+      ],
+      "attempts": 288
+    },
+    {
+      "level": 399,
+      "specialIndex": 80,
+      "patternKey": "anneGridChamber3",
+      "blockCount": 21,
+      "dependencyDepth": 8,
+      "decisionSteps": 20,
+      "initiallyClearRatio": 0.14285714285714285,
+      "trivialEscapeRatio": 0,
+      "mechanisms": [
+        {
+          "type": "cycle",
+          "functional": true
+        },
+        {
+          "type": "obstacle",
+          "functional": true
+        }
+      ],
+      "attempts": 493
+    },
+    {
+      "level": 402,
+      "specialIndex": 81,
+      "patternKey": "anneGridChamber4",
+      "blockCount": 20,
+      "dependencyDepth": 6,
+      "decisionSteps": 20,
+      "initiallyClearRatio": 0.15,
+      "trivialEscapeRatio": 0.1,
+      "mechanisms": [
+        {
+          "type": "swap",
+          "functional": true
+        },
+        {
+          "type": "obstacle",
+          "functional": true
+        }
+      ],
+      "attempts": 119
+    },
+    {
+      "level": 407,
+      "specialIndex": 82,
+      "patternKey": "anneGridChamber5",
+      "blockCount": 22,
+      "dependencyDepth": 13,
+      "decisionSteps": 21,
+      "initiallyClearRatio": 0.18181818181818182,
+      "trivialEscapeRatio": 0.09090909090909091,
+      "mechanisms": [
+        {
+          "type": "swap",
+          "functional": true
+        }
+      ],
+      "attempts": 220
+    },
+    {
+      "level": 413,
+      "specialIndex": 83,
+      "patternKey": "anneGridChamber1",
+      "blockCount": 22,
+      "dependencyDepth": 12,
+      "decisionSteps": 22,
+      "initiallyClearRatio": 0.13636363636363635,
+      "trivialEscapeRatio": 0.09090909090909091,
+      "mechanisms": [
+        {
+          "type": "cycle",
+          "functional": true
+        }
+      ],
+      "attempts": 303
+    },
+    {
+      "level": 418,
+      "specialIndex": 84,
+      "patternKey": "anneGridChamber5",
+      "blockCount": 20,
+      "dependencyDepth": 5,
+      "decisionSteps": 20,
+      "initiallyClearRatio": 0.15,
+      "trivialEscapeRatio": 0.05,
+      "mechanisms": [
+        {
+          "type": "redirect",
+          "functional": true
+        },
+        {
+          "type": "swap",
+          "functional": true
+        }
+      ],
+      "attempts": 462
+    },
+    {
+      "level": 424,
+      "specialIndex": 85,
+      "patternKey": "anneGridChamber1",
+      "blockCount": 21,
+      "dependencyDepth": 5,
+      "decisionSteps": 19,
+      "initiallyClearRatio": 0.19047619047619047,
+      "trivialEscapeRatio": 0.047619047619047616,
+      "mechanisms": [
+        {
+          "type": "redirect",
+          "functional": true
+        },
+        {
+          "type": "swap",
+          "functional": true
+        }
+      ],
+      "attempts": 194
+    },
+    {
+      "level": 429,
+      "specialIndex": 86,
+      "patternKey": "anneGridChamber3",
+      "blockCount": 22,
+      "dependencyDepth": 8,
+      "decisionSteps": 22,
+      "initiallyClearRatio": 0.18181818181818182,
+      "trivialEscapeRatio": 0.13636363636363635,
+      "mechanisms": [
+        {
+          "type": "cycle",
+          "functional": true
+        },
+        {
+          "type": "obstacle",
+          "functional": true
+        }
+      ],
+      "attempts": 251
+    },
+    {
+      "level": 432,
+      "specialIndex": 87,
+      "patternKey": "anneGridChamber2",
+      "blockCount": 21,
+      "dependencyDepth": 9,
+      "decisionSteps": 20,
+      "initiallyClearRatio": 0.19047619047619047,
+      "trivialEscapeRatio": 0.09523809523809523,
+      "mechanisms": [
+        {
+          "type": "swap",
+          "functional": true
+        },
+        {
+          "type": "obstacle",
+          "functional": true
+        }
+      ],
+      "attempts": 226
+    },
+    {
+      "level": 438,
+      "specialIndex": 88,
+      "patternKey": "anneGridChamber1",
+      "blockCount": 22,
+      "dependencyDepth": 5,
+      "decisionSteps": 22,
+      "initiallyClearRatio": 0.18181818181818182,
+      "trivialEscapeRatio": 0.13636363636363635,
+      "mechanisms": [
+        {
+          "type": "swap",
+          "functional": true
+        }
+      ],
+      "attempts": 90
+    },
+    {
+      "level": 443,
+      "specialIndex": 89,
+      "patternKey": "anneGridChamber3",
+      "blockCount": 22,
+      "dependencyDepth": 11,
+      "decisionSteps": 22,
+      "initiallyClearRatio": 0.13636363636363635,
+      "trivialEscapeRatio": 0.09090909090909091,
+      "mechanisms": [
+        {
+          "type": "cycle",
+          "functional": true
+        }
+      ],
+      "attempts": 486
+    },
+    {
+      "level": 449,
+      "specialIndex": 90,
+      "patternKey": "anneGridChamber2",
+      "blockCount": 21,
+      "dependencyDepth": 8,
+      "decisionSteps": 21,
+      "initiallyClearRatio": 0.23809523809523808,
+      "trivialEscapeRatio": 0.09523809523809523,
+      "mechanisms": [
+        {
+          "type": "redirect",
+          "functional": true
+        },
+        {
+          "type": "swap",
+          "functional": true
+        }
+      ],
+      "attempts": 190
+    },
+    {
+      "level": 452,
+      "specialIndex": 91,
+      "patternKey": "anneGridChamber3",
+      "blockCount": 21,
+      "dependencyDepth": 6,
+      "decisionSteps": 20,
+      "initiallyClearRatio": 0.23809523809523808,
+      "trivialEscapeRatio": 0.047619047619047616,
+      "mechanisms": [
+        {
+          "type": "redirect",
+          "functional": true
+        },
+        {
+          "type": "swap",
+          "functional": true
+        }
+      ],
+      "attempts": 302
+    },
+    {
+      "level": 457,
+      "specialIndex": 92,
+      "patternKey": "anneGridChamber6",
+      "blockCount": 21,
+      "dependencyDepth": 5,
+      "decisionSteps": 18,
+      "initiallyClearRatio": 0.09523809523809523,
+      "trivialEscapeRatio": 0.047619047619047616,
+      "mechanisms": [
+        {
+          "type": "cycle",
+          "functional": true
+        },
+        {
+          "type": "obstacle",
+          "functional": true
+        }
+      ],
+      "attempts": 377
+    },
+    {
+      "level": 463,
+      "specialIndex": 93,
+      "patternKey": "anneGridChamber7",
+      "blockCount": 20,
+      "dependencyDepth": 8,
+      "decisionSteps": 19,
+      "initiallyClearRatio": 0.2,
+      "trivialEscapeRatio": 0.15,
+      "mechanisms": [
+        {
+          "type": "swap",
+          "functional": true
+        },
+        {
+          "type": "obstacle",
+          "functional": true
+        }
+      ],
+      "attempts": 100
+    },
+    {
+      "level": 468,
+      "specialIndex": 94,
+      "patternKey": "anneGridChamber1",
+      "blockCount": 22,
+      "dependencyDepth": 6,
+      "decisionSteps": 21,
+      "initiallyClearRatio": 0.22727272727272727,
+      "trivialEscapeRatio": 0.09090909090909091,
+      "mechanisms": [
+        {
+          "type": "swap",
+          "functional": true
+        }
+      ],
+      "attempts": 178
+    },
+    {
+      "level": 474,
+      "specialIndex": 95,
+      "patternKey": "anneGridChamber2",
+      "blockCount": 23,
+      "dependencyDepth": 9,
+      "decisionSteps": 23,
+      "initiallyClearRatio": 0.21739130434782608,
+      "trivialEscapeRatio": 0.13043478260869565,
+      "mechanisms": [
+        {
+          "type": "cycle",
+          "functional": true
+        }
+      ],
+      "attempts": 548
+    },
+    {
+      "level": 479,
+      "specialIndex": 96,
+      "patternKey": "anneGridChamber3",
+      "blockCount": 20,
+      "dependencyDepth": 5,
+      "decisionSteps": 18,
+      "initiallyClearRatio": 0.15,
+      "trivialEscapeRatio": 0.05,
+      "mechanisms": [
+        {
+          "type": "redirect",
+          "functional": true
+        },
+        {
+          "type": "swap",
+          "functional": true
+        }
+      ],
+      "attempts": 117
+    },
+    {
+      "level": 482,
+      "specialIndex": 97,
+      "patternKey": "anneGridChamber1",
+      "blockCount": 21,
+      "dependencyDepth": 10,
+      "decisionSteps": 20,
+      "initiallyClearRatio": 0.09523809523809523,
+      "trivialEscapeRatio": 0,
+      "mechanisms": [
+        {
+          "type": "redirect",
+          "functional": true
+        },
+        {
+          "type": "swap",
+          "functional": true
+        }
+      ],
+      "attempts": 137
+    },
+    {
+      "level": 488,
+      "specialIndex": 98,
+      "patternKey": "anneGridChamber3",
+      "blockCount": 21,
+      "dependencyDepth": 6,
+      "decisionSteps": 20,
+      "initiallyClearRatio": 0.23809523809523808,
+      "trivialEscapeRatio": 0.09523809523809523,
+      "mechanisms": [
+        {
+          "type": "cycle",
+          "functional": true
+        },
+        {
+          "type": "obstacle",
+          "functional": true
+        }
+      ],
+      "attempts": 88
+    },
+    {
+      "level": 493,
+      "specialIndex": 99,
+      "patternKey": "anneGridChamber6",
+      "blockCount": 20,
+      "dependencyDepth": 5,
+      "decisionSteps": 19,
+      "initiallyClearRatio": 0.25,
+      "trivialEscapeRatio": 0.1,
+      "mechanisms": [
+        {
+          "type": "swap",
+          "functional": true
+        },
+        {
+          "type": "obstacle",
+          "functional": true
+        }
+      ],
+      "attempts": 301
+    },
+    {
+      "level": 499,
+      "specialIndex": 100,
+      "patternKey": "anneGridChamber4",
+      "blockCount": 22,
+      "dependencyDepth": 10,
+      "decisionSteps": 18,
+      "initiallyClearRatio": 0.13636363636363635,
+      "trivialEscapeRatio": 0,
+      "mechanisms": [
+        {
+          "type": "swap",
+          "functional": true
+        }
+      ],
+      "attempts": 242
+    },
+    {
+      "level": 502,
+      "specialIndex": 101,
+      "patternKey": "anneGridChamber1",
+      "blockCount": 22,
+      "dependencyDepth": 5,
+      "decisionSteps": 21,
+      "initiallyClearRatio": 0.22727272727272727,
+      "trivialEscapeRatio": 0.09090909090909091,
+      "mechanisms": [
+        {
+          "type": "cycle",
+          "functional": true
+        }
+      ],
+      "attempts": 607
+    },
+    {
+      "level": 507,
+      "specialIndex": 102,
+      "patternKey": "anneGridChamber6",
+      "blockCount": 20,
+      "dependencyDepth": 5,
+      "decisionSteps": 20,
+      "initiallyClearRatio": 0.2,
+      "trivialEscapeRatio": 0.1,
+      "mechanisms": [
+        {
+          "type": "redirect",
+          "functional": true
+        },
+        {
+          "type": "swap",
+          "functional": true
+        }
+      ],
+      "attempts": 249
+    },
+    {
+      "level": 513,
+      "specialIndex": 103,
+      "patternKey": "anneGridChamber1",
+      "blockCount": 21,
+      "dependencyDepth": 5,
+      "decisionSteps": 20,
+      "initiallyClearRatio": 0.23809523809523808,
+      "trivialEscapeRatio": 0.09523809523809523,
+      "mechanisms": [
+        {
+          "type": "redirect",
+          "functional": true
+        },
+        {
+          "type": "swap",
+          "functional": true
+        }
+      ],
+      "attempts": 199
+    },
+    {
+      "level": 518,
+      "specialIndex": 104,
+      "patternKey": "anneGridChamber3",
+      "blockCount": 21,
+      "dependencyDepth": 6,
+      "decisionSteps": 21,
+      "initiallyClearRatio": 0.23809523809523808,
+      "trivialEscapeRatio": 0.09523809523809523,
+      "mechanisms": [
+        {
+          "type": "cycle",
+          "functional": true
+        },
+        {
+          "type": "obstacle",
+          "functional": true
+        }
+      ],
+      "attempts": 422
+    },
+    {
+      "level": 524,
+      "specialIndex": 105,
+      "patternKey": "anneGridChamber1",
+      "blockCount": 20,
+      "dependencyDepth": 7,
+      "decisionSteps": 20,
+      "initiallyClearRatio": 0.2,
+      "trivialEscapeRatio": 0.1,
+      "mechanisms": [
+        {
+          "type": "swap",
+          "functional": true
+        },
+        {
+          "type": "obstacle",
+          "functional": true
+        }
+      ],
+      "attempts": 38
+    },
+    {
+      "level": 529,
+      "specialIndex": 106,
+      "patternKey": "anneGridChamber3",
+      "blockCount": 22,
+      "dependencyDepth": 9,
+      "decisionSteps": 21,
+      "initiallyClearRatio": 0.18181818181818182,
+      "trivialEscapeRatio": 0.13636363636363635,
+      "mechanisms": [
+        {
+          "type": "swap",
+          "functional": true
+        }
+      ],
+      "attempts": 318
+    },
+    {
+      "level": 532,
+      "specialIndex": 107,
+      "patternKey": "anneGridChamber7",
+      "blockCount": 22,
+      "dependencyDepth": 7,
+      "decisionSteps": 22,
+      "initiallyClearRatio": 0.18181818181818182,
+      "trivialEscapeRatio": 0.13636363636363635,
+      "mechanisms": [
+        {
+          "type": "cycle",
+          "functional": true
+        }
+      ],
+      "attempts": 704
+    },
+    {
+      "level": 538,
+      "specialIndex": 108,
+      "patternKey": "anneGridChamber5",
+      "blockCount": 20,
+      "dependencyDepth": 8,
+      "decisionSteps": 19,
+      "initiallyClearRatio": 0.25,
+      "trivialEscapeRatio": 0.1,
+      "mechanisms": [
+        {
+          "type": "redirect",
+          "functional": true
+        },
+        {
+          "type": "swap",
+          "functional": true
+        }
+      ],
+      "attempts": 182
+    },
+    {
+      "level": 543,
+      "specialIndex": 109,
+      "patternKey": "anneGridChamber7",
+      "blockCount": 21,
+      "dependencyDepth": 6,
+      "decisionSteps": 20,
+      "initiallyClearRatio": 0.19047619047619047,
+      "trivialEscapeRatio": 0,
+      "mechanisms": [
+        {
+          "type": "redirect",
+          "functional": true
+        },
+        {
+          "type": "swap",
+          "functional": true
+        }
+      ],
+      "attempts": 143
+    },
+    {
+      "level": 549,
+      "specialIndex": 110,
+      "patternKey": "anneGridChamber3",
+      "blockCount": 21,
+      "dependencyDepth": 5,
+      "decisionSteps": 21,
+      "initiallyClearRatio": 0.23809523809523808,
+      "trivialEscapeRatio": 0.047619047619047616,
+      "mechanisms": [
+        {
+          "type": "cycle",
+          "functional": true
+        },
+        {
+          "type": "obstacle",
+          "functional": true
+        }
+      ],
+      "attempts": 281
+    },
+    {
+      "level": 552,
+      "specialIndex": 111,
+      "patternKey": "anneGridChamber7",
+      "blockCount": 20,
+      "dependencyDepth": 9,
+      "decisionSteps": 20,
+      "initiallyClearRatio": 0.2,
+      "trivialEscapeRatio": 0.1,
+      "mechanisms": [
+        {
+          "type": "swap",
+          "functional": true
+        },
+        {
+          "type": "obstacle",
+          "functional": true
+        }
+      ],
+      "attempts": 115
+    },
+    {
+      "level": 557,
+      "specialIndex": 112,
+      "patternKey": "anneGridChamber1",
+      "blockCount": 22,
+      "dependencyDepth": 9,
+      "decisionSteps": 18,
+      "initiallyClearRatio": 0.13636363636363635,
+      "trivialEscapeRatio": 0.09090909090909091,
+      "mechanisms": [
+        {
+          "type": "swap",
+          "functional": true
+        }
+      ],
+      "attempts": 235
+    },
+    {
+      "level": 563,
+      "specialIndex": 113,
+      "patternKey": "anneGridChamber2",
+      "blockCount": 23,
+      "dependencyDepth": 6,
+      "decisionSteps": 22,
+      "initiallyClearRatio": 0.21739130434782608,
+      "trivialEscapeRatio": 0.08695652173913043,
+      "mechanisms": [
+        {
+          "type": "cycle",
+          "functional": true
+        }
+      ],
+      "attempts": 489
+    },
+    {
+      "level": 568,
+      "specialIndex": 114,
+      "patternKey": "anneGridChamber3",
+      "blockCount": 20,
+      "dependencyDepth": 5,
+      "decisionSteps": 19,
+      "initiallyClearRatio": 0.15,
+      "trivialEscapeRatio": 0.05,
+      "mechanisms": [
+        {
+          "type": "redirect",
+          "functional": true
+        },
+        {
+          "type": "swap",
+          "functional": true
+        }
+      ],
+      "attempts": 85
+    },
+    {
+      "level": 574,
+      "specialIndex": 115,
+      "patternKey": "anneGridChamber1",
+      "blockCount": 21,
+      "dependencyDepth": 7,
+      "decisionSteps": 21,
+      "initiallyClearRatio": 0.19047619047619047,
+      "trivialEscapeRatio": 0.09523809523809523,
+      "mechanisms": [
+        {
+          "type": "redirect",
+          "functional": true
+        },
+        {
+          "type": "swap",
+          "functional": true
+        }
+      ],
+      "attempts": 327
+    },
+    {
+      "level": 579,
+      "specialIndex": 116,
+      "patternKey": "anneGridChamber2",
+      "blockCount": 22,
+      "dependencyDepth": 10,
+      "decisionSteps": 22,
+      "initiallyClearRatio": 0.22727272727272727,
+      "trivialEscapeRatio": 0.045454545454545456,
+      "mechanisms": [
+        {
+          "type": "cycle",
+          "functional": true
+        },
+        {
+          "type": "obstacle",
+          "functional": true
+        }
+      ],
+      "attempts": 328
+    },
+    {
+      "level": 582,
+      "specialIndex": 117,
+      "patternKey": "anneGridChamber5",
+      "blockCount": 20,
+      "dependencyDepth": 7,
+      "decisionSteps": 20,
+      "initiallyClearRatio": 0.25,
+      "trivialEscapeRatio": 0.1,
+      "mechanisms": [
+        {
+          "type": "swap",
+          "functional": true
+        },
+        {
+          "type": "obstacle",
+          "functional": true
+        }
+      ],
+      "attempts": 39
+    },
+    {
+      "level": 588,
+      "specialIndex": 118,
+      "patternKey": "anneGridChamber3",
+      "blockCount": 22,
+      "dependencyDepth": 7,
+      "decisionSteps": 21,
+      "initiallyClearRatio": 0.13636363636363635,
+      "trivialEscapeRatio": 0.09090909090909091,
+      "mechanisms": [
+        {
+          "type": "swap",
+          "functional": true
+        }
+      ],
+      "attempts": 256
+    },
+    {
+      "level": 593,
+      "specialIndex": 119,
+      "patternKey": "anneGridChamber8",
+      "blockCount": 22,
+      "dependencyDepth": 5,
+      "decisionSteps": 22,
+      "initiallyClearRatio": 0.22727272727272727,
+      "trivialEscapeRatio": 0.13636363636363635,
+      "mechanisms": [
+        {
+          "type": "cycle",
+          "functional": true
+        }
+      ],
+      "attempts": 232
+    },
+    {
+      "level": 599,
+      "specialIndex": 120,
+      "patternKey": "anneGridChamber1",
+      "blockCount": 20,
+      "dependencyDepth": 8,
+      "decisionSteps": 18,
+      "initiallyClearRatio": 0.1,
+      "trivialEscapeRatio": 0,
+      "mechanisms": [
+        {
+          "type": "redirect",
+          "functional": true
+        },
+        {
+          "type": "swap",
+          "functional": true
+        }
+      ],
+      "attempts": 76
+    },
+    {
+      "level": 602,
+      "specialIndex": 121,
+      "patternKey": "anneGridChamber3",
+      "blockCount": 21,
+      "dependencyDepth": 8,
+      "decisionSteps": 20,
+      "initiallyClearRatio": 0.19047619047619047,
+      "trivialEscapeRatio": 0.09523809523809523,
+      "mechanisms": [
+        {
+          "type": "redirect",
+          "functional": true
+        },
+        {
+          "type": "swap",
+          "functional": true
+        }
+      ],
+      "attempts": 143
+    },
+    {
+      "level": 607,
+      "specialIndex": 122,
+      "patternKey": "anneGridChamber4",
+      "blockCount": 21,
+      "dependencyDepth": 6,
+      "decisionSteps": 21,
+      "initiallyClearRatio": 0.23809523809523808,
+      "trivialEscapeRatio": 0.09523809523809523,
+      "mechanisms": [
+        {
+          "type": "cycle",
+          "functional": true
+        },
+        {
+          "type": "obstacle",
+          "functional": true
+        }
+      ],
+      "attempts": 1340
+    },
+    {
+      "level": 613,
+      "specialIndex": 123,
+      "patternKey": "anneGridChamber3",
+      "blockCount": 21,
+      "dependencyDepth": 7,
+      "decisionSteps": 19,
+      "initiallyClearRatio": 0.19047619047619047,
+      "trivialEscapeRatio": 0.14285714285714285,
+      "mechanisms": [
+        {
+          "type": "swap",
+          "functional": true
+        },
+        {
+          "type": "obstacle",
+          "functional": true
+        }
+      ],
+      "attempts": 42
+    },
+    {
+      "level": 618,
+      "specialIndex": 124,
+      "patternKey": "anneGridChamber6",
+      "blockCount": 22,
+      "dependencyDepth": 6,
+      "decisionSteps": 21,
+      "initiallyClearRatio": 0.22727272727272727,
+      "trivialEscapeRatio": 0.09090909090909091,
+      "mechanisms": [
+        {
+          "type": "swap",
+          "functional": true
+        }
+      ],
+      "attempts": 111
+    },
+    {
+      "level": 624,
+      "specialIndex": 125,
+      "patternKey": "anneGridChamber2",
+      "blockCount": 23,
+      "dependencyDepth": 7,
+      "decisionSteps": 23,
+      "initiallyClearRatio": 0.17391304347826086,
+      "trivialEscapeRatio": 0.13043478260869565,
+      "mechanisms": [
+        {
+          "type": "cycle",
+          "functional": true
+        }
+      ],
+      "attempts": 290
+    },
+    {
+      "level": 629,
+      "specialIndex": 126,
+      "patternKey": "anneGridChamber6",
+      "blockCount": 20,
+      "dependencyDepth": 6,
+      "decisionSteps": 17,
+      "initiallyClearRatio": 0.25,
+      "trivialEscapeRatio": 0.15,
+      "mechanisms": [
+        {
+          "type": "redirect",
+          "functional": true
+        },
+        {
+          "type": "swap",
+          "functional": true
+        }
+      ],
+      "attempts": 120
+    },
+    {
+      "level": 632,
+      "specialIndex": 127,
+      "patternKey": "anneGridChamber7",
+      "blockCount": 21,
+      "dependencyDepth": 5,
+      "decisionSteps": 20,
+      "initiallyClearRatio": 0.23809523809523808,
+      "trivialEscapeRatio": 0.09523809523809523,
+      "mechanisms": [
+        {
+          "type": "redirect",
+          "functional": true
+        },
+        {
+          "type": "swap",
+          "functional": true
+        }
+      ],
+      "attempts": 185
+    },
+    {
+      "level": 638,
+      "specialIndex": 128,
+      "patternKey": "anneGridChamber4",
+      "blockCount": 21,
+      "dependencyDepth": 9,
+      "decisionSteps": 21,
+      "initiallyClearRatio": 0.19047619047619047,
+      "trivialEscapeRatio": 0.09523809523809523,
+      "mechanisms": [
+        {
+          "type": "cycle",
+          "functional": true
+        },
+        {
+          "type": "obstacle",
+          "functional": true
+        }
+      ],
+      "attempts": 563
+    },
+    {
+      "level": 643,
+      "specialIndex": 129,
+      "patternKey": "anneGridChamber1",
+      "blockCount": 20,
+      "dependencyDepth": 8,
+      "decisionSteps": 16,
+      "initiallyClearRatio": 0.15,
+      "trivialEscapeRatio": 0,
+      "mechanisms": [
+        {
+          "type": "swap",
+          "functional": true
+        },
+        {
+          "type": "obstacle",
+          "functional": true
+        }
+      ],
+      "attempts": 29
+    },
+    {
+      "level": 649,
+      "specialIndex": 130,
+      "patternKey": "anneGridChamber3",
+      "blockCount": 22,
+      "dependencyDepth": 9,
+      "decisionSteps": 19,
+      "initiallyClearRatio": 0.13636363636363635,
+      "trivialEscapeRatio": 0.09090909090909091,
+      "mechanisms": [
+        {
+          "type": "swap",
+          "functional": true
+        }
+      ],
+      "attempts": 102
+    },
+    {
+      "level": 652,
+      "specialIndex": 131,
+      "patternKey": "anneGridChamber4",
+      "blockCount": 22,
+      "dependencyDepth": 9,
+      "decisionSteps": 19,
+      "initiallyClearRatio": 0.13636363636363635,
+      "trivialEscapeRatio": 0.045454545454545456,
+      "mechanisms": [
+        {
+          "type": "cycle",
+          "functional": true
+        }
+      ],
+      "attempts": 534
+    },
+    {
+      "level": 657,
+      "specialIndex": 132,
+      "patternKey": "anneGridChamber5",
+      "blockCount": 20,
+      "dependencyDepth": 6,
+      "decisionSteps": 20,
+      "initiallyClearRatio": 0.2,
+      "trivialEscapeRatio": 0.1,
+      "mechanisms": [
+        {
+          "type": "redirect",
+          "functional": true
+        },
+        {
+          "type": "swap",
+          "functional": true
+        }
+      ],
+      "attempts": 374
+    },
+    {
+      "level": 663,
+      "specialIndex": 133,
+      "patternKey": "anneGridChamber6",
+      "blockCount": 21,
+      "dependencyDepth": 10,
+      "decisionSteps": 18,
+      "initiallyClearRatio": 0.14285714285714285,
+      "trivialEscapeRatio": 0.14285714285714285,
+      "mechanisms": [
+        {
+          "type": "redirect",
+          "functional": true
+        },
+        {
+          "type": "swap",
+          "functional": true
+        }
+      ],
+      "attempts": 48
+    },
+    {
+      "level": 668,
+      "specialIndex": 134,
+      "patternKey": "anneGridChamber1",
+      "blockCount": 21,
+      "dependencyDepth": 10,
+      "decisionSteps": 21,
+      "initiallyClearRatio": 0.23809523809523808,
+      "trivialEscapeRatio": 0.09523809523809523,
+      "mechanisms": [
+        {
+          "type": "cycle",
+          "functional": true
+        },
+        {
+          "type": "obstacle",
+          "functional": true
+        }
+      ],
+      "attempts": 541
+    },
+    {
+      "level": 674,
+      "specialIndex": 135,
+      "patternKey": "anneGridChamber2",
+      "blockCount": 21,
+      "dependencyDepth": 8,
+      "decisionSteps": 21,
+      "initiallyClearRatio": 0.19047619047619047,
+      "trivialEscapeRatio": 0.09523809523809523,
+      "mechanisms": [
+        {
+          "type": "swap",
+          "functional": true
+        },
+        {
+          "type": "obstacle",
+          "functional": true
+        }
+      ],
+      "attempts": 195
+    },
+    {
+      "level": 679,
+      "specialIndex": 136,
+      "patternKey": "anneGridChamber3",
+      "blockCount": 22,
+      "dependencyDepth": 6,
+      "decisionSteps": 18,
+      "initiallyClearRatio": 0.09090909090909091,
+      "trivialEscapeRatio": 0.09090909090909091,
+      "mechanisms": [
+        {
+          "type": "swap",
+          "functional": true
+        }
+      ],
+      "attempts": 114
+    },
+    {
+      "level": 682,
+      "specialIndex": 137,
+      "patternKey": "anneGridChamber5",
+      "blockCount": 22,
+      "dependencyDepth": 9,
+      "decisionSteps": 22,
+      "initiallyClearRatio": 0.18181818181818182,
+      "trivialEscapeRatio": 0.13636363636363635,
+      "mechanisms": [
+        {
+          "type": "cycle",
+          "functional": true
+        }
+      ],
+      "attempts": 622
+    },
+    {
+      "level": 688,
+      "specialIndex": 138,
+      "patternKey": "anneGridChamber3",
+      "blockCount": 20,
+      "dependencyDepth": 7,
+      "decisionSteps": 15,
+      "initiallyClearRatio": 0.2,
+      "trivialEscapeRatio": 0.05,
+      "mechanisms": [
+        {
+          "type": "redirect",
+          "functional": true
+        },
+        {
+          "type": "swap",
+          "functional": true
+        }
+      ],
+      "attempts": 141
+    },
+    {
+      "level": 693,
+      "specialIndex": 139,
+      "patternKey": "anneGridChamber5",
+      "blockCount": 21,
+      "dependencyDepth": 5,
+      "decisionSteps": 18,
+      "initiallyClearRatio": 0.14285714285714285,
+      "trivialEscapeRatio": 0.09523809523809523,
+      "mechanisms": [
+        {
+          "type": "redirect",
+          "functional": true
+        },
+        {
+          "type": "swap",
+          "functional": true
+        }
+      ],
+      "attempts": 124
+    },
+    {
+      "level": 699,
+      "specialIndex": 140,
+      "patternKey": "anneGridChamber1",
+      "blockCount": 22,
+      "dependencyDepth": 8,
+      "decisionSteps": 23,
+      "initiallyClearRatio": 0.22727272727272727,
+      "trivialEscapeRatio": 0.045454545454545456,
+      "mechanisms": [
+        {
+          "type": "cycle",
+          "functional": true
+        },
+        {
+          "type": "obstacle",
+          "functional": true
+        }
+      ],
+      "attempts": 350
+    },
+    {
+      "level": 702,
+      "specialIndex": 141,
+      "patternKey": "anneGridChamber6",
+      "blockCount": 20,
+      "dependencyDepth": 10,
+      "decisionSteps": 20,
+      "initiallyClearRatio": 0.15,
+      "trivialEscapeRatio": 0.1,
+      "mechanisms": [
+        {
+          "type": "swap",
+          "functional": true
+        },
+        {
+          "type": "obstacle",
+          "functional": true
+        }
+      ],
+      "attempts": 86
+    },
+    {
+      "level": 707,
+      "specialIndex": 142,
+      "patternKey": "anneGridChamber3",
+      "blockCount": 22,
+      "dependencyDepth": 7,
+      "decisionSteps": 20,
+      "initiallyClearRatio": 0.13636363636363635,
+      "trivialEscapeRatio": 0.045454545454545456,
+      "mechanisms": [
+        {
+          "type": "swap",
+          "functional": true
+        }
+      ],
+      "attempts": 261
+    },
+    {
+      "level": 713,
+      "specialIndex": 143,
+      "patternKey": "anneGridChamber1",
+      "blockCount": 22,
+      "dependencyDepth": 6,
+      "decisionSteps": 21,
+      "initiallyClearRatio": 0.13636363636363635,
+      "trivialEscapeRatio": 0.09090909090909091,
+      "mechanisms": [
+        {
+          "type": "cycle",
+          "functional": true
+        }
+      ],
+      "attempts": 1301
+    },
+    {
+      "level": 718,
+      "specialIndex": 144,
+      "patternKey": "anneGridChamber3",
+      "blockCount": 20,
+      "dependencyDepth": 8,
+      "decisionSteps": 18,
+      "initiallyClearRatio": 0.1,
+      "trivialEscapeRatio": 0,
+      "mechanisms": [
+        {
+          "type": "redirect",
+          "functional": true
+        },
+        {
+          "type": "swap",
+          "functional": true
+        }
+      ],
+      "attempts": 183
+    },
+    {
+      "level": 724,
+      "specialIndex": 145,
+      "patternKey": "anneGridChamber1",
+      "blockCount": 21,
+      "dependencyDepth": 6,
+      "decisionSteps": 20,
+      "initiallyClearRatio": 0.19047619047619047,
+      "trivialEscapeRatio": 0.09523809523809523,
+      "mechanisms": [
+        {
+          "type": "redirect",
+          "functional": true
+        },
+        {
+          "type": "swap",
+          "functional": true
+        }
+      ],
+      "attempts": 98
+    },
+    {
+      "level": 729,
+      "specialIndex": 146,
+      "patternKey": "anneGridChamber4",
+      "blockCount": 21,
+      "dependencyDepth": 9,
+      "decisionSteps": 21,
+      "initiallyClearRatio": 0.23809523809523808,
+      "trivialEscapeRatio": 0.09523809523809523,
+      "mechanisms": [
+        {
+          "type": "cycle",
+          "functional": true
+        },
+        {
+          "type": "obstacle",
+          "functional": true
+        }
+      ],
+      "attempts": 446
+    },
+    {
+      "level": 732,
+      "specialIndex": 147,
+      "patternKey": "anneGridChamber3",
+      "blockCount": 20,
+      "dependencyDepth": 7,
+      "decisionSteps": 19,
+      "initiallyClearRatio": 0.25,
+      "trivialEscapeRatio": 0.05,
+      "mechanisms": [
+        {
+          "type": "swap",
+          "functional": true
+        },
+        {
+          "type": "obstacle",
+          "functional": true
+        }
+      ],
+      "attempts": 16
+    },
+    {
+      "level": 738,
+      "specialIndex": 148,
+      "patternKey": "anneGridChamber6",
+      "blockCount": 22,
+      "dependencyDepth": 5,
+      "decisionSteps": 21,
+      "initiallyClearRatio": 0.18181818181818182,
+      "trivialEscapeRatio": 0.045454545454545456,
+      "mechanisms": [
+        {
+          "type": "swap",
+          "functional": true
+        }
+      ],
+      "attempts": 191
+    },
+    {
+      "level": 743,
+      "specialIndex": 149,
+      "patternKey": "anneGridChamber2",
+      "blockCount": 23,
+      "dependencyDepth": 7,
+      "decisionSteps": 21,
+      "initiallyClearRatio": 0.17391304347826086,
+      "trivialEscapeRatio": 0.08695652173913043,
+      "mechanisms": [
+        {
+          "type": "cycle",
+          "functional": true
+        }
+      ],
+      "attempts": 656
+    },
+    {
+      "level": 749,
+      "specialIndex": 150,
+      "patternKey": "anneGridChamber6",
+      "blockCount": 20,
+      "dependencyDepth": 5,
+      "decisionSteps": 17,
+      "initiallyClearRatio": 0.15,
+      "trivialEscapeRatio": 0,
+      "mechanisms": [
+        {
+          "type": "redirect",
+          "functional": true
+        },
+        {
+          "type": "swap",
+          "functional": true
+        }
+      ],
+      "attempts": 427
+    },
+    {
+      "level": 752,
+      "specialIndex": 151,
+      "patternKey": "anneGridChamber3",
+      "blockCount": 21,
+      "dependencyDepth": 9,
+      "decisionSteps": 21,
+      "initiallyClearRatio": 0.19047619047619047,
+      "trivialEscapeRatio": 0.14285714285714285,
+      "mechanisms": [
+        {
+          "type": "redirect",
+          "functional": true
+        },
+        {
+          "type": "swap",
+          "functional": true
+        }
+      ],
+      "attempts": 296
+    },
+    {
+      "level": 757,
+      "specialIndex": 152,
+      "patternKey": "anneGridChamber4",
+      "blockCount": 21,
+      "dependencyDepth": 9,
+      "decisionSteps": 21,
+      "initiallyClearRatio": 0.14285714285714285,
+      "trivialEscapeRatio": 0.047619047619047616,
+      "mechanisms": [
+        {
+          "type": "cycle",
+          "functional": true
+        },
+        {
+          "type": "obstacle",
+          "functional": true
+        }
+      ],
+      "attempts": 1236
+    },
+    {
+      "level": 763,
+      "specialIndex": 153,
+      "patternKey": "anneGridChamber1",
+      "blockCount": 20,
+      "dependencyDepth": 9,
+      "decisionSteps": 19,
+      "initiallyClearRatio": 0.15,
+      "trivialEscapeRatio": 0.05,
+      "mechanisms": [
+        {
+          "type": "swap",
+          "functional": true
+        },
+        {
+          "type": "obstacle",
+          "functional": true
+        }
+      ],
+      "attempts": 38
+    },
+    {
+      "level": 768,
+      "specialIndex": 154,
+      "patternKey": "anneGridChamber3",
+      "blockCount": 22,
+      "dependencyDepth": 7,
+      "decisionSteps": 17,
+      "initiallyClearRatio": 0.13636363636363635,
+      "trivialEscapeRatio": 0.09090909090909091,
+      "mechanisms": [
+        {
+          "type": "swap",
+          "functional": true
+        }
+      ],
+      "attempts": 86
+    },
+    {
+      "level": 774,
+      "specialIndex": 155,
+      "patternKey": "anneGridChamber1",
+      "blockCount": 22,
+      "dependencyDepth": 10,
+      "decisionSteps": 15,
+      "initiallyClearRatio": 0.18181818181818182,
+      "trivialEscapeRatio": 0.045454545454545456,
+      "mechanisms": [
+        {
+          "type": "cycle",
+          "functional": true
+        }
+      ],
+      "attempts": 720
+    },
+    {
+      "level": 779,
+      "specialIndex": 156,
+      "patternKey": "anneGridChamber4",
+      "blockCount": 20,
+      "dependencyDepth": 7,
+      "decisionSteps": 20,
+      "initiallyClearRatio": 0.2,
+      "trivialEscapeRatio": 0.05,
+      "mechanisms": [
+        {
+          "type": "redirect",
+          "functional": true
+        },
+        {
+          "type": "swap",
+          "functional": true
+        }
+      ],
+      "attempts": 122
+    },
+    {
+      "level": 782,
+      "specialIndex": 157,
+      "patternKey": "anneGridChamber5",
+      "blockCount": 21,
+      "dependencyDepth": 5,
+      "decisionSteps": 19,
+      "initiallyClearRatio": 0.19047619047619047,
+      "trivialEscapeRatio": 0.09523809523809523,
+      "mechanisms": [
+        {
+          "type": "redirect",
+          "functional": true
+        },
+        {
+          "type": "swap",
+          "functional": true
+        }
+      ],
+      "attempts": 213
+    },
+    {
+      "level": 788,
+      "specialIndex": 158,
+      "patternKey": "anneGridChamber3",
+      "blockCount": 21,
+      "dependencyDepth": 9,
+      "decisionSteps": 21,
+      "initiallyClearRatio": 0.19047619047619047,
+      "trivialEscapeRatio": 0.047619047619047616,
+      "mechanisms": [
+        {
+          "type": "cycle",
+          "functional": true
+        },
+        {
+          "type": "obstacle",
+          "functional": true
+        }
+      ],
+      "attempts": 271
+    },
+    {
+      "level": 793,
+      "specialIndex": 159,
+      "patternKey": "anneGridChamber7",
+      "blockCount": 20,
+      "dependencyDepth": 6,
+      "decisionSteps": 20,
+      "initiallyClearRatio": 0.25,
+      "trivialEscapeRatio": 0.1,
+      "mechanisms": [
+        {
+          "type": "swap",
+          "functional": true
+        },
+        {
+          "type": "obstacle",
+          "functional": true
+        }
+      ],
+      "attempts": 39
+    },
+    {
+      "level": 799,
+      "specialIndex": 160,
+      "patternKey": "anneGridChamber1",
+      "blockCount": 22,
+      "dependencyDepth": 7,
+      "decisionSteps": 20,
+      "initiallyClearRatio": 0.13636363636363635,
+      "trivialEscapeRatio": 0.045454545454545456,
+      "mechanisms": [
+        {
+          "type": "swap",
+          "functional": true
+        }
+      ],
+      "attempts": 119
+    },
+    {
+      "level": 802,
+      "specialIndex": 161,
+      "patternKey": "anneGridChamber3",
+      "blockCount": 22,
+      "dependencyDepth": 9,
+      "decisionSteps": 22,
+      "initiallyClearRatio": 0.13636363636363635,
+      "trivialEscapeRatio": 0.09090909090909091,
+      "mechanisms": [
+        {
+          "type": "cycle",
+          "functional": true
+        }
+      ],
+      "attempts": 226
+    },
+    {
+      "level": 807,
+      "specialIndex": 162,
+      "patternKey": "anneGridChamber6",
+      "blockCount": 20,
+      "dependencyDepth": 6,
+      "decisionSteps": 19,
+      "initiallyClearRatio": 0.25,
+      "trivialEscapeRatio": 0.05,
+      "mechanisms": [
+        {
+          "type": "redirect",
+          "functional": true
+        },
+        {
+          "type": "swap",
+          "functional": true
+        }
+      ],
+      "attempts": 224
+    },
+    {
+      "level": 813,
+      "specialIndex": 163,
+      "patternKey": "anneGridChamber4",
+      "blockCount": 21,
+      "dependencyDepth": 5,
+      "decisionSteps": 20,
+      "initiallyClearRatio": 0.19047619047619047,
+      "trivialEscapeRatio": 0.14285714285714285,
+      "mechanisms": [
+        {
+          "type": "redirect",
+          "functional": true
+        },
+        {
+          "type": "swap",
+          "functional": true
+        }
+      ],
+      "attempts": 192
+    },
+    {
+      "level": 818,
+      "specialIndex": 164,
+      "patternKey": "anneGridChamber1",
+      "blockCount": 21,
+      "dependencyDepth": 6,
+      "decisionSteps": 21,
+      "initiallyClearRatio": 0.19047619047619047,
+      "trivialEscapeRatio": 0.047619047619047616,
+      "mechanisms": [
+        {
+          "type": "cycle",
+          "functional": true
+        },
+        {
+          "type": "obstacle",
+          "functional": true
+        }
+      ],
+      "attempts": 270
+    },
+    {
+      "level": 824,
+      "specialIndex": 165,
+      "patternKey": "anneGridChamber5",
+      "blockCount": 20,
+      "dependencyDepth": 6,
+      "decisionSteps": 20,
+      "initiallyClearRatio": 0.2,
+      "trivialEscapeRatio": 0.1,
+      "mechanisms": [
+        {
+          "type": "swap",
+          "functional": true
+        },
+        {
+          "type": "obstacle",
+          "functional": true
+        }
+      ],
+      "attempts": 126
+    },
+    {
+      "level": 829,
+      "specialIndex": 166,
+      "patternKey": "anneGridChamber1",
+      "blockCount": 22,
+      "dependencyDepth": 5,
+      "decisionSteps": 20,
+      "initiallyClearRatio": 0.13636363636363635,
+      "trivialEscapeRatio": 0.09090909090909091,
+      "mechanisms": [
+        {
+          "type": "swap",
+          "functional": true
+        }
+      ],
+      "attempts": 204
+    },
+    {
+      "level": 832,
+      "specialIndex": 167,
+      "patternKey": "anneGridChamber6",
+      "blockCount": 22,
+      "dependencyDepth": 10,
+      "decisionSteps": 22,
+      "initiallyClearRatio": 0.13636363636363635,
+      "trivialEscapeRatio": 0.09090909090909091,
+      "mechanisms": [
+        {
+          "type": "cycle",
+          "functional": true
+        }
+      ],
+      "attempts": 348
+    },
+    {
+      "level": 838,
+      "specialIndex": 168,
+      "patternKey": "anneGridChamber1",
+      "blockCount": 20,
+      "dependencyDepth": 6,
+      "decisionSteps": 18,
+      "initiallyClearRatio": 0.2,
+      "trivialEscapeRatio": 0.1,
+      "mechanisms": [
+        {
+          "type": "redirect",
+          "functional": true
+        },
+        {
+          "type": "swap",
+          "functional": true
+        }
+      ],
+      "attempts": 89
+    },
+    {
+      "level": 843,
+      "specialIndex": 169,
+      "patternKey": "anneGridChamber3",
+      "blockCount": 21,
+      "dependencyDepth": 9,
+      "decisionSteps": 20,
+      "initiallyClearRatio": 0.19047619047619047,
+      "trivialEscapeRatio": 0.09523809523809523,
+      "mechanisms": [
+        {
+          "type": "redirect",
+          "functional": true
+        },
+        {
+          "type": "swap",
+          "functional": true
+        }
+      ],
+      "attempts": 216
+    },
+    {
+      "level": 849,
+      "specialIndex": 170,
+      "patternKey": "anneGridChamber7",
+      "blockCount": 21,
+      "dependencyDepth": 8,
+      "decisionSteps": 22,
+      "initiallyClearRatio": 0.23809523809523808,
+      "trivialEscapeRatio": 0.14285714285714285,
+      "mechanisms": [
+        {
+          "type": "cycle",
+          "functional": true
+        },
+        {
+          "type": "obstacle",
+          "functional": true
+        }
+      ],
+      "attempts": 1012
+    },
+    {
+      "level": 852,
+      "specialIndex": 171,
+      "patternKey": "anneGridChamber3",
+      "blockCount": 20,
+      "dependencyDepth": 8,
+      "decisionSteps": 20,
+      "initiallyClearRatio": 0.25,
+      "trivialEscapeRatio": 0.1,
+      "mechanisms": [
+        {
+          "type": "swap",
+          "functional": true
+        },
+        {
+          "type": "obstacle",
+          "functional": true
+        }
+      ],
+      "attempts": 42
+    },
+    {
+      "level": 857,
+      "specialIndex": 172,
+      "patternKey": "anneGridChamber5",
+      "blockCount": 22,
+      "dependencyDepth": 6,
+      "decisionSteps": 20,
+      "initiallyClearRatio": 0.18181818181818182,
+      "trivialEscapeRatio": 0.045454545454545456,
+      "mechanisms": [
+        {
+          "type": "swap",
+          "functional": true
+        }
+      ],
+      "attempts": 147
+    },
+    {
+      "level": 863,
+      "specialIndex": 173,
+      "patternKey": "anneGridChamber1",
+      "blockCount": 22,
+      "dependencyDepth": 7,
+      "decisionSteps": 22,
+      "initiallyClearRatio": 0.13636363636363635,
+      "trivialEscapeRatio": 0.045454545454545456,
+      "mechanisms": [
+        {
+          "type": "cycle",
+          "functional": true
+        }
+      ],
+      "attempts": 1004
+    },
+    {
+      "level": 868,
+      "specialIndex": 174,
+      "patternKey": "anneGridChamber3",
+      "blockCount": 20,
+      "dependencyDepth": 5,
+      "decisionSteps": 19,
+      "initiallyClearRatio": 0.2,
+      "trivialEscapeRatio": 0.1,
+      "mechanisms": [
+        {
+          "type": "redirect",
+          "functional": true
+        },
+        {
+          "type": "swap",
+          "functional": true
+        }
+      ],
+      "attempts": 257
+    },
+    {
+      "level": 874,
+      "specialIndex": 175,
+      "patternKey": "anneGridChamber7",
+      "blockCount": 21,
+      "dependencyDepth": 6,
+      "decisionSteps": 21,
+      "initiallyClearRatio": 0.23809523809523808,
+      "trivialEscapeRatio": 0.14285714285714285,
+      "mechanisms": [
+        {
+          "type": "redirect",
+          "functional": true
+        },
+        {
+          "type": "swap",
+          "functional": true
+        }
+      ],
+      "attempts": 500
+    },
+    {
+      "level": 879,
+      "specialIndex": 176,
+      "patternKey": "anneGridChamber3",
+      "blockCount": 21,
+      "dependencyDepth": 9,
+      "decisionSteps": 21,
+      "initiallyClearRatio": 0.14285714285714285,
+      "trivialEscapeRatio": 0.047619047619047616,
+      "mechanisms": [
+        {
+          "type": "cycle",
+          "functional": true
+        },
+        {
+          "type": "obstacle",
+          "functional": true
+        }
+      ],
+      "attempts": 147
+    },
+    {
+      "level": 882,
+      "specialIndex": 177,
+      "patternKey": "anneGridChamber2",
+      "blockCount": 22,
+      "dependencyDepth": 9,
+      "decisionSteps": 22,
+      "initiallyClearRatio": 0.18181818181818182,
+      "trivialEscapeRatio": 0.09090909090909091,
+      "mechanisms": [
+        {
+          "type": "swap",
+          "functional": true
+        },
+        {
+          "type": "obstacle",
+          "functional": true
+        }
+      ],
+      "attempts": 199
+    },
+    {
+      "level": 888,
+      "specialIndex": 178,
+      "patternKey": "anneGridChamber3",
+      "blockCount": 22,
+      "dependencyDepth": 5,
+      "decisionSteps": 21,
+      "initiallyClearRatio": 0.18181818181818182,
+      "trivialEscapeRatio": 0.045454545454545456,
+      "mechanisms": [
+        {
+          "type": "swap",
+          "functional": true
+        }
+      ],
+      "attempts": 21
+    },
+    {
+      "level": 893,
+      "specialIndex": 179,
+      "patternKey": "anneGridChamber6",
+      "blockCount": 22,
+      "dependencyDepth": 12,
+      "decisionSteps": 22,
+      "initiallyClearRatio": 0.18181818181818182,
+      "trivialEscapeRatio": 0.09090909090909091,
+      "mechanisms": [
+        {
+          "type": "cycle",
+          "functional": true
+        }
+      ],
+      "attempts": 361
+    },
+    {
+      "level": 899,
+      "specialIndex": 180,
+      "patternKey": "anneGridChamber3",
+      "blockCount": 20,
+      "dependencyDepth": 5,
+      "decisionSteps": 19,
+      "initiallyClearRatio": 0.2,
+      "trivialEscapeRatio": 0.1,
+      "mechanisms": [
+        {
+          "type": "redirect",
+          "functional": true
+        },
+        {
+          "type": "swap",
+          "functional": true
+        }
+      ],
+      "attempts": 416
+    },
+    {
+      "level": 902,
+      "specialIndex": 181,
+      "patternKey": "anneGridChamber1",
+      "blockCount": 21,
+      "dependencyDepth": 7,
+      "decisionSteps": 20,
+      "initiallyClearRatio": 0.19047619047619047,
+      "trivialEscapeRatio": 0.09523809523809523,
+      "mechanisms": [
+        {
+          "type": "redirect",
+          "functional": true
+        },
+        {
+          "type": "swap",
+          "functional": true
+        }
+      ],
+      "attempts": 236
+    },
+    {
+      "level": 907,
+      "specialIndex": 182,
+      "patternKey": "anneGridChamber2",
+      "blockCount": 22,
+      "dependencyDepth": 9,
+      "decisionSteps": 22,
+      "initiallyClearRatio": 0.22727272727272727,
+      "trivialEscapeRatio": 0.13636363636363635,
+      "mechanisms": [
+        {
+          "type": "cycle",
+          "functional": true
+        },
+        {
+          "type": "obstacle",
+          "functional": true
+        }
+      ],
+      "attempts": 952
+    },
+    {
+      "level": 913,
+      "specialIndex": 183,
+      "patternKey": "anneGridChamber1",
+      "blockCount": 20,
+      "dependencyDepth": 7,
+      "decisionSteps": 20,
+      "initiallyClearRatio": 0.2,
+      "trivialEscapeRatio": 0.05,
+      "mechanisms": [
+        {
+          "type": "swap",
+          "functional": true
+        },
+        {
+          "type": "obstacle",
+          "functional": true
+        }
+      ],
+      "attempts": 109
+    },
+    {
+      "level": 918,
+      "specialIndex": 184,
+      "patternKey": "anneGridChamber2",
+      "blockCount": 23,
+      "dependencyDepth": 7,
+      "decisionSteps": 23,
+      "initiallyClearRatio": 0.13043478260869565,
+      "trivialEscapeRatio": 0.043478260869565216,
+      "mechanisms": [
+        {
+          "type": "swap",
+          "functional": true
+        }
+      ],
+      "attempts": 153
+    },
+    {
+      "level": 924,
+      "specialIndex": 185,
+      "patternKey": "anneGridChamber6",
+      "blockCount": 22,
+      "dependencyDepth": 6,
+      "decisionSteps": 22,
+      "initiallyClearRatio": 0.22727272727272727,
+      "trivialEscapeRatio": 0.13636363636363635,
+      "mechanisms": [
+        {
+          "type": "cycle",
+          "functional": true
+        }
+      ],
+      "attempts": 283
+    },
+    {
+      "level": 929,
+      "specialIndex": 186,
+      "patternKey": "anneGridChamber2",
+      "blockCount": 21,
+      "dependencyDepth": 6,
+      "decisionSteps": 21,
+      "initiallyClearRatio": 0.19047619047619047,
+      "trivialEscapeRatio": 0.047619047619047616,
+      "mechanisms": [
+        {
+          "type": "redirect",
+          "functional": true
+        },
+        {
+          "type": "swap",
+          "functional": true
+        }
+      ],
+      "attempts": 28
+    },
+    {
+      "level": 932,
+      "specialIndex": 187,
+      "patternKey": "anneGridChamber3",
+      "blockCount": 21,
+      "dependencyDepth": 6,
+      "decisionSteps": 20,
+      "initiallyClearRatio": 0.14285714285714285,
+      "trivialEscapeRatio": 0.047619047619047616,
+      "mechanisms": [
+        {
+          "type": "redirect",
+          "functional": true
+        },
+        {
+          "type": "swap",
+          "functional": true
+        }
+      ],
+      "attempts": 421
+    },
+    {
+      "level": 938,
+      "specialIndex": 188,
+      "patternKey": "anneGridChamber1",
+      "blockCount": 21,
+      "dependencyDepth": 8,
+      "decisionSteps": 21,
+      "initiallyClearRatio": 0.19047619047619047,
+      "trivialEscapeRatio": 0.09523809523809523,
+      "mechanisms": [
+        {
+          "type": "cycle",
+          "functional": true
+        },
+        {
+          "type": "obstacle",
+          "functional": true
+        }
+      ],
+      "attempts": 661
+    },
+    {
+      "level": 943,
+      "specialIndex": 189,
+      "patternKey": "anneGridChamber5",
+      "blockCount": 20,
+      "dependencyDepth": 8,
+      "decisionSteps": 19,
+      "initiallyClearRatio": 0.15,
+      "trivialEscapeRatio": 0.05,
+      "mechanisms": [
+        {
+          "type": "swap",
+          "functional": true
+        },
+        {
+          "type": "obstacle",
+          "functional": true
+        }
+      ],
+      "attempts": 67
+    },
+    {
+      "level": 949,
+      "specialIndex": 190,
+      "patternKey": "anneGridChamber7",
+      "blockCount": 22,
+      "dependencyDepth": 10,
+      "decisionSteps": 22,
+      "initiallyClearRatio": 0.09090909090909091,
+      "trivialEscapeRatio": 0.09090909090909091,
+      "mechanisms": [
+        {
+          "type": "swap",
+          "functional": true
+        }
+      ],
+      "attempts": 51
+    },
+    {
+      "level": 952,
+      "specialIndex": 191,
+      "patternKey": "anneGridChamber6",
+      "blockCount": 22,
+      "dependencyDepth": 10,
+      "decisionSteps": 21,
+      "initiallyClearRatio": 0.18181818181818182,
+      "trivialEscapeRatio": 0.09090909090909091,
+      "mechanisms": [
+        {
+          "type": "cycle",
+          "functional": true
+        }
+      ],
+      "attempts": 636
+    },
+    {
+      "level": 957,
+      "specialIndex": 192,
+      "patternKey": "anneGridChamber1",
+      "blockCount": 20,
+      "dependencyDepth": 5,
+      "decisionSteps": 18,
+      "initiallyClearRatio": 0.2,
+      "trivialEscapeRatio": 0.1,
+      "mechanisms": [
+        {
+          "type": "redirect",
+          "functional": true
+        },
+        {
+          "type": "swap",
+          "functional": true
+        }
+      ],
+      "attempts": 82
+    },
+    {
+      "level": 963,
+      "specialIndex": 193,
+      "patternKey": "anneGridChamber2",
+      "blockCount": 22,
+      "dependencyDepth": 9,
+      "decisionSteps": 22,
+      "initiallyClearRatio": 0.18181818181818182,
+      "trivialEscapeRatio": 0.13636363636363635,
+      "mechanisms": [
+        {
+          "type": "redirect",
+          "functional": true
+        },
+        {
+          "type": "swap",
+          "functional": true
+        }
+      ],
+      "attempts": 54
+    },
+    {
+      "level": 968,
+      "specialIndex": 194,
+      "patternKey": "anneGridChamber3",
+      "blockCount": 21,
+      "dependencyDepth": 6,
+      "decisionSteps": 21,
+      "initiallyClearRatio": 0.23809523809523808,
+      "trivialEscapeRatio": 0.14285714285714285,
+      "mechanisms": [
+        {
+          "type": "cycle",
+          "functional": true
+        },
+        {
+          "type": "obstacle",
+          "functional": true
+        }
+      ],
+      "attempts": 257
+    },
+    {
+      "level": 974,
+      "specialIndex": 195,
+      "patternKey": "anneGridChamber4",
+      "blockCount": 20,
+      "dependencyDepth": 7,
+      "decisionSteps": 19,
+      "initiallyClearRatio": 0.25,
+      "trivialEscapeRatio": 0.05,
+      "mechanisms": [
+        {
+          "type": "swap",
+          "functional": true
+        },
+        {
+          "type": "obstacle",
+          "functional": true
+        }
+      ],
+      "attempts": 138
+    },
+    {
+      "level": 979,
+      "specialIndex": 196,
+      "patternKey": "anneGridChamber6",
+      "blockCount": 22,
+      "dependencyDepth": 11,
+      "decisionSteps": 22,
+      "initiallyClearRatio": 0.22727272727272727,
+      "trivialEscapeRatio": 0.13636363636363635,
+      "mechanisms": [
+        {
+          "type": "swap",
+          "functional": true
+        }
+      ],
+      "attempts": 268
+    },
+    {
+      "level": 982,
+      "specialIndex": 197,
+      "patternKey": "anneGridChamber1",
+      "blockCount": 22,
+      "dependencyDepth": 5,
+      "decisionSteps": 22,
+      "initiallyClearRatio": 0.13636363636363635,
+      "trivialEscapeRatio": 0.09090909090909091,
+      "mechanisms": [
+        {
+          "type": "cycle",
+          "functional": true
+        }
+      ],
+      "attempts": 995
+    },
+    {
+      "level": 988,
+      "specialIndex": 198,
+      "patternKey": "anneGridChamber3",
+      "blockCount": 20,
+      "dependencyDepth": 5,
+      "decisionSteps": 20,
+      "initiallyClearRatio": 0.2,
+      "trivialEscapeRatio": 0,
+      "mechanisms": [
+        {
+          "type": "redirect",
+          "functional": true
+        },
+        {
+          "type": "swap",
+          "functional": true
+        }
+      ],
+      "attempts": 319
+    },
+    {
+      "level": 993,
+      "specialIndex": 199,
+      "patternKey": "anneGridChamber7",
+      "blockCount": 21,
+      "dependencyDepth": 9,
+      "decisionSteps": 21,
+      "initiallyClearRatio": 0.23809523809523808,
+      "trivialEscapeRatio": 0.09523809523809523,
+      "mechanisms": [
+        {
+          "type": "redirect",
+          "functional": true
+        },
+        {
+          "type": "swap",
+          "functional": true
+        }
+      ],
+      "attempts": 218
+    },
+    {
+      "level": 999,
+      "specialIndex": 200,
+      "patternKey": "anneGridChamber1",
+      "blockCount": 21,
+      "dependencyDepth": 10,
+      "decisionSteps": 21,
+      "initiallyClearRatio": 0.14285714285714285,
+      "trivialEscapeRatio": 0.047619047619047616,
+      "mechanisms": [
+        {
+          "type": "cycle",
+          "functional": true
+        },
+        {
+          "type": "obstacle",
+          "functional": true
+        }
+      ],
+      "attempts": 441
+    },
+    {
+      "level": 1002,
+      "specialIndex": 201,
+      "patternKey": "anneGridChamber2",
+      "blockCount": 22,
+      "dependencyDepth": 6,
+      "decisionSteps": 22,
+      "initiallyClearRatio": 0.22727272727272727,
+      "trivialEscapeRatio": 0.13636363636363635,
+      "mechanisms": [
+        {
+          "type": "swap",
+          "functional": true
+        },
+        {
+          "type": "obstacle",
+          "functional": true
+        }
+      ],
+      "attempts": 98
+    },
+    {
+      "level": 1007,
+      "specialIndex": 202,
+      "patternKey": "anneGridChamber3",
+      "blockCount": 22,
+      "dependencyDepth": 15,
+      "decisionSteps": 21,
+      "initiallyClearRatio": 0.09090909090909091,
+      "trivialEscapeRatio": 0.09090909090909091,
+      "mechanisms": [
+        {
+          "type": "swap",
+          "functional": true
+        }
+      ],
+      "attempts": 90
+    },
+    {
+      "level": 1013,
+      "specialIndex": 203,
+      "patternKey": "anneGridChamber6",
+      "blockCount": 22,
+      "dependencyDepth": 6,
+      "decisionSteps": 20,
+      "initiallyClearRatio": 0.13636363636363635,
+      "trivialEscapeRatio": 0.09090909090909091,
+      "mechanisms": [
+        {
+          "type": "cycle",
+          "functional": true
+        }
+      ],
+      "attempts": 682
+    },
+    {
+      "level": 1018,
+      "specialIndex": 204,
+      "patternKey": "anneGridChamber1",
+      "blockCount": 20,
+      "dependencyDepth": 5,
+      "decisionSteps": 19,
+      "initiallyClearRatio": 0.1,
+      "trivialEscapeRatio": 0.05,
+      "mechanisms": [
+        {
+          "type": "redirect",
+          "functional": true
+        },
+        {
+          "type": "swap",
+          "functional": true
+        }
+      ],
+      "attempts": 382
+    },
+    {
+      "level": 1024,
+      "specialIndex": 205,
+      "patternKey": "anneGridChamber5",
+      "blockCount": 21,
+      "dependencyDepth": 6,
+      "decisionSteps": 20,
+      "initiallyClearRatio": 0.19047619047619047,
+      "trivialEscapeRatio": 0.14285714285714285,
+      "mechanisms": [
+        {
+          "type": "redirect",
+          "functional": true
+        },
+        {
+          "type": "swap",
+          "functional": true
+        }
+      ],
+      "attempts": 447
+    },
+    {
+      "level": 1029,
+      "specialIndex": 206,
+      "patternKey": "anneGridChamber3",
+      "blockCount": 21,
+      "dependencyDepth": 10,
+      "decisionSteps": 20,
+      "initiallyClearRatio": 0.09523809523809523,
+      "trivialEscapeRatio": 0.047619047619047616,
+      "mechanisms": [
+        {
+          "type": "cycle",
+          "functional": true
+        },
+        {
+          "type": "obstacle",
+          "functional": true
+        }
+      ],
+      "attempts": 283
+    },
+    {
+      "level": 1032,
+      "specialIndex": 207,
+      "patternKey": "anneGridChamber1",
+      "blockCount": 20,
+      "dependencyDepth": 10,
+      "decisionSteps": 20,
+      "initiallyClearRatio": 0.2,
+      "trivialEscapeRatio": 0.1,
+      "mechanisms": [
+        {
+          "type": "swap",
+          "functional": true
+        },
+        {
+          "type": "obstacle",
+          "functional": true
+        }
+      ],
+      "attempts": 108
+    },
+    {
+      "level": 1038,
+      "specialIndex": 208,
+      "patternKey": "anneGridChamber2",
+      "blockCount": 23,
+      "dependencyDepth": 8,
+      "decisionSteps": 20,
+      "initiallyClearRatio": 0.13043478260869565,
+      "trivialEscapeRatio": 0.043478260869565216,
+      "mechanisms": [
+        {
+          "type": "swap",
+          "functional": true
+        }
+      ],
+      "attempts": 175
+    },
+    {
+      "level": 1043,
+      "specialIndex": 209,
+      "patternKey": "anneGridChamber1",
+      "blockCount": 22,
+      "dependencyDepth": 8,
+      "decisionSteps": 22,
+      "initiallyClearRatio": 0.18181818181818182,
+      "trivialEscapeRatio": 0.045454545454545456,
+      "mechanisms": [
+        {
+          "type": "cycle",
+          "functional": true
+        }
+      ],
+      "attempts": 397
+    },
+    {
+      "level": 1049,
+      "specialIndex": 210,
+      "patternKey": "anneGridChamber6",
+      "blockCount": 20,
+      "dependencyDepth": 5,
+      "decisionSteps": 19,
+      "initiallyClearRatio": 0.15,
+      "trivialEscapeRatio": 0.05,
+      "mechanisms": [
+        {
+          "type": "redirect",
+          "functional": true
+        },
+        {
+          "type": "swap",
+          "functional": true
+        }
+      ],
+      "attempts": 606
+    },
+    {
+      "level": 1052,
+      "specialIndex": 211,
+      "patternKey": "anneGridChamber5",
+      "blockCount": 21,
+      "dependencyDepth": 9,
+      "decisionSteps": 16,
+      "initiallyClearRatio": 0.19047619047619047,
+      "trivialEscapeRatio": 0.09523809523809523,
+      "mechanisms": [
+        {
+          "type": "redirect",
+          "functional": true
+        },
+        {
+          "type": "swap",
+          "functional": true
+        }
+      ],
+      "attempts": 119
+    },
+    {
+      "level": 1057,
+      "specialIndex": 212,
+      "patternKey": "anneGridChamber1",
+      "blockCount": 21,
+      "dependencyDepth": 6,
+      "decisionSteps": 21,
+      "initiallyClearRatio": 0.19047619047619047,
+      "trivialEscapeRatio": 0.09523809523809523,
+      "mechanisms": [
+        {
+          "type": "cycle",
+          "functional": true
+        },
+        {
+          "type": "obstacle",
+          "functional": true
+        }
+      ],
+      "attempts": 1134
+    },
+    {
+      "level": 1063,
+      "specialIndex": 213,
+      "patternKey": "anneGridChamber5",
+      "blockCount": 20,
+      "dependencyDepth": 8,
+      "decisionSteps": 18,
+      "initiallyClearRatio": 0.2,
+      "trivialEscapeRatio": 0.1,
+      "mechanisms": [
+        {
+          "type": "swap",
+          "functional": true
+        },
+        {
+          "type": "obstacle",
+          "functional": true
+        }
+      ],
+      "attempts": 36
+    },
+    {
+      "level": 1068,
+      "specialIndex": 214,
+      "patternKey": "anneGridChamber3",
+      "blockCount": 22,
+      "dependencyDepth": 6,
+      "decisionSteps": 21,
+      "initiallyClearRatio": 0.13636363636363635,
+      "trivialEscapeRatio": 0.045454545454545456,
+      "mechanisms": [
+        {
+          "type": "swap",
+          "functional": true
+        }
+      ],
+      "attempts": 244
+    },
+    {
+      "level": 1074,
+      "specialIndex": 215,
+      "patternKey": "anneGridChamber5",
+      "blockCount": 22,
+      "dependencyDepth": 8,
+      "decisionSteps": 22,
+      "initiallyClearRatio": 0.13636363636363635,
+      "trivialEscapeRatio": 0.13636363636363635,
+      "mechanisms": [
+        {
+          "type": "cycle",
+          "functional": true
+        }
+      ],
+      "attempts": 381
+    },
+    {
+      "level": 1079,
+      "specialIndex": 216,
+      "patternKey": "anneGridChamber3",
+      "blockCount": 20,
+      "dependencyDepth": 6,
+      "decisionSteps": 18,
+      "initiallyClearRatio": 0.1,
+      "trivialEscapeRatio": 0.05,
+      "mechanisms": [
+        {
+          "type": "redirect",
+          "functional": true
+        },
+        {
+          "type": "swap",
+          "functional": true
+        }
+      ],
+      "attempts": 172
+    },
+    {
+      "level": 1082,
+      "specialIndex": 217,
+      "patternKey": "anneGridChamber1",
+      "blockCount": 21,
+      "dependencyDepth": 9,
+      "decisionSteps": 21,
+      "initiallyClearRatio": 0.09523809523809523,
+      "trivialEscapeRatio": 0.047619047619047616,
+      "mechanisms": [
+        {
+          "type": "redirect",
+          "functional": true
+        },
+        {
+          "type": "swap",
+          "functional": true
+        }
+      ],
+      "attempts": 202
+    },
+    {
+      "level": 1088,
+      "specialIndex": 218,
+      "patternKey": "anneGridChamber3",
+      "blockCount": 21,
+      "dependencyDepth": 9,
+      "decisionSteps": 21,
+      "initiallyClearRatio": 0.19047619047619047,
+      "trivialEscapeRatio": 0.14285714285714285,
+      "mechanisms": [
+        {
+          "type": "cycle",
+          "functional": true
+        },
+        {
+          "type": "obstacle",
+          "functional": true
+        }
+      ],
+      "attempts": 84
+    },
+    {
+      "level": 1093,
+      "specialIndex": 219,
+      "patternKey": "anneGridChamber4",
+      "blockCount": 20,
+      "dependencyDepth": 5,
+      "decisionSteps": 20,
+      "initiallyClearRatio": 0.25,
+      "trivialEscapeRatio": 0.1,
+      "mechanisms": [
+        {
+          "type": "swap",
+          "functional": true
+        },
+        {
+          "type": "obstacle",
+          "functional": true
+        }
+      ],
+      "attempts": 77
+    },
+    {
+      "level": 1099,
+      "specialIndex": 220,
+      "patternKey": "anneGridChamber6",
+      "blockCount": 22,
+      "dependencyDepth": 7,
+      "decisionSteps": 19,
+      "initiallyClearRatio": 0.18181818181818182,
+      "trivialEscapeRatio": 0.045454545454545456,
+      "mechanisms": [
+        {
+          "type": "swap",
+          "functional": true
+        }
+      ],
+      "attempts": 266
+    },
+    {
+      "level": 1102,
+      "specialIndex": 221,
+      "patternKey": "anneGridChamber1",
+      "blockCount": 22,
+      "dependencyDepth": 5,
+      "decisionSteps": 22,
+      "initiallyClearRatio": 0.22727272727272727,
+      "trivialEscapeRatio": 0.045454545454545456,
+      "mechanisms": [
+        {
+          "type": "cycle",
+          "functional": true
+        }
+      ],
+      "attempts": 590
+    },
+    {
+      "level": 1107,
+      "specialIndex": 222,
+      "patternKey": "anneGridChamber7",
+      "blockCount": 20,
+      "dependencyDepth": 5,
+      "decisionSteps": 18,
+      "initiallyClearRatio": 0.2,
+      "trivialEscapeRatio": 0.1,
+      "mechanisms": [
+        {
+          "type": "redirect",
+          "functional": true
+        },
+        {
+          "type": "swap",
+          "functional": true
+        }
+      ],
+      "attempts": 208
+    },
+    {
+      "level": 1113,
+      "specialIndex": 223,
+      "patternKey": "anneGridChamber1",
+      "blockCount": 21,
+      "dependencyDepth": 8,
+      "decisionSteps": 19,
+      "initiallyClearRatio": 0.19047619047619047,
+      "trivialEscapeRatio": 0.047619047619047616,
+      "mechanisms": [
+        {
+          "type": "redirect",
+          "functional": true
+        },
+        {
+          "type": "swap",
+          "functional": true
+        }
+      ],
+      "attempts": 193
+    },
+    {
+      "level": 1118,
+      "specialIndex": 224,
+      "patternKey": "anneGridChamber3",
+      "blockCount": 21,
+      "dependencyDepth": 9,
+      "decisionSteps": 21,
+      "initiallyClearRatio": 0.23809523809523808,
+      "trivialEscapeRatio": 0.09523809523809523,
+      "mechanisms": [
+        {
+          "type": "cycle",
+          "functional": true
+        },
+        {
+          "type": "obstacle",
+          "functional": true
+        }
+      ],
+      "attempts": 639
+    },
+    {
+      "level": 1124,
+      "specialIndex": 225,
+      "patternKey": "anneGridChamber1",
+      "blockCount": 20,
+      "dependencyDepth": 7,
+      "decisionSteps": 19,
+      "initiallyClearRatio": 0.15,
+      "trivialEscapeRatio": 0.05,
+      "mechanisms": [
+        {
+          "type": "swap",
+          "functional": true
+        },
+        {
+          "type": "obstacle",
+          "functional": true
+        }
+      ],
+      "attempts": 26
+    },
+    {
+      "level": 1129,
+      "specialIndex": 226,
+      "patternKey": "anneGridChamber5",
+      "blockCount": 22,
+      "dependencyDepth": 7,
+      "decisionSteps": 20,
+      "initiallyClearRatio": 0.22727272727272727,
+      "trivialEscapeRatio": 0.09090909090909091,
+      "mechanisms": [
+        {
+          "type": "swap",
+          "functional": true
+        }
+      ],
+      "attempts": 168
+    },
+    {
+      "level": 1132,
+      "specialIndex": 227,
+      "patternKey": "anneGridChamber4",
+      "blockCount": 22,
+      "dependencyDepth": 6,
+      "decisionSteps": 21,
+      "initiallyClearRatio": 0.18181818181818182,
+      "trivialEscapeRatio": 0.13636363636363635,
+      "mechanisms": [
+        {
+          "type": "cycle",
+          "functional": true
+        }
+      ],
+      "attempts": 456
+    },
+    {
+      "level": 1138,
+      "specialIndex": 228,
+      "patternKey": "anneGridChamber5",
+      "blockCount": 20,
+      "dependencyDepth": 10,
+      "decisionSteps": 19,
+      "initiallyClearRatio": 0.15,
+      "trivialEscapeRatio": 0.05,
+      "mechanisms": [
+        {
+          "type": "redirect",
+          "functional": true
+        },
+        {
+          "type": "swap",
+          "functional": true
+        }
+      ],
+      "attempts": 297
+    },
+    {
+      "level": 1143,
+      "specialIndex": 229,
+      "patternKey": "anneGridChamber7",
+      "blockCount": 21,
+      "dependencyDepth": 7,
+      "decisionSteps": 20,
+      "initiallyClearRatio": 0.14285714285714285,
+      "trivialEscapeRatio": 0.047619047619047616,
+      "mechanisms": [
+        {
+          "type": "redirect",
+          "functional": true
+        },
+        {
+          "type": "swap",
+          "functional": true
+        }
+      ],
+      "attempts": 211
+    },
+    {
+      "level": 1149,
+      "specialIndex": 230,
+      "patternKey": "anneGridChamber2",
+      "blockCount": 22,
+      "dependencyDepth": 7,
+      "decisionSteps": 22,
+      "initiallyClearRatio": 0.18181818181818182,
+      "trivialEscapeRatio": 0.13636363636363635,
+      "mechanisms": [
+        {
+          "type": "cycle",
+          "functional": true
+        },
+        {
+          "type": "obstacle",
+          "functional": true
+        }
+      ],
+      "attempts": 203
+    },
+    {
+      "level": 1152,
+      "specialIndex": 231,
+      "patternKey": "anneGridChamber1",
+      "blockCount": 20,
+      "dependencyDepth": 8,
+      "decisionSteps": 20,
+      "initiallyClearRatio": 0.1,
+      "trivialEscapeRatio": 0,
+      "mechanisms": [
+        {
+          "type": "swap",
+          "functional": true
+        },
+        {
+          "type": "obstacle",
+          "functional": true
+        }
+      ],
+      "attempts": 120
+    },
+    {
+      "level": 1157,
+      "specialIndex": 232,
+      "patternKey": "anneGridChamber3",
+      "blockCount": 22,
+      "dependencyDepth": 5,
+      "decisionSteps": 21,
+      "initiallyClearRatio": 0.22727272727272727,
+      "trivialEscapeRatio": 0.045454545454545456,
+      "mechanisms": [
+        {
+          "type": "swap",
+          "functional": true
+        }
+      ],
+      "attempts": 93
+    },
+    {
+      "level": 1163,
+      "specialIndex": 233,
+      "patternKey": "anneGridChamber4",
+      "blockCount": 22,
+      "dependencyDepth": 9,
+      "decisionSteps": 20,
+      "initiallyClearRatio": 0.09090909090909091,
+      "trivialEscapeRatio": 0.045454545454545456,
+      "mechanisms": [
+        {
+          "type": "cycle",
+          "functional": true
+        }
+      ],
+      "attempts": 98
+    },
+    {
+      "level": 1168,
+      "specialIndex": 234,
+      "patternKey": "anneGridChamber2",
+      "blockCount": 21,
+      "dependencyDepth": 6,
+      "decisionSteps": 19,
+      "initiallyClearRatio": 0.23809523809523808,
+      "trivialEscapeRatio": 0.09523809523809523,
+      "mechanisms": [
+        {
+          "type": "redirect",
+          "functional": true
+        },
+        {
+          "type": "swap",
+          "functional": true
+        }
+      ],
+      "attempts": 70
+    },
+    {
+      "level": 1174,
+      "specialIndex": 235,
+      "patternKey": "anneGridChamber3",
+      "blockCount": 21,
+      "dependencyDepth": 8,
+      "decisionSteps": 17,
+      "initiallyClearRatio": 0.14285714285714285,
+      "trivialEscapeRatio": 0.09523809523809523,
+      "mechanisms": [
+        {
+          "type": "redirect",
+          "functional": true
+        },
+        {
+          "type": "swap",
+          "functional": true
+        }
+      ],
+      "attempts": 44
+    },
+    {
+      "level": 1179,
+      "specialIndex": 236,
+      "patternKey": "anneGridChamber4",
+      "blockCount": 21,
+      "dependencyDepth": 7,
+      "decisionSteps": 21,
+      "initiallyClearRatio": 0.19047619047619047,
+      "trivialEscapeRatio": 0.14285714285714285,
+      "mechanisms": [
+        {
+          "type": "cycle",
+          "functional": true
+        },
+        {
+          "type": "obstacle",
+          "functional": true
+        }
+      ],
+      "attempts": 1375
+    },
+    {
+      "level": 1182,
+      "specialIndex": 237,
+      "patternKey": "anneGridChamber6",
+      "blockCount": 20,
+      "dependencyDepth": 6,
+      "decisionSteps": 20,
+      "initiallyClearRatio": 0.25,
+      "trivialEscapeRatio": 0.15,
+      "mechanisms": [
+        {
+          "type": "swap",
+          "functional": true
+        },
+        {
+          "type": "obstacle",
+          "functional": true
+        }
+      ],
+      "attempts": 168
+    },
+    {
+      "level": 1188,
+      "specialIndex": 238,
+      "patternKey": "anneGridChamber3",
+      "blockCount": 22,
+      "dependencyDepth": 7,
+      "decisionSteps": 22,
+      "initiallyClearRatio": 0.22727272727272727,
+      "trivialEscapeRatio": 0.09090909090909091,
+      "mechanisms": [
+        {
+          "type": "swap",
+          "functional": true
+        }
+      ],
+      "attempts": 341
+    },
+    {
+      "level": 1193,
+      "specialIndex": 239,
+      "patternKey": "anneGridChamber4",
+      "blockCount": 22,
+      "dependencyDepth": 8,
+      "decisionSteps": 22,
+      "initiallyClearRatio": 0.18181818181818182,
+      "trivialEscapeRatio": 0.09090909090909091,
+      "mechanisms": [
+        {
+          "type": "cycle",
+          "functional": true
+        }
+      ],
+      "attempts": 513
+    },
+    {
+      "level": 1199,
+      "specialIndex": 240,
+      "patternKey": "anneGridChamber3",
+      "blockCount": 20,
+      "dependencyDepth": 5,
+      "decisionSteps": 19,
+      "initiallyClearRatio": 0.15,
+      "trivialEscapeRatio": 0.05,
+      "mechanisms": [
+        {
+          "type": "redirect",
+          "functional": true
+        },
+        {
+          "type": "swap",
+          "functional": true
+        }
+      ],
+      "attempts": 302
+    },
+    {
+      "level": 1202,
+      "specialIndex": 241,
+      "patternKey": "anneGridChamber1",
+      "blockCount": 21,
+      "dependencyDepth": 6,
+      "decisionSteps": 19,
+      "initiallyClearRatio": 0.14285714285714285,
+      "trivialEscapeRatio": 0.09523809523809523,
+      "mechanisms": [
+        {
+          "type": "redirect",
+          "functional": true
+        },
+        {
+          "type": "swap",
+          "functional": true
+        }
+      ],
+      "attempts": 258
+    },
+    {
+      "level": 1207,
+      "specialIndex": 242,
+      "patternKey": "anneGridChamber4",
+      "blockCount": 22,
+      "dependencyDepth": 7,
+      "decisionSteps": 22,
+      "initiallyClearRatio": 0.18181818181818182,
+      "trivialEscapeRatio": 0.09090909090909091,
+      "mechanisms": [
+        {
+          "type": "cycle",
+          "functional": true
+        },
+        {
+          "type": "obstacle",
+          "functional": true
+        }
+      ],
+      "attempts": 810
+    },
+    {
+      "level": 1213,
+      "specialIndex": 243,
+      "patternKey": "anneGridChamber3",
+      "blockCount": 20,
+      "dependencyDepth": 9,
+      "decisionSteps": 20,
+      "initiallyClearRatio": 0.15,
+      "trivialEscapeRatio": 0.05,
+      "mechanisms": [
+        {
+          "type": "swap",
+          "functional": true
+        },
+        {
+          "type": "obstacle",
+          "functional": true
+        }
+      ],
+      "attempts": 18
+    },
+    {
+      "level": 1218,
+      "specialIndex": 244,
+      "patternKey": "anneGridChamber5",
+      "blockCount": 22,
+      "dependencyDepth": 6,
+      "decisionSteps": 21,
+      "initiallyClearRatio": 0.22727272727272727,
+      "trivialEscapeRatio": 0.13636363636363635,
+      "mechanisms": [
+        {
+          "type": "swap",
+          "functional": true
+        }
+      ],
+      "attempts": 69
+    },
+    {
+      "level": 1224,
+      "specialIndex": 245,
+      "patternKey": "anneGridChamber1",
+      "blockCount": 22,
+      "dependencyDepth": 6,
+      "decisionSteps": 22,
+      "initiallyClearRatio": 0.18181818181818182,
+      "trivialEscapeRatio": 0.09090909090909091,
+      "mechanisms": [
+        {
+          "type": "cycle",
+          "functional": true
+        }
+      ],
+      "attempts": 972
+    },
+    {
+      "level": 1229,
+      "specialIndex": 246,
+      "patternKey": "anneGridChamber6",
+      "blockCount": 20,
+      "dependencyDepth": 7,
+      "decisionSteps": 19,
+      "initiallyClearRatio": 0.2,
+      "trivialEscapeRatio": 0.1,
+      "mechanisms": [
+        {
+          "type": "redirect",
+          "functional": true
+        },
+        {
+          "type": "swap",
+          "functional": true
+        }
+      ],
+      "attempts": 251
+    },
+    {
+      "level": 1232,
+      "specialIndex": 247,
+      "patternKey": "anneGridChamber8",
+      "blockCount": 21,
+      "dependencyDepth": 5,
+      "decisionSteps": 21,
+      "initiallyClearRatio": 0.14285714285714285,
+      "trivialEscapeRatio": 0.047619047619047616,
+      "mechanisms": [
+        {
+          "type": "redirect",
+          "functional": true
+        },
+        {
+          "type": "swap",
+          "functional": true
+        }
+      ],
+      "attempts": 136
+    },
+    {
+      "level": 1238,
+      "specialIndex": 248,
+      "patternKey": "anneGridChamber1",
+      "blockCount": 21,
+      "dependencyDepth": 7,
+      "decisionSteps": 21,
+      "initiallyClearRatio": 0.23809523809523808,
+      "trivialEscapeRatio": 0.09523809523809523,
+      "mechanisms": [
+        {
+          "type": "cycle",
+          "functional": true
+        },
+        {
+          "type": "obstacle",
+          "functional": true
+        }
+      ],
+      "attempts": 178
+    },
+    {
+      "level": 1243,
+      "specialIndex": 249,
+      "patternKey": "anneGridChamber2",
+      "blockCount": 21,
+      "dependencyDepth": 10,
+      "decisionSteps": 21,
+      "initiallyClearRatio": 0.19047619047619047,
+      "trivialEscapeRatio": 0.047619047619047616,
+      "mechanisms": [
+        {
+          "type": "swap",
+          "functional": true
+        },
+        {
+          "type": "obstacle",
+          "functional": true
+        }
+      ],
+      "attempts": 150
+    },
+    {
+      "level": 1249,
+      "specialIndex": 250,
+      "patternKey": "anneGridChamber3",
+      "blockCount": 22,
+      "dependencyDepth": 7,
+      "decisionSteps": 19,
+      "initiallyClearRatio": 0.22727272727272727,
+      "trivialEscapeRatio": 0.045454545454545456,
+      "mechanisms": [
+        {
+          "type": "swap",
+          "functional": true
+        }
+      ],
+      "attempts": 41
+    }
+  ]
+}
