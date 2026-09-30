@@ -2017,6 +2017,11 @@
 
           // Reaching an internal pit is a valid escape even if cells exist beyond it.
           if (pitSet.has(key)) return true;
+
+          // Generator physics must match runtime physics: the first missing physical
+          // board cell is an immediate cliff, never a transparent gap.
+          if (!footprintSet.has(key)) return true;
+
           if (obstacleSet.has(key)) return false;
           if (currentRemaining.has(key)) return false;
 
@@ -3573,8 +3578,19 @@
       showHint("Yön Değiştirildi! 🔄");
     }
 
+    function detachLinkedPairForSingleTargetBooster(block) {
+      const pair = getLinkedPairForBlock(block);
+      if (!pair) return;
+
+      fadeLinkedPair(pair);
+      linkedPairByCell.delete(`${pair.a.q},${pair.a.r}`);
+      linkedPairByCell.delete(`${pair.b.q},${pair.b.r}`);
+      activeLinkedPairs = activeLinkedPairs.filter(p => p !== pair);
+    }
+
     function hammerSmashBlock(block) {
       playSound('hammer');
+      detachLinkedPairForSingleTargetBooster(block);
       block.isRemoved = true;
 
       new TWEEN.Tween(block.mesh.scale)
@@ -3599,15 +3615,19 @@
       });
 
       // Linked pairs should never be left half-alive by a booster.
+      const processedPairs = new Set();
       Array.from(affected).forEach(block => {
         const pair = getLinkedPairForBlock(block);
-        if (!pair) return;
+        if (!pair || processedPairs.has(pair.id)) return;
+        processedPairs.add(pair.id);
+
         const pairBlocks = getLinkedPairBlocks(pair);
         if (pairBlocks.aBlock) affected.add(pairBlocks.aBlock);
         if (pairBlocks.bBlock) affected.add(pairBlocks.bBlock);
         fadeLinkedPair(pair);
         linkedPairByCell.delete(`${pair.a.q},${pair.a.r}`);
         linkedPairByCell.delete(`${pair.b.q},${pair.b.r}`);
+        activeLinkedPairs = activeLinkedPairs.filter(p => p !== pair);
       });
 
       const liveAffected = Array.from(affected).filter(block => block && !block.isRemoved);
