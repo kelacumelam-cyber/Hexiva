@@ -1131,6 +1131,20 @@
           for (let r = -2; r <= 2; r++) if (Math.abs(q + r) <= 2) c.push({ q, r });
         }
         return c;
+      },
+      swapTrialAxisB: () => {
+        const c = [];
+        for (let q = -2; q <= 2; q++) {
+          for (let r = -2; r <= 2; r++) if (Math.abs(q + r) <= 2) c.push({ q, r });
+        }
+        return c;
+      },
+      swapTrialAxisC: () => {
+        const c = [];
+        for (let q = -2; q <= 2; q++) {
+          for (let r = -2; r <= 2; r++) if (Math.abs(q + r) <= 2) c.push({ q, r });
+        }
+        return c;
       }
     };
 
@@ -1145,7 +1159,9 @@
       // The proof level routes a block through the changer and then into this pit.
       redirectTrial: [{ q: 0, r: -1 }],
       // Swap center is also a true escape/drop cell.
-      swapTrial: [{ q: 0, r: 0 }]
+      swapTrial: [{ q: 0, r: 0 }],
+      swapTrialAxisB: [{ q: 0, r: 0 }],
+      swapTrialAxisC: [{ q: 0, r: 0 }]
     };
 
     // A redirect cell is passable space, not a block and not an escape hole.
@@ -1154,11 +1170,14 @@
       redirectTrial: [{ q: 0, r: 0, dirIndex: 0 }]
     };
 
-    // Swap V1: one reversible axis only. The center cell is also listed in PIT_LAYOUTS,
-    // so it remains a valid drop/escape space while acting as the swap button.
+    // Swap mechanism uses the three opposite axes of the hex grid.
+    // The center cell is also listed in PIT_LAYOUTS, so it remains a valid
+    // drop/escape space while acting as the swap button.
     // aDir / bDir point from the center to the two held cells.
     const SWAP_LAYOUTS = {
-      swapTrial: [{ q: 0, r: 0, aDir: 2, bDir: 5 }]
+      swapTrial: [{ q: 0, r: 0, aDir: 2, bDir: 5 }],
+      swapTrialAxisB: [{ q: 0, r: 0, aDir: 0, bDir: 3 }],
+      swapTrialAxisC: [{ q: 0, r: 0, aDir: 1, bDir: 4 }]
     };
 
     function generateSolvableLevel(levelNum) {
@@ -1752,7 +1771,17 @@
         }
 
         const blocker = blocks.find(b => !b.isRemoved && b.q === testQ && b.r === testR);
-        if (blocker) return { canFly: false, blocker };
+        if (blocker) {
+          return {
+            canFly: false,
+            blocker,
+            blockerQ: testQ,
+            blockerR: testR,
+            steps,
+            routePoints,
+            finalDirIndex: dirIndex
+          };
+        }
 
         const redirect = activeRedirectors.get(key);
         if (redirect) {
@@ -1905,22 +1934,131 @@
       runWaypoint(0);
     }
 
-    function animateBlocked(block) {
-      playSound('blocked');
-      const origPos = { x: block.mesh.position.x, z: block.mesh.position.z };
-      const dir = HEX_DIRECTIONS[block.dirIndex];
-      const nudge = 0.22;
+    function animateBlocked(block, blockedInfo = null) {
+      if (block.isAnimating) return;
+      block.isAnimating = true;
+      playSound('slide');
 
-      new TWEEN.Tween(block.mesh.position)
-        .to({ x: origPos.x + dir.dx * nudge, z: origPos.z + dir.dz * nudge }, 75)
-        .yoyo(true)
-        .repeat(1)
-        .easing(TWEEN.Easing.Quadratic.Out)
-        .onComplete(() => {
-          block.mesh.position.x = origPos.x;
-          block.mesh.position.z = origPos.z;
-        })
-        .start();
+      const start = {
+        x: block.mesh.position.x,
+        y: block.mesh.position.y,
+        z: block.mesh.position.z,
+        dirIndex: block.dirIndex
+      };
+
+      const routePoints = (blockedInfo && blockedInfo.routePoints)
+        ? [...blockedInfo.routePoints]
+        : [];
+      const finalDirIndex = blockedInfo && blockedInfo.finalDirIndex !== undefined
+        ? blockedInfo.finalDirIndex
+        : block.dirIndex;
+      const finalDir = HEX_DIRECTIONS[finalDirIndex];
+
+      const outward = routePoints
+        .filter(p => p.type === 'redirect')
+        .map(p => {
+          const w = hexToWorld(p.q, p.r);
+          return { x: w.x, z: w.z, redirect: p };
+        });
+
+      if (blockedInfo && blockedInfo.blocker) {
+        const previousQ = blockedInfo.blocker.q - finalDir.dq;
+        const previousR = blockedInfo.blocker.r - finalDir.dr;
+        const previousWorld = hexToWorld(previousQ, previousR);
+        const dirLen = Math.sqrt(finalDir.dx * finalDir.dx + finalDir.dz * finalDir.dz) || 1;
+        const ux = finalDir.dx / dirLen;
+        const uz = finalDir.dz / dirLen;
+        const bump = 0.20;
+
+        outward.push({
+          x: previousWorld.x + ux * bump,
+          z: previousWorld.z + uz * bump,
+          collision: true
+        });
+      } else {
+        const dirLen = Math.sqrt(finalDir.dx * finalDir.dx + finalDir.dz * finalDir.dz) || 1;
+        outward.push({
+          x: start.x + (finalDir.dx / dirLen) * 0.22,
+          z: start.z + (finalDir.dz / dirLen) * 0.22,
+          collision: true
+        });
+      }
+
+      const visitedPositions = [{ x: start.x, z: start.z }];
+
+      function restoreAtStart() {
+        block.mesh.position.set(start.x, start.y, start.z);
+        block.dirIndex = start.dirIndex;
+        const originalAngle = -(HEX_DIRECTIONS[start.dirIndex].angleDeg * Math.PI / 180);
+        new TWEEN.Tween(block.arrowMesh.rotation)
+          .to({ y: originalAngle }, 110)
+          .easing(TWEEN.Easing.Quadratic.Out)
+          .onComplete(() => { block.isAnimating = false; })
+          .start();
+      }
+
+      function returnAlongPath(index) {
+        if (index < 0) {
+          restoreAtStart();
+          return;
+        }
+        const point = visitedPositions[index];
+        const dx = point.x - block.mesh.position.x;
+        const dz = point.z - block.mesh.position.z;
+        const distance = Math.sqrt(dx * dx + dz * dz);
+        const duration = Math.max(90, Math.min(220, 75 + distance * 40));
+
+        new TWEEN.Tween(block.mesh.position)
+          .to({ x: point.x, y: start.y, z: point.z }, duration)
+          .easing(TWEEN.Easing.Quadratic.Out)
+          .onComplete(() => returnAlongPath(index - 1))
+          .start();
+      }
+
+      function runOutward(index) {
+        if (index >= outward.length) {
+          playSound('blocked');
+          new TWEEN.Tween(block.mesh.scale)
+            .to({ x: 1.04, y: 0.96, z: 1.04 }, 70)
+            .easing(TWEEN.Easing.Quadratic.Out)
+            .yoyo(true)
+            .repeat(1)
+            .onComplete(() => {
+              block.mesh.scale.set(1, 1, 1);
+              returnAlongPath(visitedPositions.length - 1);
+            })
+            .start();
+          return;
+        }
+
+        const point = outward[index];
+        const dx = point.x - block.mesh.position.x;
+        const dz = point.z - block.mesh.position.z;
+        const distance = Math.sqrt(dx * dx + dz * dz);
+        const duration = Math.max(95, Math.min(260, 80 + distance * 42));
+
+        new TWEEN.Tween(block.mesh.position)
+          .to({ x: point.x, y: start.y, z: point.z }, duration)
+          .easing(point.collision ? TWEEN.Easing.Quadratic.In : TWEEN.Easing.Quadratic.InOut)
+          .onComplete(() => {
+            visitedPositions.push({ x: point.x, z: point.z });
+            if (point.redirect) {
+              activateRedirectorVisual(point.redirect.q, point.redirect.r);
+              block.dirIndex = point.redirect.toDirIndex;
+              const targetAngle = -(HEX_DIRECTIONS[block.dirIndex].angleDeg * Math.PI / 180);
+              new TWEEN.Tween(block.arrowMesh.rotation)
+                .to({ y: targetAngle }, 120)
+                .easing(TWEEN.Easing.Back.Out)
+                .onComplete(() => runOutward(index + 1))
+                .start();
+            } else {
+              runOutward(index + 1);
+            }
+          })
+          .start();
+      }
+
+      runOutward(0);
     }
 
     function rotateBlockDirection(block) {
@@ -1992,7 +2130,7 @@
           hit = hit.parent;
           block = hit.userData;
         }
-        if (!block || block.isRemoved) return;
+        if (!block || block.isRemoved || block.isAnimating) return;
 
         if (activeBooster === 'hammer') {
           hammerSmashBlock(block);
@@ -2016,7 +2154,7 @@
         if (check.canFly) {
           animateFlyAway(block, check);
         } else {
-          animateBlocked(block);
+          animateBlocked(block, check);
         }
       }
     }
