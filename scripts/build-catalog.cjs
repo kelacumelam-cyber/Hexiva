@@ -136,7 +136,7 @@ function draft(level, attempt, options = {}) {
       "cycle",
     ];
     const anneIndex = ((options.specialIndex || level) - 1) % anneKinds.length;
-    kind = anneKinds[anneIndex];
+    kind = options.forceKind || anneKinds[anneIndex];
 
     // Some large sparse chambers cannot physically support a necessary wall+cycle
     // arrangement on every deterministic notch/rotation. Try the harder combination
