@@ -166,6 +166,33 @@
       }
     }
 
+    #ambient-background {
+      position: fixed;
+      inset: 0;
+      z-index: 0;
+      overflow: hidden;
+      pointer-events: none;
+      background:
+        radial-gradient(circle at 72% 18%, rgba(255, 239, 174, 0.70) 0%, rgba(255, 239, 174, 0.16) 17%, rgba(255,255,255,0) 38%),
+        linear-gradient(180deg, #8fd8ff 0%, #c9edff 43%, #f8f4df 76%, #e7f4df 100%);
+    }
+
+    #ambient-background svg {
+      width: 100%;
+      height: 100%;
+      display: block;
+    }
+
+    #ambient-background::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background:
+        radial-gradient(ellipse at 50% 48%, rgba(246,250,255,0.72) 0%, rgba(246,250,255,0.42) 25%, rgba(246,250,255,0.08) 49%, rgba(246,250,255,0) 69%),
+        linear-gradient(180deg, rgba(255,255,255,0.05) 0%, rgba(255,255,255,0) 62%, rgba(255,248,220,0.13) 100%);
+      pointer-events: none;
+    }
+
     #game-canvas {
       position: absolute;
       top: 0;
@@ -245,6 +272,103 @@
   </style>
 </head>
 <body class="w-full h-full relative select-none">
+
+  <div id="ambient-background" aria-hidden="true">
+    <svg viewBox="0 0 100 180" preserveAspectRatio="xMidYMid slice" role="presentation">
+      <defs>
+        <linearGradient id="islandGrass" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stop-color="#7fd86c"/>
+          <stop offset="100%" stop-color="#4fa95b"/>
+        </linearGradient>
+        <linearGradient id="islandRock" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stop-color="#b79e72"/>
+          <stop offset="52%" stop-color="#927752"/>
+          <stop offset="100%" stop-color="#6f593f"/>
+        </linearGradient>
+        <linearGradient id="islandRockLight" x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0%" stop-color="#d4bd8d"/>
+          <stop offset="100%" stop-color="#8e7351"/>
+        </linearGradient>
+      </defs>
+
+      <!-- Quiet distant clouds -->
+      <g fill="#ffffff" opacity="0.46">
+        <ellipse cx="15" cy="31" rx="10" ry="3.7"/>
+        <ellipse cx="9" cy="30" rx="5" ry="4.2"/>
+        <ellipse cx="19" cy="28.5" rx="5.8" ry="5"/>
+        <ellipse cx="86" cy="43" rx="12" ry="3.8"/>
+        <ellipse cx="80" cy="41.5" rx="5.5" ry="4.3"/>
+        <ellipse cx="90" cy="40" rx="6" ry="5"/>
+        <ellipse cx="52" cy="18" rx="8" ry="2.5" opacity="0.45"/>
+      </g>
+
+      <!-- Warm prosperity light -->
+      <circle cx="76" cy="22" r="8.5" fill="#fff3b0" opacity="0.34"/>
+      <circle cx="76" cy="22" r="4.8" fill="#fff9d8" opacity="0.45"/>
+
+      <!-- Left distant island -->
+      <g opacity="0.62">
+        <ellipse cx="4" cy="83" rx="16" ry="4.6" fill="url(#islandGrass)"/>
+        <path d="M-11 84 Q4 95 19 84 L11 104 Q4 114 -4 104 Z" fill="url(#islandRock)"/>
+        <path d="M-2 85 Q4 97 9 86 L5 103 Q1 108 -3 101 Z" fill="url(#islandRockLight)" opacity="0.42"/>
+        <g fill="#388a4f">
+          <circle cx="-3" cy="79.5" r="2.3"/>
+          <circle cx="4" cy="78.8" r="2.8"/>
+          <circle cx="10" cy="80" r="2.1"/>
+        </g>
+        <g fill="#f6efda" opacity="0.85">
+          <rect x="1.3" y="78.2" width="5.2" height="2.4" rx="0.8"/>
+          <rect x="3.1" y="75.9" width="1.6" height="2.5" rx="0.4"/>
+        </g>
+      </g>
+
+      <!-- Right high island -->
+      <g opacity="0.52">
+        <ellipse cx="101" cy="69" rx="14" ry="4.2" fill="url(#islandGrass)"/>
+        <path d="M88 70 Q101 79 114 70 L109 89 Q101 99 94 89 Z" fill="url(#islandRock)"/>
+        <path d="M96 71 Q101 82 105 72 L102 88 Q99 92 96 86 Z" fill="url(#islandRockLight)" opacity="0.38"/>
+        <g fill="#3f9354">
+          <circle cx="94" cy="66" r="2.1"/>
+          <circle cx="101" cy="64.9" r="2.7"/>
+          <circle cx="107" cy="66.3" r="2.2"/>
+        </g>
+      </g>
+
+      <!-- Lower-left prosperity terrace -->
+      <g opacity="0.74">
+        <ellipse cx="13" cy="145" rx="20" ry="5.5" fill="url(#islandGrass)"/>
+        <path d="M-5 146 Q13 160 31 146 L24 170 Q13 181 3 169 Z" fill="url(#islandRock)"/>
+        <path d="M9 147 Q14 160 19 148 L15 169 Q11 174 8 166 Z" fill="url(#islandRockLight)" opacity="0.46"/>
+        <path d="M0 143 Q13 138 26 143" stroke="#d9e8a6" stroke-width="1.2" fill="none" opacity="0.78"/>
+        <g fill="#367f48">
+          <circle cx="3" cy="139" r="3"/>
+          <circle cx="10" cy="137.5" r="3.7"/>
+          <circle cx="18" cy="138.3" r="3.2"/>
+          <circle cx="24" cy="140" r="2.5"/>
+        </g>
+        <g fill="#fff7df" opacity="0.86">
+          <rect x="8" y="136.4" width="8" height="3" rx="1"/>
+          <rect x="10" y="133.6" width="4" height="2.9" rx="0.6"/>
+        </g>
+      </g>
+
+      <!-- Lower-right distant island -->
+      <g opacity="0.68">
+        <ellipse cx="91" cy="151" rx="17" ry="4.8" fill="url(#islandGrass)"/>
+        <path d="M75 152 Q91 163 107 152 L101 173 Q91 182 82 172 Z" fill="url(#islandRock)"/>
+        <path d="M87 153 Q92 164 97 153 L94 171 Q90 176 87 168 Z" fill="url(#islandRockLight)" opacity="0.44"/>
+        <g fill="#3b8b4e">
+          <circle cx="82" cy="147" r="2.6"/>
+          <circle cx="90" cy="146" r="3.3"/>
+          <circle cx="98" cy="147.4" r="2.7"/>
+        </g>
+        <path d="M82 149 Q91 144 100 149" stroke="#d9e8a6" stroke-width="1" fill="none" opacity="0.72"/>
+      </g>
+
+      <!-- Atmospheric horizon -->
+      <path d="M0 118 Q22 113 43 118 T100 117 V180 H0 Z" fill="#f7f1da" opacity="0.12"/>
+    </svg>
+  </div>
 
   <div id="portrait-guard" class="fixed inset-0 z-[100] bg-slate-950/95 text-white items-center justify-center text-center p-8">
     <div class="max-w-xs">
@@ -759,7 +883,7 @@
     const canvas = document.getElementById('game-canvas');
 
     const scene = new THREE.Scene();
-    scene.background = new THREE.Color(0xdce5f5);
+    scene.background = null;
 
     // Mobile-first camera framing. Stronger top-down presentation while
     // preserving enough perspective to keep the chunky 3D block identity.
@@ -801,9 +925,11 @@
     const renderer = new THREE.WebGLRenderer({
       canvas: canvas,
       antialias: true,
+      alpha: true,
       powerPreference: "high-performance",
       precision: "highp"
     });
+    renderer.setClearColor(0x000000, 0);
 
     renderer.setSize(window.innerWidth, window.innerHeight);
     renderer.setPixelRatio(getSafePixelRatio());
