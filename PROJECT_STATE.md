@@ -52,12 +52,14 @@ User-provided references established the desired presentation direction:
 
 ## Current camera checkpoint candidate (V11)
 
-Implemented but awaiting visual approval:
+Approved presentation checkpoint:
 - camera moved from `(0, 19, 15)` to `(0, 24, 9.5)`,
 - board is viewed substantially more from above,
 - 3D depth is intentionally retained,
 - mobile board offset was reduced to match the new viewing angle,
 - no block geometry, colors, shadows, mechanics, UI identity, or direction rules were changed in this checkpoint.
+- User approved the stronger top-down framing.
+- Direction-changer visual arrow alignment bug fixed: the mechanism frame no longer rotates the displayed arrow away from its logical `dirIndex`.
 
 ## NEXT TASK
 
