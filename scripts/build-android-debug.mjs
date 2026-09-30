@@ -16,10 +16,18 @@ try {
   );
 }
 
-execFileSync(wrapper, ["assembleDebug"], {
-  cwd: androidDir,
-  stdio: "inherit"
-});
+if (process.platform === "win32") {
+  execFileSync(
+    "cmd.exe",
+    ["/d", "/s", "/c", `"${wrapper}" assembleDebug`],
+    { cwd: androidDir, stdio: "inherit" }
+  );
+} else {
+  execFileSync(wrapper, ["assembleDebug"], {
+    cwd: androidDir,
+    stdio: "inherit"
+  });
+}
 
 const apk = path.join(
   androidDir,
