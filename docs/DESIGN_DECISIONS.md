@@ -54,3 +54,10 @@ Correct interpretation:
 - Swap mechanism: the larger central mechanism with two arms. Its arms hold two hexes and swap their positions when activated. Its center can also function as a real empty/escape cell.
 
 Do not reuse the arm-based swap visual language for the direction changer.
+
+
+### Blocked-move animation
+Accepted future behavior: a tapped hex should physically travel along its arrow direction until the first blocking hex, visibly bump it, and return to its starting cell. If its route is clear, it escapes/falls normally. This is an animation/feedback rule and must not alter movement logic.
+
+### Shadow policy
+With the approved stronger top-down camera, dynamic cast shadows should remain disabled unless a later visual test clearly proves they improve readability. Depth should primarily come from geometry, bevels, base plates, lighting, and color separation.
