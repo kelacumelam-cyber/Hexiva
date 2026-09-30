@@ -378,3 +378,17 @@ Each level remains fixed/deterministic by level number.
 For V2 levels, valid inward/sideways arrow directions are preferred when available, using a deterministic fluctuating difficulty mood rather than a monotonic difficulty curve. This is intended to reduce free outward escapes and increase internal movement/collision play.
 
 Generator QA metrics continue to record family, topology profile, outward-facing ratio, initially clear move count, and trivial direct escape count. Thresholds remain subject to playtesting.
+
+
+## Web test workflow
+
+Accepted default testing flow:
+
+- The live test URL is GitHub Pages: https://kelacumelam-cyber.github.io/Hexiva/
+- After each approved development checkpoint, update the repository's main `index.html`.
+- GitHub Pages republishes automatically from `main` / root.
+- User tests by refreshing the same URL.
+- If the browser serves an older cached build, use a hard refresh (Ctrl+F5).
+- GitHub Pages may take from seconds to a few minutes to publish a new commit.
+- Downloading standalone HTML/ZIP files is now only a fallback when Pages is unavailable or a local-file-specific test is needed.
+- Before telling the user a new web build is ready, make sure the full HTML was committed and not truncated.
