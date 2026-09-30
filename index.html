@@ -3233,56 +3233,31 @@
     momVoiceBtn.addEventListener('click', async () => {
       initAudio();
 
-      // Android APK: use the native SpeechRecognizer plugin rather than the
-      // browser Web Speech API. Android WebView can expose SpeechRecognition
-      // but still reject it without a native permission/recognizer path.
-      const nativeSpeech =
+      // Android APK: explicitly request the native RECORD_AUDIO permission
+      // before entering the WebView SpeechRecognition API. The custom
+      // Capacitor plugin exists only for this permission bridge; it does not
+      // replace the browser speech recognizer.
+      const nativeMic =
         window.Capacitor &&
         window.Capacitor.Plugins &&
-        window.Capacitor.Plugins.SpeechRecognition;
+        window.Capacitor.Plugins.HexivaMicrophone;
 
-      if (nativeSpeech) {
+      if (nativeMic) {
         try {
-          const permission = await nativeSpeech.checkPermissions();
-          if (permission?.speechRecognition !== 'granted') {
-            const requested = await nativeSpeech.requestPermissions();
-            if (requested?.speechRecognition !== 'granted') {
-              showHint('Mikrofon izni gerekiyor 🎙️');
-              return;
-            }
-          }
-
-          if (activeMomRecognition) {
-            try { await nativeSpeech.stop(); } catch (e) {}
-            activeMomRecognition = null;
-          }
-
-          activeMomRecognition = nativeSpeech;
-          showHint('Seni dinliyorum... 🎙️');
-
-          const result = await nativeSpeech.start({
-            language: 'tr-TR',
-            maxResults: 5,
-            partialResults: false,
-            popup: false,
-          });
-
-          if (activeMomRecognition === nativeSpeech) activeMomRecognition = null;
-          rewardMomVoiceCheat(result?.matches || []);
-          return;
-        } catch (error) {
-          activeMomRecognition = null;
-          const message = String(error?.message || error || '').toLowerCase();
-          if (message.includes('permission') || message.includes('denied') || message.includes('not allowed')) {
+          const permission = await nativeMic.requestPermission();
+          if (!permission?.granted) {
             showHint('Mikrofon izni gerekiyor 🎙️');
-          } else {
-            showHint('Ses anlaşılmadı, bir daha söyle 😄');
+            return;
           }
+        } catch (error) {
+          console.error('Hexiva microphone permission failed:', error);
+          showHint('Mikrofon izni gerekiyor 🎙️');
           return;
         }
       }
 
-      // Web fallback: keep the existing browser behavior for the live web build.
+      // Browser/WebView speech recognition. On Android this runs only after
+      // the native microphone permission has been granted above.
       const SpeechRecognitionApi = window.SpeechRecognition || window.webkitSpeechRecognition;
 
       if (!SpeechRecognitionApi) {
