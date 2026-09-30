@@ -123,7 +123,7 @@ html = removeRange(
   html,
   '  <script type="module">\n    // Cloud persistence is optional.',
   '  <script>\n    let audioEnabled = true;',
-  '  <script>window.cloudSaveHandler = null;<\/script>\n\n  <script>\n    let audioEnabled = true;'
+  '  <script>window.cloudSaveHandler = null;<\/script>\n\n'
 );
 
 // Release sanity checks before writing the artifact.
@@ -142,6 +142,21 @@ for (const token of forbidden) {
   }
 }
 
+// Validate every inline classic script in the generated release artifact.
+// This catches packaging-only syntax errors before an APK can be built.
+const inlineScripts = [...html.matchAll(/<script(?![^>]*\bsrc=)(?![^>]*\btype=["']module["'])[^>]*>([\s\S]*?)<\/script>/gi)]
+  .map((match) => match[1])
+  .filter((code) => code.trim().length > 0);
+
+for (const [index, code] of inlineScripts.entries()) {
+  try {
+    // Parse without executing.
+    new Function(code);
+  } catch (error) {
+    throw new Error(`Release inline script #${index + 1} has invalid JavaScript: ${error.message}`);
+  }
+}
+
 await writeFile(path.join(dist, "index.html"), html, "utf8");
 
-console.log("Hexiva offline web bundle created in dist/");
+console.log(`Hexiva offline web bundle created in dist/ (validated ${inlineScripts.length} inline scripts)`);
