@@ -4,7 +4,7 @@ Last updated: 2026-09-30
 
 ## Current checkpoint
 
-The current playable baseline is `index.html`, now at V18. The approved top-down presentation remains, board cast shadows are disabled, and swap mechanism V1 is implemented as a test candidate.
+The current playable baseline is `index.html`, now at V21. All three swap axes are approved; blocked taps now travel to the first blocker and return.
 
 The game is working as a mobile-first Three.js/WebGL prototype. The current visual identity must be preserved while the board presentation, mechanics, level generation, and eventual Android packaging are improved.
 
@@ -227,3 +227,23 @@ Implemented in V18 and awaiting visual/gameplay approval.
 - V19 visual treatment is broadly approved and can remain for now.
 - It is not considered final art; further polish may happen later.
 - Next safe expansion: add additional swap orientations while preserving the same reversible behavior and center-pit rule.
+
+
+## Swap-axis checkpoint approved
+
+- Levels 26, 27, and 28 were checked.
+- All three opposite hex-grid swap axes work correctly.
+- V19 swap visuals remain accepted as a good working state, not final art.
+- Same color or same arrow on the two held hexes is not currently treated as a swap-design bug; generator-level variety will be addressed in the later level-generation overhaul.
+
+## V21 collision-return candidate
+
+Awaiting gameplay feel approval.
+
+- Replaces the old tiny blocked nudge.
+- A tapped blocked hex now travels along its visible arrow route.
+- If empty cells exist before the blocker, it visibly crosses them.
+- It stops just before the first blocking hex, performs a small impact/squash, then returns to its original cell.
+- If a direction changer lies on the blocked route, the hex follows it on the outward trip and restores its original direction when back at the starting cell.
+- Clear routes still escape/fall exactly as before.
+- A block cannot be re-tapped while its blocked-return animation is running.
