@@ -369,3 +369,11 @@ The offline/APK build now strips development-only behavior without removing it f
 - optional Firebase module removed from native release output; local save remains authoritative,
 - build fails if known CDN/Firebase release tokens remain,
 - source sanity verification script added.
+
+
+## V41.2 debug APK + physical test workflow
+
+- Added cross-platform `npm run android:debug`.
+- Command rebuilds/syncs offline assets and runs Gradle `assembleDebug`.
+- Expected output path documented: `android/app/build/outputs/apk/debug/app-debug.apk`.
+- Added a focused 15-20 minute physical Android acceptance checklist covering portrait layout, mechanics, persistence, offline launch, thermal behavior and long-session slowdown.
