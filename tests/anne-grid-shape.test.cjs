@@ -12,7 +12,7 @@ test("anne-grid chamber families are large, connected and genuinely distinct", (
     assert.equal(connected(shape.cells), true);
     fingerprints.add(P.fingerprint(shape.cells));
   }
-  assert.ok(fingerprints.size >= 5);
+  assert.equal(fingerprints.size, FAMILY_COUNT);
 });
 
 test("anne-grid variants stay connected across deterministic rotations/notches", () => {
@@ -21,6 +21,24 @@ test("anne-grid variants stay connected across deterministic rotations/notches",
       const shape = makeAnneGridShape(specialIndex, attempt);
       assert.ok(shape.cells.length >= 32);
       assert.equal(connected(shape.cells), true);
+    }
+  }
+});
+
+
+test("anne-grid families stay below the Work near-repeat threshold", () => {
+  const shapes = [];
+  for (let i = 1; i <= FAMILY_COUNT; i++) {
+    shapes.push(makeAnneGridShape(i, 0));
+  }
+
+  for (let i = 0; i < shapes.length; i++) {
+    for (let j = i + 1; j < shapes.length; j++) {
+      const similarity = P.similarity(shapes[i].cells, shapes[j].cells);
+      assert.ok(
+        similarity <= 0.84,
+        `families ${i + 1} and ${j + 1} are too similar: ${similarity}`,
+      );
     }
   }
 });
