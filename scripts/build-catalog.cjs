@@ -1,7 +1,8 @@
 const fs = require("fs"),
   crypto = require("crypto"),
   P = require("../src/puzzle-engine.js"),
-  templates = require("../src/topologies.json");
+  templates = require("../src/topologies.json"),
+  { makeAnneGridShape } = require("../src/anne-grid-shape.js");
 function rng(seed) {
   return () => {
     seed += 0x6d2b79f5;
@@ -35,7 +36,11 @@ function connected(cells) {
   }
   return seen.size === ks.size;
 }
-function shape(level, attempt, r) {
+function shape(level, attempt, r, options = {}) {
+  if (options.anneGrid) {
+    return makeAnneGridShape(options.specialIndex || level, attempt);
+  }
+
   let family =
     level <= 34 && attempt < 240
       ? keys[level - 1]
@@ -92,11 +97,11 @@ function shape(level, attempt, r) {
     cells = cells.map((c) => ({ q: -c.r, r: c.q + c.r }));
   return { cells, family };
 }
-function draft(level, attempt) {
+function draft(level, attempt, options = {}) {
   const r = rng(
     (Math.imul(level, 0x45d9f3b) ^ Math.imul(attempt + 1, 0x9e3779b9)) >>> 0,
   );
-  const { cells, family } = shape(level, attempt, r),
+  const { cells, family } = shape(level, attempt, r, options),
     ks = new Set(cells.map(P.key));
   const l = {
     level,
@@ -114,18 +119,27 @@ function draft(level, attempt) {
   // Mechanic cadence recurs and combines. Obstacle is paired with rearrangement:
   // a permanent wall alone cannot be necessary in a fixed-arrow removal-only puzzle.
   let kind =
-    level < 8
-      ? "plain"
-      : [
-          "plain",
-          "redirect",
-          "swap",
-          "linked",
-          "cycle",
-          "obstacle",
+    options.anneGrid
+      ? [
           "redirectSwap",
           "obstacleCycle",
-        ][level % 8];
+          "obstacle",
+          "redirectCycle",
+          "swap",
+          "cycle",
+        ][((options.specialIndex || level) - 1) % 6]
+      : level < 8
+        ? "plain"
+        : [
+            "plain",
+            "redirect",
+            "swap",
+            "linked",
+            "cycle",
+            "obstacle",
+            "redirectSwap",
+            "obstacleCycle",
+          ][level % 8];
   const interiors = shuffle(
     cells.filter(
       (c) => P.D.filter((_, d) => ks.has(P.key(P.step(c, d)))).length >= 4,
@@ -135,7 +149,7 @@ function draft(level, attempt) {
   let reserved = new Set(),
     mechanism = null;
   const wantSwap = ["swap", "obstacle", "redirectSwap"].includes(kind),
-    wantCycle = ["cycle", "obstacleCycle"].includes(kind);
+    wantCycle = ["cycle", "obstacleCycle", "redirectCycle"].includes(kind);
   if (wantSwap || wantCycle) {
     for (const c of interiors) {
       for (const axis of shuffle(wantSwap ? [0, 1, 2] : [0, 1], r)) {
@@ -164,19 +178,30 @@ function draft(level, attempt) {
       (!mechanism ||
         !P.D.some((_, d) => P.key(P.step(mechanism, d)) === P.key(c))),
   );
-  const floorCount =
-    level <= 4 ? 0 : Math.min(3, Math.floor(cells.length / 12));
+  const floorCount = options.anneGrid
+    ? Math.min(6, Math.max(4, Math.floor(cells.length / 7)))
+    : level <= 4
+      ? 0
+      : Math.min(3, Math.floor(cells.length / 12));
   for (const c of free.slice(0, floorCount)) {
     l.floors.push(c);
     reserved.add(P.key(c));
   }
-  if (kind === "redirect" || kind === "redirectSwap") {
+  if (kind === "redirect" || kind === "redirectSwap" || kind === "redirectCycle") {
     const c = free.find((c) => !reserved.has(P.key(c)));
     if (!c) return null;
     l.redirectors.push({ ...c, dirIndex: Math.floor(r() * 6) });
     reserved.add(P.key(c));
   }
-  if (!mechanism && level > 4 && r() < 0.2) {
+  if (options.anneGrid) {
+    const pitTarget = 1 + (((options.specialIndex || level) % 3) === 0 ? 1 : 0);
+    for (const c of free) {
+      if (l.pits.length >= pitTarget + (mechanism ? 1 : 0)) break;
+      if (reserved.has(P.key(c))) continue;
+      l.pits.push(c);
+      reserved.add(P.key(c));
+    }
+  } else if (!mechanism && level > 4 && r() < 0.2) {
     const c = free.find((c) => !reserved.has(P.key(c)));
     if (c) {
       l.pits.push(c);
@@ -309,7 +334,7 @@ function draft(level, attempt) {
 
   return l;
 }
-function reject(m, level) {
+function reject(m, level, options = {}) {
   const out = [];
   if (m.solvabilityStalled)
     out.push(m.solverExhausted ? "solver-budget" : "unsolvable");
@@ -325,6 +350,12 @@ function reject(m, level) {
   if (m.maxForcedRun > (level <= 4 ? 2 : 4)) out.push("forced-run");
   if (m.meaningfulOpeningCount < 2) out.push("meaningless-opening");
   if (level <= 4 && m.dependencyDepth > 5) out.push("tutorial-depth");
+  if (options.anneGrid) {
+    if (m.initiallyClearRatio > 0.26) out.push("anne-grid-opening");
+    if (m.trivialEscapeRatio > 0.16) out.push("anne-grid-trivial");
+    if (m.dependencyDepth < 5) out.push("anne-grid-depth");
+    if (m.decisionSteps < 9) out.push("anne-grid-decisions");
+  }
   return out;
 }
 function score(m) {
@@ -482,4 +513,4 @@ async function main() {
   console.log(`Catalog saved: ${count}`);
 }
 if (require.main === module) main();
-module.exports = { draft, reject };
+module.exports = { draft, reject, score };
