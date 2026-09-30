@@ -139,6 +139,9 @@ test("fresh QA grant adds exactly 100 to existing coins and runs once", () => {
   const store = new Map([
     ["hexiva-save-v1", JSON.stringify({ coins: 275 })],
     ["hexiva-qa-deploy-marker-v42-6", "1"],
+    ["hexiva-qa-v43-fit-20260930-7c6a2f1d", "1"],
+    ["hexiva-qa-v43-arrow-20260930-91d4b6ce", "1"],
+    ["hexiva-qa-mom-voice-20260930-4e93a1b7", "1"],
   ]);
   const c = {
     console,
@@ -152,7 +155,7 @@ test("fresh QA grant adds exactly 100 to existing coins and runs once", () => {
   };
   vm.createContext(c);
   vm.runInContext(
-    "let coins=0;const LOCAL_SAVE_KEY='hexiva-save-v1';const QA_DEPLOY_MARKER_V43='hexiva-qa-v43-20260930-c74f9e21';window.applyLoadedSave=data=>{coins=data.coins};" +
+    "let coins=0;const LOCAL_SAVE_KEY='hexiva-save-v1';const QA_DEPLOY_MARKER_V43='hexiva-qa-v43-20260930-c74f9e21';const QA_DEPLOY_MARKER_V43_FIT='hexiva-qa-v43-fit-20260930-7c6a2f1d';const QA_DEPLOY_MARKER_V43_ARROW='hexiva-qa-v43-arrow-20260930-91d4b6ce';const QA_DEPLOY_MARKER_MOM_VOICE='hexiva-qa-mom-voice-20260930-4e93a1b7';window.applyLoadedSave=data=>{coins=data.coins};" +
       code +
       ";loadLocalState();globalThis.balance=coins;",
     c,
