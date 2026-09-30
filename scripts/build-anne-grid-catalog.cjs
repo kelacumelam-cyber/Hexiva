@@ -1,6 +1,9 @@
 const fs = require("fs");
 const vm = require("vm");
 const P = require("../src/puzzle-engine.js");
+const {
+  makeAnneGridShape,
+} = require("../src/anne-grid-shape.js");
 const { draft, reject, score } = require("./build-catalog.cjs");
 const {
   FINAL_LEVEL_COUNT,
@@ -43,9 +46,28 @@ function buildSpecial(finalLevel, specialIndex, acceptedLevels, buildOptions = {
   let bestScore = Infinity;
   let accepted = 0;
   const reasons = {};
+  const recent = acceptedLevels.slice(-8);
+  const avoidFamilyIndexes = recent
+    .map((level) => {
+      const match = /^anneGridChamber(\d+)$/.exec(level.patternKey || "");
+      return match ? Number(match[1]) - 1 : null;
+    })
+    .filter((value) => value !== null);
   let attempt = 0;
 
   for (; attempt < maxAttempts; attempt++) {
+    const previewShape = makeAnneGridShape(specialIndex, attempt, {
+      avoidFamilyIndexes,
+    });
+    const preview = {
+      footprint: previewShape.cells,
+      patternKey: previewShape.family,
+    };
+    if (recentShapeViolation(acceptedLevels, preview)) {
+      reasons["recent-shape-or-family"] =
+        (reasons["recent-shape-or-family"] || 0) + 1;
+      continue;
+    }
     const beforeConstructionRejects = Object.values(reasons).reduce(
       (sum, value) => sum + value,
       0,
@@ -53,6 +75,7 @@ function buildSpecial(finalLevel, specialIndex, acceptedLevels, buildOptions = {
     const candidate = draft(finalLevel, attempt, {
       anneGrid: true,
       specialIndex,
+      avoidFamilyIndexes,
       forceKind: buildOptions.forceKind,
       failureStats: reasons,
     });
@@ -65,12 +88,6 @@ function buildSpecial(finalLevel, specialIndex, acceptedLevels, buildOptions = {
         reasons["construction-constraints"] =
           (reasons["construction-constraints"] || 0) + 1;
       }
-      continue;
-    }
-
-    if (recentShapeViolation(acceptedLevels, candidate)) {
-      reasons["recent-shape-or-family"] =
-        (reasons["recent-shape-or-family"] || 0) + 1;
       continue;
     }
 
