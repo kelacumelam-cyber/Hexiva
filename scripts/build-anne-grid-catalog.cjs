@@ -112,6 +112,7 @@ function buildSpecial(finalLevel, specialIndex, acceptedLevels, buildOptions = {
     generatorVersion: "V43-ANNE-GRID-V1",
     anneGrid: true,
     specialIndex,
+    mechanicKind: best.mechanicKind || null,
     attempts: Math.min(attempt + 1, maxAttempts),
     acceptedCandidates: accepted,
     rejections: reasons,
