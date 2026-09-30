@@ -791,3 +791,15 @@ Fix:
 - The existing Web Speech API remains as the browser fallback, so the live web build is not intentionally changed.
 - The native call is one-shot and does not use partial results; this avoids unnecessary Android recognizer lifecycle complexity for the temporary family voice command.
 - The previous manifest declaration remains in place as defense-in-depth.
+
+
+## V43.3.3 — Capacitor 8 speech plugin compatibility correction
+
+A compatibility review found that `@capacitor-community/speech-recognition@7.0.1` is a Capacitor 7 plugin, while Hexiva uses Capacitor 8. The community plugin repository still has an open Capacitor 8 support request, so it was not a safe dependency choice for the APK.
+
+Correction:
+- Removed `@capacitor-community/speech-recognition@7.0.1`.
+- Switched to `@capawesome-team/capacitor-speech-recognition@8.1.1`, whose 8.x line explicitly targets Capacitor 8.
+- The native API shape used by Hexiva (checkPermissions/requestPermissions/start with matches) remains the intended integration.
+- The existing explicit `RECORD_AUDIO` manifest configuration remains as defense-in-depth.
+- User must run `npm install` before the next APK build so `package-lock.json` and native Android plugin files are regenerated/synced.
