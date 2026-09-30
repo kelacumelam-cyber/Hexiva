@@ -1,11 +1,22 @@
 const fs = require("fs"),
   vm = require("vm"),
+  crypto = require("crypto"),
   assert = require("assert/strict"),
   P = require("../src/puzzle-engine.js"),
   { reject } = require("./build-catalog.cjs");
+const catalogPath = process.argv[2] || "src/catalog.js";
+const expectedCount =
+  Number(process.argv[3]) ||
+  (catalogPath.includes("anne-grid-preview") ? 1250 : 1000);
+const isAnneGridPreview = catalogPath.includes("anne-grid-preview");
 const context = { window: {} };
 vm.createContext(context);
-vm.runInContext(fs.readFileSync("src/catalog.js", "utf8"), context);
+const catalogSource = fs.readFileSync(catalogPath, "utf8");
+const catalogSha256 = crypto
+  .createHash("sha256")
+  .update(catalogSource)
+  .digest("hex");
+vm.runInContext(catalogSource, context);
 const catalog = JSON.parse(JSON.stringify(context.window.HEXIVA_CATALOG));
 const html = fs.readFileSync("index.html", "utf8"),
   routeSource = html.slice(
@@ -58,7 +69,9 @@ const mechanismCounts = {},
 for (const l of catalog) {
   const proof = P.solve(l),
     m = P.metrics(l, proof),
-    bad = reject(m, l.level);
+    bad = reject(m, l.level, {
+      anneGrid: Boolean(l.generationStats && l.generationStats.anneGrid),
+    });
   if (bad.length) violations.push({ level: l.level, reasons: bad });
   assert.equal(proof.exhausted, false, `budget exhausted ${l.level}`);
   let bs = P.initial(l);
@@ -157,9 +170,35 @@ const sort = (k, n = 12) =>
     .sort((a, b) => b[k] - a[k])
     .slice(0, n)
     .map((x) => ({ level: x.level, value: x[k] }));
+const specialLevels = catalog.filter(
+  (level) => level.generationStats && level.generationStats.anneGrid,
+);
+const anneGridCadenceViolations = [];
+if (isAnneGridPreview) {
+  for (let start = 0; start < catalog.length; start += 10) {
+    const decade = catalog.slice(start, start + 10);
+    const offsets = decade
+      .map((level, index) =>
+        level.generationStats && level.generationStats.anneGrid ? index + 1 : null,
+      )
+      .filter(Boolean);
+    if (
+      offsets.length !== 2 ||
+      Math.abs(offsets[1] - offsets[0]) <= 1
+    )
+      anneGridCadenceViolations.push({
+        startLevel: start + 1,
+        offsets,
+      });
+  }
+}
+
 const summary = {
-  generatorVersion: "V43",
+  generatorVersion: isAnneGridPreview ? "V43-ANNE-GRID-V1" : "V43",
+  catalogSha256,
   auditedLevels: catalog.length,
+  anneGridLevels: specialLevels.length,
+  anneGridCadenceViolations,
   qualityViolations: violations,
   solvabilityStalls: rows
     .filter((x) => x.solvabilityStalled)
@@ -204,7 +243,8 @@ const summary = {
     [5, 34],
     [35, 100],
     [101, 300],
-    [301, 1000],
+    [301, Math.min(1000, catalog.length)],
+    ...(catalog.length > 1000 ? [[1001, catalog.length]] : []),
   ].map(([start, end]) => {
     const group = rows.filter((x) => x.level >= start && x.level <= end);
     return {
@@ -234,14 +274,19 @@ const summary = {
   },
 };
 fs.mkdirSync("docs/audits", { recursive: true });
-fs.writeFileSync(
-  "docs/audits/v43-summary.json",
-  JSON.stringify(summary, null, 2),
-);
-fs.writeFileSync("docs/audits/v43-levels.json", JSON.stringify(rows));
+const summaryPath = isAnneGridPreview
+  ? "docs/audits/anne-grid-summary.json"
+  : "docs/audits/v43-summary.json";
+const levelsPath = isAnneGridPreview
+  ? "docs/audits/anne-grid-levels.json"
+  : "docs/audits/v43-levels.json";
+fs.writeFileSync(summaryPath, JSON.stringify(summary, null, 2));
+fs.writeFileSync(levelsPath, JSON.stringify(rows));
 console.log(JSON.stringify(summary, null, 2));
 if (
-  catalog.length !== 1000 ||
+  catalog.length !== expectedCount ||
+  (isAnneGridPreview && specialLevels.length !== 250) ||
+  anneGridCadenceViolations.length ||
   violations.length ||
   nearRepeats.length ||
   familyRepeats.length ||

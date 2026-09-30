@@ -1,0 +1,287 @@
+const fs = require("fs");
+const vm = require("vm");
+const P = require("../src/puzzle-engine.js");
+const {
+  makeAnneGridShape,
+} = require("../src/anne-grid-shape.js");
+const { draft, reject, score } = require("./build-catalog.cjs");
+const {
+  FINAL_LEVEL_COUNT,
+  NORMAL_LEVEL_COUNT,
+  SPECIAL_LEVEL_COUNT,
+  buildCatalogLayout,
+} = require("../src/catalog-layout.js");
+
+const SOURCE_CATALOG = "src/catalog.js";
+const OUTPUT_CATALOG = "src/catalog-anne-grid-preview.js";
+const OUTPUT_AUDIT = "docs/audits/anne-grid-generation.json";
+const CHECKPOINT = "docs/audits/anne-grid-checkpoint.json";
+const MAX_ATTEMPTS = 12000;
+const REQUIRED_ACCEPTED = 3;
+
+function loadCatalog(path) {
+  const context = { window: {} };
+  vm.createContext(context);
+  vm.runInContext(fs.readFileSync(path, "utf8"), context);
+  return JSON.parse(JSON.stringify(context.window.HEXIVA_CATALOG));
+}
+
+function clone(value) {
+  return JSON.parse(JSON.stringify(value));
+}
+
+function shapeViolationAgainst(levels, candidate) {
+  return levels.some((other) => {
+    if (P.fingerprint(other.footprint) === P.fingerprint(candidate.footprint))
+      return true;
+    if (other.patternKey === candidate.patternKey) return true;
+    return P.similarity(other.footprint, candidate.footprint) > 0.84;
+  });
+}
+
+function recentShapeViolation(levels, candidate) {
+  return shapeViolationAgainst(levels.slice(-8), candidate);
+}
+
+function buildSpecial(finalLevel, specialIndex, acceptedLevels, buildOptions = {}) {
+  const maxAttempts = buildOptions.maxAttempts || MAX_ATTEMPTS;
+  const requiredAccepted = buildOptions.requiredAccepted || REQUIRED_ACCEPTED;
+  let best = null;
+  let bestMetrics = null;
+  let bestScore = Infinity;
+  let accepted = 0;
+  const reasons = {};
+  const recent = acceptedLevels.slice(-8);
+  const futureLevels = buildOptions.futureLevels || [];
+  const avoidFamilyIndexes = recent
+    .map((level) => {
+      const match = /^anneGridChamber(\d+)$/.exec(level.patternKey || "");
+      return match ? Number(match[1]) - 1 : null;
+    })
+    .filter((value) => value !== null);
+  let attempt = 0;
+
+  for (; attempt < maxAttempts; attempt++) {
+    const previewShape = makeAnneGridShape(specialIndex, attempt, {
+      avoidFamilyIndexes,
+    });
+    const preview = {
+      footprint: previewShape.cells,
+      patternKey: previewShape.family,
+    };
+    if (
+      recentShapeViolation(acceptedLevels, preview) ||
+      shapeViolationAgainst(futureLevels, preview)
+    ) {
+      reasons["recent-shape-or-family"] =
+        (reasons["recent-shape-or-family"] || 0) + 1;
+      continue;
+    }
+    const beforeConstructionRejects = Object.values(reasons).reduce(
+      (sum, value) => sum + value,
+      0,
+    );
+    const candidate = draft(finalLevel, attempt, {
+      anneGrid: true,
+      specialIndex,
+      avoidFamilyIndexes,
+      forceKind: buildOptions.forceKind,
+      failureStats: reasons,
+    });
+    if (!candidate) {
+      const afterConstructionRejects = Object.values(reasons).reduce(
+        (sum, value) => sum + value,
+        0,
+      );
+      if (afterConstructionRejects === beforeConstructionRejects) {
+        reasons["construction-constraints"] =
+          (reasons["construction-constraints"] || 0) + 1;
+      }
+      continue;
+    }
+
+    const proof = P.solve(candidate, {}, 20000);
+    if (!proof.solved) {
+      const reason = proof.exhausted ? "solver-budget" : "unsolvable";
+      reasons[reason] = (reasons[reason] || 0) + 1;
+      continue;
+    }
+
+    const metrics = P.metrics(candidate, proof);
+    const violations = reject(metrics, finalLevel, { anneGrid: true });
+    if (violations.length) {
+      for (const reason of violations)
+        reasons[reason] = (reasons[reason] || 0) + 1;
+      continue;
+    }
+
+    accepted++;
+    const candidateScore = score(metrics);
+    if (candidateScore < bestScore) {
+      best = candidate;
+      bestMetrics = metrics;
+      bestScore = candidateScore;
+      best.solution = proof.solution;
+    }
+    if (accepted >= requiredAccepted) break;
+  }
+
+  if (!best) {
+    throw new Error(
+      `No compliant anne-grid candidate for final level ${finalLevel} / special ${specialIndex}: ${JSON.stringify(reasons)}`,
+    );
+  }
+
+  best.generationStats = {
+    ...bestMetrics,
+    telemetryVersion: 4,
+    generatorVersion: "V43-ANNE-GRID-V1",
+    anneGrid: true,
+    specialIndex,
+    mechanicKind: best.mechanicKind || null,
+    attempts: Math.min(attempt + 1, maxAttempts),
+    acceptedCandidates: accepted,
+    rejections: reasons,
+    qualityPenalty: bestScore,
+    qualityAccepted: true,
+    difficultyProfile: "hard",
+  };
+
+  return best;
+}
+
+function main() {
+  const base = loadCatalog(SOURCE_CATALOG);
+  if (base.length !== NORMAL_LEVEL_COUNT) {
+    throw new Error(
+      `Expected untouched ${NORMAL_LEVEL_COUNT}-level V43 base catalog, got ${base.length}. Refusing to overwrite or rebase from an unknown source.`,
+    );
+  }
+
+  const layout = buildCatalogLayout();
+  let output = [];
+  let specialStats = [];
+  let startIndex = 0;
+
+  if (fs.existsSync(CHECKPOINT)) {
+    const checkpoint = JSON.parse(fs.readFileSync(CHECKPOINT, "utf8"));
+    if (
+      checkpoint.generatorVersion === "V43-ANNE-GRID-V1" &&
+      checkpoint.baseLevels === NORMAL_LEVEL_COUNT &&
+      Array.isArray(checkpoint.output) &&
+      Array.isArray(checkpoint.specialStats)
+    ) {
+      output = checkpoint.output;
+      specialStats = checkpoint.specialStats;
+      startIndex = output.length;
+      console.log(
+        `Resuming anne-grid generation at final level ${startIndex + 1}; ${specialStats.length}/${SPECIAL_LEVEL_COUNT} specials already checkpointed.`,
+      );
+    }
+  }
+
+  for (let layoutIndex = startIndex; layoutIndex < layout.length; layoutIndex++) {
+    const slot = layout[layoutIndex];
+    if (slot.kind === "normal") {
+      const normal = clone(base[slot.normalLevel - 1]);
+      normal.level = slot.finalLevel;
+      normal.generationStats = {
+        ...normal.generationStats,
+        sourceLevel: slot.normalLevel,
+        anneGrid: false,
+      };
+      output.push(normal);
+      continue;
+    }
+
+    const futureLevels = layout
+      .slice(layoutIndex + 1, layoutIndex + 9)
+      .filter((futureSlot) => futureSlot.kind === "normal")
+      .map((futureSlot) => base[futureSlot.normalLevel - 1]);
+
+    const special = buildSpecial(
+      slot.finalLevel,
+      slot.specialIndex,
+      output,
+      { futureLevels },
+    );
+    special.level = slot.finalLevel;
+    output.push(special);
+    specialStats.push({
+      level: slot.finalLevel,
+      specialIndex: slot.specialIndex,
+      patternKey: special.patternKey,
+      blockCount: special.generationStats.blockCount,
+      dependencyDepth: special.generationStats.dependencyDepth,
+      decisionSteps: special.generationStats.decisionSteps,
+      initiallyClearRatio: special.generationStats.initiallyClearRatio,
+      trivialEscapeRatio: special.generationStats.trivialEscapeRatio,
+      mechanisms: special.generationStats.mechanisms.map((m) => ({
+        type: m.type,
+        functional: m.functional,
+      })),
+      attempts: special.generationStats.attempts,
+    });
+
+    fs.mkdirSync("docs/audits", { recursive: true });
+    fs.writeFileSync(
+      CHECKPOINT,
+      JSON.stringify(
+        {
+          generatorVersion: "V43-ANNE-GRID-V1",
+          baseLevels: NORMAL_LEVEL_COUNT,
+          output,
+          specialStats,
+        },
+      ),
+    );
+
+    if (slot.specialIndex % 10 === 0)
+      console.log(
+        `Generated anne-grid ${slot.specialIndex}/${SPECIAL_LEVEL_COUNT} at final level ${slot.finalLevel}`,
+      );
+  }
+
+  if (output.length !== FINAL_LEVEL_COUNT)
+    throw new Error(`Expected ${FINAL_LEVEL_COUNT} final levels, got ${output.length}`);
+
+  const playable = output.map(({ solution, ...level }) => {
+    if (!level.generationStats) return level;
+    const { dependencyPhases, ...generationStats } = level.generationStats;
+    return { ...level, generationStats };
+  });
+
+  fs.mkdirSync("docs/audits", { recursive: true });
+  fs.writeFileSync(
+    OUTPUT_CATALOG,
+    "// Preview generated by scripts/build-anne-grid-catalog.cjs; not loaded by the live game.\nwindow.HEXIVA_CATALOG = " +
+      JSON.stringify(playable) +
+      ";\n",
+  );
+  fs.writeFileSync(
+    OUTPUT_AUDIT,
+    JSON.stringify(
+      {
+        generatorVersion: "V43-ANNE-GRID-V1",
+        finalLevels: FINAL_LEVEL_COUNT,
+        normalLevels: NORMAL_LEVEL_COUNT,
+        specialLevels: SPECIAL_LEVEL_COUNT,
+        specialStats,
+      },
+      null,
+      2,
+    ),
+  );
+
+  if (fs.existsSync(CHECKPOINT)) fs.unlinkSync(CHECKPOINT);
+  console.log(
+    `Preview saved: ${OUTPUT_CATALOG} (${NORMAL_LEVEL_COUNT} preserved normal + ${SPECIAL_LEVEL_COUNT} anne-grid)`,
+  );
+}
+
+if (require.main === module) main();
+module.exports = {
+  buildSpecial,
+  recentShapeViolation,
+  shapeViolationAgainst,
+};

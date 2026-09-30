@@ -720,3 +720,51 @@ Behavior:
 - offline build cleanup strips all QA deploy-marker constants generically so later APK packaging does not fail.
 
 This feature is intentionally temporary and should be removed in a later public update when requested.
+
+## V43.3 — anne-grid chamber catalog expansion (1250 levels)
+
+The requested broad chamber/grid design language is now integrated without replacing the existing 1000 V43 normal levels.
+
+Catalog/layout:
+- Final catalog size: **1250**.
+- Existing **1000 V43 normal levels are preserved in relative order**.
+- **250 anne-grid special levels** are interleaved through the final sequence.
+- Every final 10-level block contains exactly **2 non-adjacent** anne-grid levels.
+- The first four original V43 tutorial levels remain untouched; the first special levels are at final levels 5 and 9.
+- Anne-grid chambers use eight genuinely distinct connected footprint families. Pairwise canonical near-overlap is regression-tested against the same Work threshold (<= 0.84).
+- Large chamber footprints are deliberately sparse: meaningful floor gaps, pits and certified mechanics remain part of the playable structure rather than decorative fill.
+
+Mechanics/generation:
+- Supported special cadence uses proven combinations: redirect+swap, obstacle+cycle, obstacle+swap, swap, cycle, and redirect+swap recurrence.
+- The rejected redirect+cycle pairing was removed from the production cadence after targeted feasibility probing showed poor reliable yield under the hard quality gates.
+- No silent mechanic fallback remains. The recorded mechanic kind is the mechanic actually constructed.
+- Anne-grid arrow assignment uses bounded backtracking while preserving the conservative same-direction visual-group cap.
+- Recent family/near-footprint conflicts are screened before expensive construction, and future normal V43 neighbours are also checked so insertion cannot create a new last-8 near-repeat.
+- Full generation is resumable through an on-disk checkpoint and fails closed if no compliant candidate is found.
+- Preview promotion is hash-bound: the audited preview SHA-256 must exactly match the file being promoted.
+
+Independent full preview audit supplied by the local QA run:
+- **1250/1250** levels audited.
+- **250/250** anne-grid levels present.
+- qualityViolations = [].
+- solvabilityStalls = [].
+- visualViolations = [].
+- nearFootprintRepeatsWithin8 = [].
+- familyRepeatsWithin8 = [].
+- nonfunctionalMechanisms = [].
+- openingOutcomeUnknowns = [].
+- anneGridCadenceViolations = [].
+- Maximum conservative same-direction visual group = **2**.
+- **1,881,402** runtime route parity comparisons completed with no reported mismatch.
+
+Promotion/runtime regression:
+- The audited preview was promoted to src/catalog.js: **1000 preserved normal + 250 special = 1250 total**.
+- Local regression after promotion: **21/21 tests passed**.
+- Real Three.js geometry (renderer stub) successfully constructed and cleaned up **all 1250 catalog boards**.
+- The existing MeshLambertMaterial roughness console warnings remain non-fatal and pre-existing; they did not fail the regression suite.
+
+Deployment QA:
+- Fresh one-time web marker: hexiva-qa-anne-grid-20261001-0eda768.
+- It adds exactly **+100 coins once per browser/profile** so the anne-grid deployment can be distinguished during live web QA.
+- Offline/APK packaging already strips generic QA_DEPLOY_MARKER_* constants/grants.
+- Human web/GPU playtest remains the final acceptance step; automated structural proofs do not replace perceptual gameplay review.

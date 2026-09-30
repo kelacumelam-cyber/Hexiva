@@ -11,14 +11,14 @@ const catalogSource = await readFile(
 const catalogContext = { window: {} };
 runInNewContext(catalogSource, catalogContext);
 if (
-  catalogContext.window.HEXIVA_CATALOG?.length !== 1000 ||
+  catalogContext.window.HEXIVA_CATALOG?.length !== 1250 ||
   catalogContext.window.HEXIVA_CATALOG.some(
     (level, i) =>
       level.level !== i + 1 || !level.generationStats?.qualityAccepted,
   )
 ) {
   throw new Error(
-    "Release requires 1000 ordered, quality-accepted catalog entries",
+    "Release requires 1250 ordered, quality-accepted catalog entries",
   );
 }
 const dist = path.join(root, "dist");

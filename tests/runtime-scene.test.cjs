@@ -2,7 +2,7 @@ const test = require("node:test"),
   assert = require("node:assert/strict"),
   fs = require("fs"),
   vm = require("vm");
-test("all 1000 catalog boards construct and clean up with real Three.js geometry (renderer stub)", () => {
+test("all 1250 catalog boards construct and clean up with real Three.js geometry (renderer stub)", () => {
   const THREE = { ...require("three") },
     events = new Map(),
     elements = new Map();
@@ -101,7 +101,7 @@ test("all 1000 catalog boards construct and clean up with real Three.js geometry
   ].map((m) => m[1]);
   const main = scripts.find((s) => s.includes("let audioEnabled = true;"));
   vm.runInContext(main, c);
-  assert.equal(c.window.HEXIVA_CATALOG.length, 1000);
+  assert.equal(c.window.HEXIVA_CATALOG.length, 1250);
   for (const l of c.window.HEXIVA_CATALOG) {
     c.buildLevel(l.level);
     const count = vm.runInContext("blocks.length", c);
