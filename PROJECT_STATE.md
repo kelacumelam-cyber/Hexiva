@@ -4,7 +4,7 @@ Last updated: 2026-09-30
 
 ## Current checkpoint
 
-The current playable baseline is `index.html`, copied from the V10 prototype developed in ChatGPT.
+The current playable baseline is `index.html`, now at the V11 camera/presentation candidate.
 
 The game is working as a mobile-first Three.js/WebGL prototype. The current visual identity must be preserved while the board presentation, mechanics, level generation, and eventual Android packaging are improved.
 
@@ -50,16 +50,25 @@ User-provided references established the desired presentation direction:
 - Do not copy the reference art; use it only as a presentation/reference direction.
 - Special mechanics should look like mechanisms mounted on the board, not like ordinary playable colored hex blocks.
 
+## Current camera checkpoint candidate (V11)
+
+Implemented but awaiting visual approval:
+- camera moved from `(0, 19, 15)` to `(0, 24, 9.5)`,
+- board is viewed substantially more from above,
+- 3D depth is intentionally retained,
+- mobile board offset was reduced to match the new viewing angle,
+- no block geometry, colors, shadows, mechanics, UI identity, or direction rules were changed in this checkpoint.
+
 ## NEXT TASK
 
 Do NOT add another mechanic yet.
 
-First adjust only the board presentation:
-1. Raise the camera toward a stronger top-down angle.
-2. Preserve some 3D depth; do not make the game completely flat.
-3. Re-fit the board to the mobile safe area after the camera change.
-4. Re-evaluate visible block/base thickness and shadows only if needed.
-5. Preserve the existing color palette, UI identity, block shape, arrow rule, and general visual language.
+First visually review V11 on representative mobile layouts.
+If the camera direction is approved:
+1. fine-tune block/base thickness and shadow balance only if needed,
+2. then redesign the direction changer as a proper board-mounted mechanism.
+
+If V11 still looks too tilted or too flat, tune only the camera and board framing before changing geometry.
 
 After the camera/presentation checkpoint is approved:
 - redesign the direction changer as a proper board-mounted mechanism,
