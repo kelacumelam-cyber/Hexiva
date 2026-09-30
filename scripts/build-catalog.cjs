@@ -190,7 +190,7 @@ function draft(level, attempt, options = {}) {
         !P.D.some((_, d) => P.key(P.step(mechanism, d)) === P.key(c))),
   );
   const floorCount = options.anneGrid
-    ? Math.min(9, Math.max(7, Math.floor(cells.length / 5)))
+    ? Math.min(12, Math.max(10, Math.floor(cells.length / 4)))
     : level <= 4
       ? 0
       : Math.min(3, Math.floor(cells.length / 12));
@@ -247,9 +247,17 @@ function draft(level, attempt, options = {}) {
           deps = route.ids.filter((id) => !remainingIds.has(id)).length;
         // Moderate dependency rewards; never maximize depth at the expense of branches.
         const score = deps ? 2 + Math.min(deps, 3) * 0.2 : 0;
+        const anneGridBias = options.anneGrid
+          ? (route.escape === "pit" ? 0.8 : 0) +
+            (route.path.length > 2 ? 0.7 : route.path.length > 1 ? 0.3 : -0.9)
+          : 0;
         options.push({
           b: out,
-          score: score + r() * 2 + (route.path.length > 1 ? 0.6 : 0),
+          score:
+            score +
+            anneGridBias +
+            r() * 2 +
+            (route.path.length > 1 ? 0.6 : 0),
         });
       }
     if (!options.length) return null;
