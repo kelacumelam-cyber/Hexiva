@@ -16,7 +16,7 @@ function clone(value) {
 }
 
 function main() {
-  const targetSpecials = Math.max(1, Math.min(30, Number(process.argv[2]) || 12));
+  const targetSpecials = Math.max(1, Math.min(30, Number(process.argv[2]) || 4));
   const base = loadCatalog("src/catalog.js");
   if (base.length !== 1000)
     throw new Error(`Smoke expects untouched 1000-level base catalog, got ${base.length}`);
@@ -33,7 +33,15 @@ function main() {
       continue;
     }
 
-    const level = buildSpecial(slot.finalLevel, slot.specialIndex, output);
+    console.log(`[anne-grid smoke] generating special ${slot.specialIndex} at final level ${slot.finalLevel}...`);
+    const started = Date.now();
+    const level = buildSpecial(slot.finalLevel, slot.specialIndex, output, {
+      maxAttempts: 1800,
+      requiredAccepted: 1,
+    });
+    console.log(
+      `[anne-grid smoke] special ${slot.specialIndex} ready in ${((Date.now() - started) / 1000).toFixed(1)}s after ${level.generationStats.attempts} attempts`,
+    );
     level.level = slot.finalLevel;
     output.push(level);
 
