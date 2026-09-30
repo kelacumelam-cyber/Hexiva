@@ -46,6 +46,10 @@ await cp(
 
 let html = await readFile(path.join(root, "index.html"), "utf8");
 
+// Normalize Windows CRLF checkouts so release cleanup markers behave identically
+// on Windows, macOS and Linux.
+html = html.replace(/\r\n/g, "\n");
+
 const replacements = [
   [
     '<script src="https://cdn.tailwindcss.com"></script>',
