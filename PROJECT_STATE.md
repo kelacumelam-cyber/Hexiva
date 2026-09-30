@@ -219,3 +219,11 @@ Implemented in V18 and awaiting visual/gameplay approval.
 - Input is locked during the short swap animation so positions cannot desynchronize.
 - This is a proof-of-mechanic visual, not final art.
 - Do not add vertical/other diagonal swap orientations until this V1 behavior is approved.
+
+
+## V19 swap visual checkpoint approved
+
+- Swap V1 behavior is approved.
+- V19 visual treatment is broadly approved and can remain for now.
+- It is not considered final art; further polish may happen later.
+- Next safe expansion: add additional swap orientations while preserving the same reversible behavior and center-pit rule.
