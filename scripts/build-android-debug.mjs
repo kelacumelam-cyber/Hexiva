@@ -19,7 +19,7 @@ try {
 if (process.platform === "win32") {
   execFileSync(
     "cmd.exe",
-    ["/d", "/s", "/c", `"${wrapper}" assembleDebug`],
+    ["/d", "/s", "/c", "call gradlew.bat assembleDebug"],
     { cwd: androidDir, stdio: "inherit" }
   );
 } else {
