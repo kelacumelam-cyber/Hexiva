@@ -4,7 +4,7 @@ Last updated: 2026-09-30
 
 ## Current checkpoint
 
-The current playable baseline is `index.html`, now at V17. The stronger top-down camera is approved and board cast shadows are disabled.
+The current playable baseline is `index.html`, now at V18. The approved top-down presentation remains, board cast shadows are disabled, and swap mechanism V1 is implemented as a test candidate.
 
 The game is working as a mobile-first Three.js/WebGL prototype. The current visual identity must be preserved while the board presentation, mechanics, level generation, and eventual Android packaging are improved.
 
@@ -202,3 +202,20 @@ This replaces the current tiny blocked nudge animation; it is not implemented ye
 - Dynamic cast shadows were disabled for the board.
 - Reason: with the approved top-down camera, block shadows visually merged with neighboring hex/base layers and could look like extra geometry.
 - Bevels, base plates, lighting, color, and 3D thickness remain; only cast-shadow rendering was removed.
+
+
+## Swap mechanism V1 candidate
+
+Implemented in V18 and awaiting visual/gameplay approval.
+
+- First proof appears as the next pattern after the direction-changer proof (currently level 26 in the test ordering).
+- One swap mechanism only.
+- One fixed opposite-cell axis only.
+- The center mechanism cell is also a real escape/drop pit.
+- Clicking the mechanism swaps the two live hexes held on opposite sides.
+- Clicking it again can reverse the swap because the same two positions exchange again.
+- Hex arrow directions stay attached to their hexes; swapping changes position, not arrow identity.
+- If either held side no longer contains a live hex, the mechanism refuses to activate.
+- Input is locked during the short swap animation so positions cannot desynchronize.
+- This is a proof-of-mechanic visual, not final art.
+- Do not add vertical/other diagonal swap orientations until this V1 behavior is approved.
