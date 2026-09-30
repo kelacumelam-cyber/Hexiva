@@ -323,3 +323,15 @@ Desktop remains a preview/testing surface and is not the sizing authority.
 - blocked bump distance was reduced and impact squash tightened,
 - local Tween fallback now implements Quadratic.InOut used by gameplay,
 - utility labels localized: GÜNLÜK HEDİYE, DÜKKAN, ANA.
+
+
+## V40.2 mobile long-session performance audit
+
+Performance cleanup:
+- WebGL rendering and per-frame gameplay visual updates now pause while the main menu covers the game.
+- Existing hidden-tab and WebGL-context-loss pauses remain.
+- Swap/cycle visual updates no longer allocate a combined temporary array every frame.
+- Linked-pair visual updates reuse the requestAnimationFrame timestamp instead of calling performance.now each frame.
+- Linked ring/clamp update loops avoid temporary fallback arrays.
+
+These changes target battery, thermal load and garbage-collection pressure during long mobile sessions without changing gameplay visuals.
