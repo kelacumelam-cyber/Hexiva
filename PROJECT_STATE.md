@@ -529,3 +529,18 @@ Changes:
 This keeps the "easy != automatic" rule explicit: an opening should ideally present at least two plausible choices rather than a forced tap sequence.
 
 Next validation: rerun the 100-level audit and inspect the top opening-dominance, clear, trivial-escape and same-direction-cluster offenders before changing topology further.
+
+
+## V42.3 Structural opening diversification
+
+The second post-ranking audit showed a persistent failure mode: several levels still had opening-direction dominance = 1.0 even after stronger scoring and more candidate attempts. This proved the issue was structural, not merely ranking-related.
+
+Changes:
+- after a candidate board is built, the generator now inspects opening routes on the full starting board,
+- if fewer than two opening moves exist, it may safely reassign a non-protected block to an alternate direction that is already clear on the full board,
+- if multiple openers exist but all point in the same direction, one suitable block is reassigned to a different full-board-clear direction,
+- forced mechanic directions plus deliberate pit/redirect feeder arrows are protected from this repair,
+- edits are restricted to routes that are already clear on the full starting board, so the repair cannot introduce a new dependency/deadlock; removing such a block earlier only frees space,
+- telemetry now records `openingRepairCount`.
+
+This is the first structural enforcement of the rule "easy != automatic": when geometry permits, the opening must present at least two playable choices and more than one direction.
