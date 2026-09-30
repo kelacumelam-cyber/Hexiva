@@ -5,14 +5,20 @@
   "description": "Hexiva mobile-first 3D puzzle game",
   "scripts": {
     "build:web": "node scripts/build-offline.mjs",
-    "build:css": "tailwindcss -c tailwind.config.cjs -i src/tailwind.css -o dist/app.css --minify"
+    "build:css": "tailwindcss -c tailwind.config.cjs -i src/tailwind.css -o dist/app.css --minify",
+    "android:add": "npm run build:web && npx cap add android && node scripts/configure-android.mjs",
+    "android:sync": "npm run build:web && npx cap sync android && node scripts/configure-android.mjs",
+    "android:open": "npx cap open android"
   },
   "dependencies": {
     "@tweenjs/tween.js": "18.6.4",
     "three": "0.128.0",
-    "tone": "14.8.49"
+    "tone": "14.8.49",
+    "@capacitor/android": "8.5.2",
+    "@capacitor/core": "8.5.2"
   },
   "devDependencies": {
-    "tailwindcss": "3.4.17"
+    "tailwindcss": "3.4.17",
+    "@capacitor/cli": "8.5.2"
   }
 }
