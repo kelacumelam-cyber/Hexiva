@@ -4,7 +4,7 @@ Last updated: 2026-09-30
 
 ## Current checkpoint
 
-The current playable baseline is `index.html`, now at V12. The V11 stronger top-down camera direction is visually approved.
+The current playable baseline is `index.html`, now at V17. The stronger top-down camera is approved and board cast shadows are disabled.
 
 The game is working as a mobile-first Three.js/WebGL prototype. The current visual identity must be preserved while the board presentation, mechanics, level generation, and eventual Android packaging are improved.
 
@@ -183,3 +183,22 @@ Do not sacrifice the established visual identity while extending the board syste
 - Direction-changing movement logic is unchanged.
 - Approved V11/V12 top-down camera presentation is preserved.
 - Next review target: verify that the new changer is readable, clearly non-playable, and visually compatible with the board.
+
+
+## Newly accepted future mechanic
+
+### Collision return motion
+Planned after the current board-mechanic checkpoints.
+
+Normal tap behavior should eventually become:
+- tapped hex begins moving in its visible arrow direction,
+- if its path reaches a blocking hex, it visibly travels to the blocker, bumps/collides, then returns to its original cell,
+- if no blocker exists, it continues out of the board or into a valid internal escape pit and falls,
+- this must never change the fundamental arrow-direction contract.
+
+This replaces the current tiny blocked nudge animation; it is not implemented yet.
+
+## V17 visual change
+- Dynamic cast shadows were disabled for the board.
+- Reason: with the approved top-down camera, block shadows visually merged with neighboring hex/base layers and could look like extra geometry.
+- Bevels, base plates, lighting, color, and 3D thickness remain; only cast-shadow rendering was removed.
