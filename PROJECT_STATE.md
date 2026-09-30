@@ -768,3 +768,14 @@ Deployment QA:
 - It adds exactly **+100 coins once per browser/profile** so the anne-grid deployment can be distinguished during live web QA.
 - Offline/APK packaging already strips generic QA_DEPLOY_MARKER_* constants/grants.
 - Human web/GPU playtest remains the final acceptance step; automated structural proofs do not replace perceptual gameplay review.
+
+
+## V43.3.1 — Android microphone permission packaging fix
+
+The V43.3 APK exposed the temporary Turkish voice button but its generated Android manifest did not contain `android.permission.RECORD_AUDIO`. As a result, Android had no declared dangerous microphone permission to request, so the system permission dialog never appeared.
+
+Fix:
+- `scripts/configure-android.mjs` now idempotently injects `RECORD_AUDIO` into the generated Capacitor Android manifest.
+- `scripts/verify-source.mjs` now guards the packaging configuration against regression.
+- The web speech recognition behavior in `index.html` is otherwise unchanged; the fix is intentionally limited to Android permission packaging.
+- After rebuilding the APK, Android should be able to present the microphone permission dialog when the voice feature first requests access.
