@@ -38,7 +38,9 @@ function connected(cells) {
 }
 function shape(level, attempt, r, options = {}) {
   if (options.anneGrid) {
-    return makeAnneGridShape(options.specialIndex || level, attempt);
+    return makeAnneGridShape(options.specialIndex || level, attempt, {
+      avoidFamilyIndexes: options.avoidFamilyIndexes || [],
+    });
   }
 
   let family =
