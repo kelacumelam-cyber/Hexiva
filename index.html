@@ -2015,8 +2015,8 @@
       return {
         sameDirectionAdjacencyCount,
         sameDirectionAdjacencyRatio: levelBlocks.length ? sameDirectionAdjacencyCount / levelBlocks.length : 0,
-        maxSameDirectionClusterSize,
-        maxSameDirectionClusterRatio: levelBlocks.length ? maxSameDirectionClusterSize / levelBlocks.length : 0
+        maxSameDirectionClusterSize: maxClusterSize,
+        maxSameDirectionClusterRatio: levelBlocks.length ? maxClusterSize / levelBlocks.length : 0
       };
     }
 
