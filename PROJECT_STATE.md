@@ -803,3 +803,17 @@ Correction:
 - The native API shape used by Hexiva (checkPermissions/requestPermissions/start with matches) remains the intended integration.
 - The existing explicit `RECORD_AUDIO` manifest configuration remains as defense-in-depth.
 - User must run `npm install` before the next APK build so `package-lock.json` and native Android plugin files are regenerated/synced.
+
+
+## V43.3.5 — WebView getUserMedia permission trigger
+
+The first-party native-plugin attempt was simplified after checking Capacitor's actual Android WebChromeClient implementation. Capacitor already handles WebView `AUDIO_CAPTURE` requests by requesting `RECORD_AUDIO` and granting/denying the WebView request.
+
+The voice button now:
+- calls `navigator.mediaDevices.getUserMedia({ audio: true })` first on Android/WebView,
+- immediately stops the temporary audio track after permission is established,
+- then starts the existing Web Speech recognition flow,
+- keeps the browser fallback behavior intact,
+- requires no third-party speech-recognition dependency.
+
+This is deliberately smaller than adding a custom native speech plugin and uses the permission path Capacitor already provides.
