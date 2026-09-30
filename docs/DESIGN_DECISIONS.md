@@ -69,3 +69,10 @@ The first swap implementation must use one fixed axis only. Its center cell rema
 
 ### Swap visual checkpoint
 V19 swap visuals are accepted as a good working state, not final polish. Further beautification is deferred. Development may continue to additional swap orientations, preserving reversibility and the center escape/pit behavior.
+
+
+### Swap axes approved
+All three opposite direction-pair axes on the hex grid are approved as working. Same-color or same-arrow endpoint pairs are allowed for now; generator-level variety constraints are deferred to the later level-generation overhaul.
+
+### Collision-return behavior implemented
+Blocked taps now physically travel toward the first blocker and return to origin. This is feedback/animation only and does not change the core arrow-direction movement contract.
