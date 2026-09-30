@@ -133,3 +133,45 @@ After that:
 - local bundling of external dependencies for standalone APK,
 - final background and visual polish,
 - Android packaging.
+
+
+## V36 Android/mobile stability checkpoint
+
+A release-hardening pass was applied before background work.
+
+Portrait/mobile:
+- the web build now shows a portrait-only rotation guard on coarse-pointer/mobile devices in landscape,
+- desktop landscape testing remains available,
+- gameplay UI now respects safe-area insets,
+- dynamic viewport height and overscroll protection were added,
+- final APK packaging must enforce portrait orientation natively in the Android manifest/activity configuration.
+
+Performance:
+- device pixel ratio is capped adaptively: lower-capability devices use at most 1.5 DPR; stronger devices at most 2.0,
+- resize work is throttled to one animation frame,
+- hidden tabs skip tween/visual/render work,
+- cast shadows remain disabled.
+
+GPU memory / crash hardening:
+- per-level cloned materials are tagged and disposed when changing levels,
+- per-level dynamically created linked-pair geometries are disposed,
+- board level resources are explicitly cleared instead of only removing scene children,
+- this addresses a real long-session GPU-memory leak risk.
+
+WebGL recovery:
+- context loss is handled explicitly,
+- local progress is saved immediately,
+- a recovery overlay is shown,
+- after context restoration the page reloads from locally persisted state.
+
+Network resilience:
+- Firebase no longer uses static module imports,
+- Firebase modules load only when cloud configuration actually exists,
+- a Firebase/CDN failure cannot block the main game module when cloud persistence is unused,
+- localStorage remains authoritative fallback.
+
+Still pending for APK release:
+- bundle Three.js, Tone.js, Tailwind output, icons/fonts and other external dependencies locally,
+- native Android portrait lock,
+- representative real-device thermal/FPS test,
+- larger generated-level solvability/stress sweep.
