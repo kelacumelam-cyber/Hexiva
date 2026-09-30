@@ -90,10 +90,10 @@ There must not be one dominant board template. Dense boards are only one family.
 
 A dense board may contain one or more internal holes/empty regions. Density does not mean fully filled.
 
-The target is that levels feel structurally distinct rather than like the same pattern recolored.
+The target is that levels feel structurally distinct rather than like the same pattern recolored. A level number does not need to map to one immutable board forever if replay variation improves freshness.
 
 ### Reference-board policy
-V22 dense boards 29-31 are approved reference examples for future generator work. They are examples to preserve as quality targets, not templates to clone repeatedly.
+V22 dense boards 29-31 are approved quality references for future generator work. They are only one family among many; they must not become the dominant or canonical template.
 
 
 ### Outward-arrow balance
@@ -108,3 +108,7 @@ The generator should explicitly control:
 - unlock/dependency depth.
 
 Very hard levels are allowed, but they must remain fair, deterministic, and solvable.
+
+
+### Replay variety
+Level identity should not force an immutable exact board when that would reduce freshness. Generator V2 may produce different valid variations on replay. The primary goal is rich structural diversity across the whole game while preserving fairness and solvability.
