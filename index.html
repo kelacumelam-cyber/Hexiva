@@ -3366,7 +3366,8 @@
     function updateSwapMechanismVisuals(time) {
       if (!activeSwappers.length && !activeCyclers.length) return;
       const wave = Math.sin(time * 0.0017);
-      [...activeSwappers, ...activeCyclers].forEach(item => {
+
+      function updateItem(item) {
         const visual = item.group;
         if (!visual) return;
         if (item.ring && item.ring.material.emissiveIntensity !== undefined) {
@@ -3378,12 +3379,15 @@
         if (item.pedestal && item.pedestal.material.emissiveIntensity !== undefined) {
           item.pedestal.material.emissiveIntensity = 0.14 + (wave + 1) * 0.02;
         }
-      });
+      }
+
+      activeSwappers.forEach(updateItem);
+      activeCyclers.forEach(updateItem);
     }
 
     function updateLinkedPairVisuals(time) {
       if (!activeLinkVisuals.length) return;
-      const now = performance.now();
+      const now = time;
       activeLinkVisuals.forEach(pair => {
         const breathe = (Math.sin(time * 0.0022 + pair.phase) + 1) * 0.5;
         const flash = Math.max(0, (pair.flashUntil - now) / 420);
@@ -3396,14 +3400,14 @@
           pair.coreBeam.material.emissiveIntensity = 0.24 + breathe * 0.26 + flash * 0.70;
           pair.coreBeam.material.opacity = 0.84 + breathe * 0.08 + flash * 0.08;
         }
-        (pair.rings || []).forEach((ring, index) => {
+        if (pair.rings) pair.rings.forEach((ring, index) => {
           ring.rotation.z += 0.01 * (index === 0 ? 1 : -1);
           if (ring.material) {
             ring.material.emissiveIntensity = 0.20 + breathe * 0.18 + flash * 0.45;
             ring.material.opacity = 0.86 + breathe * 0.06 + flash * 0.08;
           }
         });
-        (pair.clamps || []).forEach(clamp => {
+        if (pair.clamps) pair.clamps.forEach(clamp => {
           if (clamp.material) {
             clamp.material.emissiveIntensity = 0.12 + breathe * 0.10 + flash * 0.30;
           }
@@ -4645,17 +4649,15 @@
 
     function animate(time) {
       requestAnimationFrame(animate);
-      if (document.hidden || webglContextLost) return;
+      if (document.hidden || webglContextLost || !isGameActive) return;
 
       TWEEN.update(time);
       updateRedirectorVisuals(time);
       updateSwapMechanismVisuals(time);
       updateLinkedPairVisuals(time);
 
-      if (isGameActive) {
-        const idle = Math.sin(time * 0.0014) * 0.035;
-        boardGroup.position.y = idle;
-      }
+      const idle = Math.sin(time * 0.0014) * 0.035;
+      boardGroup.position.y = idle;
 
       renderer.render(scene, camera);
     }
