@@ -830,3 +830,14 @@ Changes:
 - Recognition uses Turkish `tr-TR`, up to five results, one-shot mode and no popup.
 - The existing phrase matcher and reward logic are unchanged.
 - The repository issue tracker shows the plugin currently has an open Capacitor 8 support request, but also documents real Android use with Capacitor 8. Therefore this is a deliberate compatibility-tested fallback rather than the earlier paid-plugin route. A future dedicated native implementation can replace it if necessary.
+
+
+## V43.3.7 — remove stale custom Android bridge
+
+The first-party bridge experiment left a generated `HexivaMicrophonePlugin.java` in the ignored `android/` tree. Its `PluginMethod` import was invalid for Capacitor 8, causing `:app:compileDebugJavaWithJavac` to fail with "cannot find symbol".
+
+Resolution:
+- The custom bridge is removed; it was unnecessary because the selected speech-recognition plugin already owns the native permission/recognition flow.
+- `configure-android.mjs` now deletes any stale `HexivaMicrophonePlugin.java` and restores the generated Capacitor `MainActivity`.
+- Source verification now fails if the stale custom bridge generation returns.
+- The existing `RECORD_AUDIO` manifest declaration remains.
