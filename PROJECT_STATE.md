@@ -175,3 +175,21 @@ Still pending for APK release:
 - native Android portrait lock,
 - representative real-device thermal/FPS test,
 - larger generated-level solvability/stress sweep.
+
+
+## V37 booster + path correctness checkpoint
+
+Gameplay bug fixed:
+- route tracing now treats the first missing physical board cell as an immediate cliff,
+- a block can no longer travel across a true gap and collide with a blocker located on another section beyond that gap,
+- visible grey floor cells remain traversable and do not count as pits,
+- explicit pit cells still cause immediate vertical falls.
+
+Third booster added:
+- Bomb is now the third limited booster,
+- starting count: 1,
+- shop price: 125 coins for +1,
+- selecting Bomb then tapping a playable block removes the selected block and its immediately adjacent playable neighbors,
+- fixed metal obstacles are not destroyed by the bomb,
+- if a linked-pair member is caught in the blast, both linked members are removed so no half-linked state remains,
+- bomb count is persisted locally and in optional cloud saves.
