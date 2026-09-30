@@ -35,7 +35,7 @@ function main() {
         forceKind: kind,
       });
       console.log(
-        `PASS ${((Date.now() - started) / 1000).toFixed(1)}s, attempts=${level.generationStats.attempts}`,
+        `PASS ${((Date.now() - started) / 1000).toFixed(1)}s, attempts=${level.generationStats.attempts}, actual=${level.generationStats.mechanicKind}`,
       );
     } catch (error) {
       const message = String(error.message || error);
