@@ -337,31 +337,17 @@ function draft(level, attempt, options = {}) {
       const candidates = peelCandidates(currentRemaining, currentAssigned);
       if (!candidates.length) return null;
 
-      // MRV: solve the currently removable stones with the fewest legal arrow
-      // choices first. The old global top-score branching repeatedly explored
-      // easy parts of a large chamber while the constrained part remained
-      // unresolved until the node budget was exhausted.
-      const byStone = new Map();
-      for (const candidate of candidates) {
-        const list = byStone.get(candidate.b.id) || [];
-        list.push(candidate);
-        byStone.set(candidate.b.id, list);
-      }
-      const constrained = [...byStone.values()]
-        .sort((a, b) => a.length - b.length || b[0].score - a[0].score)
-        .slice(0, 3);
-
-      for (const choices of constrained) {
-        for (const candidate of choices.slice(0, 6)) {
-          const nextRemaining = currentRemaining.filter(
-            (item) => item.id !== candidate.b.id,
-          );
-          const result = searchPeel(
-            nextRemaining,
-            [...currentAssigned, candidate.b],
-          );
-          if (result) return result;
-        }
+      // Limit branching, but keep enough alternatives for the final rearranged
+      // visual state and required-wall checks to influence the chosen assignment.
+      for (const candidate of candidates.slice(0, 10)) {
+        const nextRemaining = currentRemaining.filter(
+          (item) => item.id !== candidate.b.id,
+        );
+        const result = searchPeel(
+          nextRemaining,
+          [...currentAssigned, candidate.b],
+        );
+        if (result) return result;
       }
       return null;
     }
