@@ -137,3 +137,20 @@ Levels 1-34 remain frozen authored/test checkpoints. Level 35+ draws from multip
 Each level number remains fixed/deterministic, but different level numbers should vary strongly in size, density, silhouette, internal floor gaps, corridors, pits, and dependency structure.
 
 For level 35+, valid inward/sideways directions should generally be preferred over free outward exits when possible. Difficulty may fluctuate between levels instead of increasing monotonically.
+
+
+### Economy baseline
+Current tuning checkpoint:
+- 0 starting coins,
+- 1 starting hammer,
+- 1 starting rotate,
+- 25 coins per completed level,
+- hammer: +1 for 75 coins,
+- rotate: +1 for 50 coins,
+- no unlimited debug coin faucet,
+- daily gift: +25 coins, +1 hammer, +1 rotate, once per 24 hours.
+
+These values may be tuned after real-phone playtesting.
+
+### Edge fall animation
+A block escaping over the board edge travels only to the physical cliff lip and then falls vertically. It must not launch far beyond the board before dropping.
