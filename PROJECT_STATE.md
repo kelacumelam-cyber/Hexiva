@@ -390,3 +390,9 @@ The offline/APK build now strips development-only behavior without removing it f
 
 The release builder no longer relies on fragile nested-brace regular expressions for QA/cloud stripping.
 It now removes known source ranges using explicit start/end markers, which is more stable across formatting and Node versions.
+
+
+## V41.5 Windows CRLF build fix
+
+Root cause of the release-cleanup marker failure was Windows CRLF line endings in the local checkout.
+The offline builder now normalizes `\r\n` to `\n` immediately after reading `index.html`, so release cleanup behaves consistently across Windows, macOS and Linux.
