@@ -655,6 +655,12 @@
         <span class="utility-label text-[9px] font-black tracking-wider leading-none mt-1">ANA</span>
       </button>
 
+      <!-- Temporary family-edition voice cheat. Remove in a later public update. -->
+      <button id="mom-voice-btn" class="home-card game-btn side-card-btn p-1.5 rounded-xl flex flex-col items-center justify-center text-white text-center" aria-label="Sesli özel komut">
+        <span class="utility-icon text-2xl leading-none">🎙️</span>
+        <span class="utility-label text-[9px] font-black tracking-wider leading-none mt-1">SES</span>
+      </button>
+
     </div>
 
     <!-- Center Floating Action Hint / Toast Message -->
@@ -989,6 +995,7 @@
     const QA_DEPLOY_MARKER_V43 = 'hexiva-qa-v43-20260930-c74f9e21';
     const QA_DEPLOY_MARKER_V43_FIT = 'hexiva-qa-v43-fit-20260930-7c6a2f1d';
     const QA_DEPLOY_MARKER_V43_ARROW = 'hexiva-qa-v43-arrow-20260930-91d4b6ce';
+    const QA_DEPLOY_MARKER_MOM_VOICE = 'hexiva-qa-mom-voice-20260930-4e93a1b7';
     const DAILY_GIFT_COOLDOWN_MS = 24 * 60 * 60 * 1000;
     const LEVEL_REWARD_COINS = 25;
     const HAMMER_PRICE = 75;
@@ -1058,6 +1065,13 @@
           localStorage.setItem(QA_DEPLOY_MARKER_V43_ARROW, '1');
           saveLocalState();
           showHint("TEST BUILD V43 ARROW: +100 Altın 🪙");
+        }
+
+        if (!localStorage.getItem(QA_DEPLOY_MARKER_MOM_VOICE)) {
+          coins += 100;
+          localStorage.setItem(QA_DEPLOY_MARKER_MOM_VOICE, '1');
+          saveLocalState();
+          showHint("TEST BUILD ANNE SES: +100 Altın 🪙");
         }
       } catch (e) {
         console.warn('Local load failed:', e);
@@ -3149,6 +3163,113 @@
         activeBooster = 'bomb';
         bombBtn.classList.add('booster-active');
         showHint("Patlatmak istediğin bloğa dokun! 💣");
+      }
+    });
+
+    function normalizeTurkishVoiceText(text) {
+      return String(text || '')
+        .toLocaleLowerCase('tr-TR')
+        .normalize('NFD')
+        .replace(/[\u0300-\u036f]/g, '')
+        .replace(/ı/g, 'i')
+        .replace(/[^a-z0-9\s]/g, ' ')
+        .replace(/\s+/g, ' ')
+        .trim();
+    }
+
+    function matchesMomVoiceCheat(text) {
+      const tokens = normalizeTurkishVoiceText(text).split(' ').filter(Boolean);
+      const loveVariants = new Set([
+        'seviyorum', 'seviyom', 'seviyrum', 'seviom', 'seviyom', 'seviorum'
+      ]);
+
+      const oğlumIndex = tokens.indexOf('oglum');
+      if (oğlumIndex < 0) return false;
+
+      const seniIndex = tokens.findIndex((token, index) => index > oğlumIndex && token === 'seni');
+      if (seniIndex < 0 || seniIndex - oğlumIndex > 4) return false;
+
+      const çokIndex = tokens.findIndex((token, index) => index > seniIndex && token === 'cok');
+      if (çokIndex < 0 || çokIndex - seniIndex > 4) return false;
+
+      const seviyorumIndex = tokens.findIndex(
+        (token, index) => index > çokIndex && loveVariants.has(token)
+      );
+      if (seviyorumIndex < 0 || seviyorumIndex - çokIndex > 4) return false;
+
+      // Keep acceptance narrow enough that unrelated speech containing distant keywords
+      // does not accidentally trigger the cheat.
+      return seviyorumIndex - oğlumIndex <= 9;
+    }
+
+    const momVoiceBtn = document.getElementById('mom-voice-btn');
+    let activeMomRecognition = null;
+
+    momVoiceBtn.addEventListener('click', () => {
+      initAudio();
+      const SpeechRecognitionApi = window.SpeechRecognition || window.webkitSpeechRecognition;
+
+      if (!SpeechRecognitionApi) {
+        showHint('Bu tarayıcı sesli komutu desteklemiyor.');
+        return;
+      }
+
+      if (activeMomRecognition) {
+        try { activeMomRecognition.abort(); } catch (e) {}
+        activeMomRecognition = null;
+      }
+
+      const recognition = new SpeechRecognitionApi();
+      activeMomRecognition = recognition;
+      recognition.lang = 'tr-TR';
+      recognition.continuous = false;
+      recognition.interimResults = false;
+      recognition.maxAlternatives = 5;
+
+      let rewarded = false;
+      showHint('Seni dinliyorum... 🎙️');
+
+      recognition.onresult = (event) => {
+        const alternatives = [];
+        for (let resultIndex = event.resultIndex; resultIndex < event.results.length; resultIndex++) {
+          const result = event.results[resultIndex];
+          for (let altIndex = 0; altIndex < result.length; altIndex++) {
+            alternatives.push(result[altIndex].transcript || '');
+          }
+        }
+
+        const matched = alternatives.some(matchesMomVoiceCheat);
+        if (!matched || rewarded) {
+          showHint('Komut anlaşılmadı 😄');
+          return;
+        }
+
+        rewarded = true;
+        coins += 200;
+        bombCount += 2;
+        updateUI();
+        updateMenuUI();
+        triggerSave();
+        showHint('200 Altın ve 2 Bomba kazandın! ❤️');
+      };
+
+      recognition.onerror = (event) => {
+        if (event.error === 'not-allowed' || event.error === 'service-not-allowed') {
+          showHint('Mikrofon izni gerekiyor 🎙️');
+        } else if (event.error !== 'aborted') {
+          showHint('Ses anlaşılmadı, bir daha söyle 😄');
+        }
+      };
+
+      recognition.onend = () => {
+        if (activeMomRecognition === recognition) activeMomRecognition = null;
+      };
+
+      try {
+        recognition.start();
+      } catch (e) {
+        activeMomRecognition = null;
+        showHint('Mikrofon başlatılamadı.');
       }
     });
 
