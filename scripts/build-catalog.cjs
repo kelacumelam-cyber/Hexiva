@@ -234,37 +234,76 @@ function draft(level, attempt, options = {}) {
       };
     }),
   );
-  while (remaining.length) {
-    const options = [],
-      remainingIds = new Set(remaining.map((b) => b.id));
-    for (const b of remaining)
+  function peelCandidates(currentRemaining, currentAssigned) {
+    const candidates = [],
+      remainingIds = new Set(currentRemaining.map((b) => b.id));
+    for (const b of currentRemaining)
       for (let d = 0; d < 6; d++) {
         const t = routes[b.id][d];
         if (!t.clear || t.ids.some((id) => remainingIds.has(id))) continue;
         const out = { ...b, dirIndex: d };
-        if (!P.fitsVisual(assigned, out)) continue;
-        const route = t,
-          deps = route.ids.filter((id) => !remainingIds.has(id)).length;
+        if (!P.fitsVisual(currentAssigned, out)) continue;
+        const deps = t.ids.filter((id) => !remainingIds.has(id)).length;
         // Moderate dependency rewards; never maximize depth at the expense of branches.
-        const score = deps ? 2 + Math.min(deps, 3) * 0.2 : 0;
+        const baseScore = deps ? 2 + Math.min(deps, 3) * 0.2 : 0;
         const anneGridBias = options.anneGrid
-          ? (route.escape === "pit" ? 0.8 : 0) +
-            (route.path.length > 2 ? 0.7 : route.path.length > 1 ? 0.3 : -0.9)
+          ? (t.escape === "pit" ? 0.8 : 0) +
+            (t.path.length > 2 ? 0.7 : t.path.length > 1 ? 0.3 : -0.9)
           : 0;
-        options.push({
+        candidates.push({
           b: out,
           score:
-            score +
+            baseScore +
             anneGridBias +
             r() * 2 +
-            (route.path.length > 1 ? 0.6 : 0),
+            (t.path.length > 1 ? 0.6 : 0),
         });
       }
-    if (!options.length) return null;
-    options.sort((a, b) => b.score - a.score);
-    const b = options[0].b;
-    assigned.push(b);
-    remaining = remaining.filter((x) => x.id !== b.id);
+    candidates.sort((a, b) => b.score - a.score);
+    return candidates;
+  }
+
+  if (options.anneGrid) {
+    // Large sparse chambers expose a weakness of the normal greedy peel: an
+    // individually good arrow choice can make the remaining visual-direction
+    // assignment impossible several steps later. Search only this special mode,
+    // keep a strict node budget, and fail closed if no compliant peel is found.
+    let searchNodes = 0;
+    const searchBudget = 3500;
+    function searchPeel(currentRemaining, currentAssigned) {
+      if (!currentRemaining.length) return currentAssigned;
+      if (++searchNodes > searchBudget) return null;
+
+      const candidates = peelCandidates(currentRemaining, currentAssigned);
+      if (!candidates.length) return null;
+
+      // Limit branching to the strongest local choices; backtracking handles
+      // greedy dead ends without turning each catalog candidate into an unbounded search.
+      for (const candidate of candidates.slice(0, 12)) {
+        const nextRemaining = currentRemaining.filter(
+          (item) => item.id !== candidate.b.id,
+        );
+        const result = searchPeel(
+          nextRemaining,
+          [...currentAssigned, candidate.b],
+        );
+        if (result) return result;
+      }
+      return null;
+    }
+
+    const searched = searchPeel(remaining, []);
+    if (!searched) return null;
+    assigned = searched;
+    remaining = [];
+  } else {
+    while (remaining.length) {
+      const candidates = peelCandidates(remaining, assigned);
+      if (!candidates.length) return null;
+      const b = candidates[0].b;
+      assigned.push(b);
+      remaining = remaining.filter((x) => x.id !== b.id);
+    }
   }
   l.blocks = assigned
     .sort((a, b) => a.id - b.id)
