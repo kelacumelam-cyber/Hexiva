@@ -893,35 +893,142 @@
     redirectInsetGeometry.center();
     redirectInsetGeometry.rotateX(Math.PI / 2);
 
-    // Swap mechanism V1 visuals. This is intentionally a proof-of-mechanic design:
-    // a board-mounted center button with two arms reaching opposite hex cells.
-    const swapHubMaterial = new THREE.MeshPhongMaterial({
-      color: 0xf8fafc,
-      emissive: 0x7c6ee6,
-      emissiveIntensity: 0.16,
-      shininess: 90
-    });
-    const swapRingMaterial = new THREE.MeshPhongMaterial({
-      color: 0x7768d8,
-      emissive: 0x3f378f,
-      emissiveIntensity: 0.22,
-      shininess: 70
-    });
-    const swapArmMaterial = new THREE.MeshPhongMaterial({
-      color: 0xaeb8d4,
-      emissive: 0x4d5775,
-      emissiveIntensity: 0.08,
+    // Swap mechanism visuals: a board-mounted center mechanism with two arms
+    // reaching opposite cells. This is still V1, but visually cleaner and more intentional.
+    const swapPedestalMaterial = new THREE.MeshPhongMaterial({
+      color: 0x6f63ca,
+      emissive: 0x332e70,
+      emissiveIntensity: 0.18,
       shininess: 65
     });
-    const swapIconMaterial = new THREE.MeshPhongMaterial({
-      color: 0x7768d8,
-      emissive: 0xb9b2ff,
-      emissiveIntensity: 0.22,
+    const swapPedestalTopMaterial = new THREE.MeshPhongMaterial({
+      color: 0x8f84e8,
+      emissive: 0x5045a8,
+      emissiveIntensity: 0.12,
+      shininess: 75
+    });
+    const swapHubMaterial = new THREE.MeshPhongMaterial({
+      color: 0xfbf7ff,
+      emissive: 0xc2b8ff,
+      emissiveIntensity: 0.10,
       shininess: 95
     });
-    const swapHubGeometry = new THREE.CylinderGeometry(0.38, 0.42, 0.14, 32);
-    const swapRingGeometry = new THREE.TorusGeometry(0.34, 0.065, 10, 28);
-    const swapArmGeometry = new THREE.BoxGeometry(0.72, 0.075, 0.10);
+    const swapRingMaterial = new THREE.MeshPhongMaterial({
+      color: 0xf0eaff,
+      emissive: 0x9a8fff,
+      emissiveIntensity: 0.06,
+      shininess: 95
+    });
+    const swapArmMaterial = new THREE.MeshPhongMaterial({
+      color: 0xd9deef,
+      emissive: 0x5f6785,
+      emissiveIntensity: 0.04,
+      shininess: 70
+    });
+    const swapJointMaterial = new THREE.MeshPhongMaterial({
+      color: 0xb9b2ff,
+      emissive: 0x7268d2,
+      emissiveIntensity: 0.14,
+      shininess: 80
+    });
+    const swapIconMaterial = new THREE.MeshPhongMaterial({
+      color: 0x8d7cff,
+      emissive: 0xd2ccff,
+      emissiveIntensity: 0.14,
+      shininess: 95
+    });
+    const swapPedestalGeometry = new THREE.CylinderGeometry(0.50, 0.56, 0.16, 6);
+    const swapPedestalTopGeometry = new THREE.CylinderGeometry(0.40, 0.44, 0.06, 24);
+    const swapHubGeometry = new THREE.CylinderGeometry(0.34, 0.37, 0.12, 28);
+    const swapRingGeometry = new THREE.TorusGeometry(0.29, 0.035, 10, 28);
+    const swapArmGeometry = new THREE.BoxGeometry(0.62, 0.055, 0.085);
+    const swapJointGeometry = new THREE.SphereGeometry(0.075, 14, 14);
+
+    // Fixed obstacle V2: a heavier, more clearly blocked board object.
+    // Goal: read as a real physical obstacle, not just a grey special tile.
+    const obstacleMaterial = new THREE.MeshPhongMaterial({
+      color: 0x434d61,
+      emissive: 0x181e29,
+      emissiveIntensity: 0.10,
+      shininess: 46
+    });
+    const obstacleTopMaterial = new THREE.MeshPhongMaterial({
+      color: 0x707b93,
+      emissive: 0x2a3344,
+      emissiveIntensity: 0.05,
+      shininess: 56
+    });
+    const obstacleRibMaterial = new THREE.MeshPhongMaterial({
+      color: 0x8d97ab,
+      emissive: 0x31394a,
+      emissiveIntensity: 0.03,
+      shininess: 64
+    });
+    const obstacleBoltMaterial = new THREE.MeshPhongMaterial({
+      color: 0xc0c7d6,
+      emissive: 0x42495c,
+      emissiveIntensity: 0.04,
+      shininess: 76
+    });
+    const obstacleGeometry = new THREE.ExtrudeGeometry(createHexagonShape(HEX_RADIUS * 0.84), {
+      depth: 0.42,
+      bevelEnabled: true,
+      bevelSegments: 2,
+      steps: 1,
+      bevelSize: 0.052,
+      bevelThickness: 0.040
+    });
+    obstacleGeometry.center();
+    obstacleGeometry.rotateX(Math.PI / 2);
+
+    const obstacleTopGeometry = new THREE.ExtrudeGeometry(createHexagonShape(HEX_RADIUS * 0.62), {
+      depth: 0.055,
+      bevelEnabled: true,
+      bevelSegments: 1,
+      steps: 1,
+      bevelSize: 0.020,
+      bevelThickness: 0.016
+    });
+    obstacleTopGeometry.center();
+    obstacleTopGeometry.rotateX(Math.PI / 2);
+
+    const obstacleRibGeometry = new THREE.BoxGeometry(0.52, 0.05, 0.10);
+    const obstacleBoltGeometry = new THREE.CylinderGeometry(0.038, 0.038, 0.035, 12);
+
+    // Linked-pair V2: stylized energy tether with a bright core and endpoint clamps.
+    const linkBeamMaterial = new THREE.MeshPhongMaterial({
+      color: 0xae8cff,      emissive: 0x7654e0,
+      emissiveIntensity: 0.34,
+      shininess: 92,
+      transparent: true,
+      opacity: 0.78
+    });
+    const linkCoreMaterial = new THREE.MeshPhongMaterial({
+      color: 0xe8d9ff,
+      emissive: 0xc89cff,
+      emissiveIntensity: 0.34,
+      shininess: 96,
+      transparent: true,
+      opacity: 0.80
+    });
+    const linkRingMaterial = new THREE.MeshPhongMaterial({
+      color: 0xf3eeff,
+      emissive: 0x9784ff,
+      emissiveIntensity: 0.36,
+      shininess: 98,
+      transparent: true,
+      opacity: 0.96
+    });
+    const linkClampMaterial = new THREE.MeshPhongMaterial({
+      color: 0x7b6ab5,
+      emissive: 0xc2b4ff,
+      emissiveIntensity: 0.28,
+      shininess: 82,
+      transparent: true,
+      opacity: 0.98
+    });
+    const linkRingGeometry = new THREE.TorusGeometry(HEX_RADIUS * 0.50, 0.045, 10, 32);
+    const linkClampGeometry = new THREE.BoxGeometry(0.18, 0.07, 0.12);
     const BLOCK_PALETTE = [
       0xff334b, // Red
       0xff7c1a, // Orange
@@ -997,7 +1104,8 @@
       flower: () => {
         const c = [{q: 0, r: 0}];
         HEX_DIRECTIONS.forEach(d => {
-          c.push({ q: d.dq, r: d.dr });          c.push({ q: d.dq + HEX_DIRECTIONS[(HEX_DIRECTIONS.indexOf(d)+1)%6].dq, r: d.dr + HEX_DIRECTIONS[(HEX_DIRECTIONS.indexOf(d)+1)%6].dr });
+          c.push({ q: d.dq, r: d.dr });
+          c.push({ q: d.dq + HEX_DIRECTIONS[(HEX_DIRECTIONS.indexOf(d)+1)%6].dq, r: d.dr + HEX_DIRECTIONS[(HEX_DIRECTIONS.indexOf(d)+1)%6].dr });
         });
         return c;
       },
@@ -1146,6 +1254,9 @@
         }
         return c;
       },
+
+      // Dense reference-inspired test boards for collision-return movement.
+      // They are original layouts; the references are used only for density/topology direction.
       collisionDenseA: () => {
         const c = [];
         for (let q = -3; q <= 3; q++) {
@@ -1168,10 +1279,433 @@
           }
         }
         return c;
+      },
+
+      // V1 proof level for the three-way cycle changer mechanic.
+      cycleTrial: () => {
+        const c = [];
+        for (let q = -2; q <= 2; q++) {
+          for (let r = -2; r <= 2; r++) if (Math.abs(q + r) <= 2) c.push({ q, r });
+        }
+        return c;
+      },
+
+      // V1 proof level for a rare fixed obstacle.
+      fixedObstacleTrial: () => {
+        const c = [];
+        for (let q = -3; q <= 3; q++) {
+          for (let r = -3; r <= 3; r++) if (Math.abs(q + r) <= 3) c.push({ q, r });
+        }
+        return c;
+      },
+
+      // V1 proof level for a rare visibly-linked pair.
+      linkedPairTrial: () => {
+        const c = [];
+        for (let q = -2; q <= 2; q++) {
+          for (let r = -2; r <= 2; r++) if (Math.abs(q + r) <= 2) c.push({ q, r });
+        }
+        return c;
+      },
+
+      // Generator V2 topology families. These begin after the 34 authored/test levels.
+      wideLensV2: () => {
+        const c = [];
+        for (let q = -4; q <= 4; q++) {
+          for (let r = -2; r <= 2; r++) {
+            if (Math.abs(q + r) <= 4) c.push({ q, r });
+          }
+        }
+        return c;
+      },
+      tallSpineV2: () => {
+        const c = [];
+        for (let q = -2; q <= 2; q++) {
+          for (let r = -4; r <= 4; r++) {
+            if (Math.abs(q + r) <= 4) c.push({ q, r });
+          }
+        }
+        return c;
+      },
+      twinLobesV2: () => {
+        const map = new Map();
+        for (const centerQ of [-2, 2]) {
+          for (let q = centerQ - 2; q <= centerQ + 2; q++) {
+            for (let r = -2; r <= 2; r++) {
+              const lq = q - centerQ;
+              if (Math.abs(lq + r) <= 2) map.set(`${q},${r}`, { q, r });
+            }
+          }
+        }
+        // Narrow bridge keeps the two lobes spatially related.
+        [-1, 0, 1].forEach(q => map.set(`${q},0`, { q, r: 0 }));
+        return [...map.values()];
+      },
+      offsetMassV2: () => {
+        const c = [];
+        for (let q = -3; q <= 4; q++) {
+          for (let r = -3; r <= 3; r++) {
+            if (Math.abs(q + r) <= 4 && !(q <= -2 && r <= -2) && !(q >= 3 && r >= 1)) {
+              c.push({ q, r });
+            }
+          }
+        }
+        return c;
+      },
+      zigzagBandV2: () => {
+        const map = new Map();
+        const spine = [
+          { q: -4, r: 1 }, { q: -3, r: 0 }, { q: -2, r: 0 },
+          { q: -1, r: -1 }, { q: 0, r: -1 }, { q: 1, r: 0 },
+          { q: 2, r: 0 }, { q: 3, r: 1 }, { q: 4, r: 1 }
+        ];
+        spine.forEach(p => {
+          map.set(`${p.q},${p.r}`, p);
+          HEX_DIRECTIONS.slice(0, 3).forEach(d => {
+            const q = p.q + d.dq, r = p.r + d.dr;
+            map.set(`${q},${r}`, { q, r });
+          });
+        });
+        return [...map.values()];
+      },
+      steppedDiamondV2: () => {
+        const c = [];
+        for (let q = -3; q <= 3; q++) {
+          for (let r = -3; r <= 3; r++) {
+            if (Math.abs(q) + Math.abs(r) <= 4 && Math.abs(q + r) <= 4) c.push({ q, r });
+          }
+        }
+        return c;
+      },
+      crescentLargeV2: () => {
+        const c = [];
+        for (let q = -4; q <= 4; q++) {
+          for (let r = -4; r <= 4; r++) {
+            if (Math.abs(q + r) > 4) continue;
+            const cutout = q >= 1 && Math.abs(r + 1) <= 2 && Math.abs(q + r) <= 3;
+            if (!cutout) c.push({ q, r });
+          }
+        }
+        return c;
+      },
+      compactMazeV2: () => {
+        const c = [];
+        for (let q = -3; q <= 3; q++) {
+          for (let r = -3; r <= 3; r++) {
+            if (Math.abs(q + r) <= 3) c.push({ q, r });
+          }
+        }
+        return c;
       }
     };
 
     const PATTERN_KEYS = Object.keys(PATTERNS);
+
+    // Generator V2 foundation.
+    // Levels 1-34 are frozen authored/test levels. From level 35 onward, only the V2 family
+    // pool is used; family order is deterministically shuffled per cycle.
+    const LEGACY_AUTHORED_LEVEL_COUNT = 34;
+    // Only the first few levels intentionally keep the very easy tutorial arrow style.
+    // Levels 5-34 keep their existing authored topology/mechanics, but now use the
+    // same dependency-chain arrow balancing as Generator V2.
+    const TUTORIAL_LEVEL_COUNT = 4;
+    const LEGACY_PATTERN_KEYS = PATTERN_KEYS.slice(0, LEGACY_AUTHORED_LEVEL_COUNT);
+    const V2_FAMILY_KEYS = PATTERN_KEYS.slice(LEGACY_AUTHORED_LEVEL_COUNT);
+
+    function hashLevelSeed(levelNum, salt = 0) {
+      let x = ((levelNum >>> 0) ^ 0x9e3779b9 ^ (salt >>> 0)) >>> 0;
+      x = Math.imul(x ^ (x >>> 16), 0x21f0aaad);
+      x = Math.imul(x ^ (x >>> 15), 0x735a2d97);
+      return (x ^ (x >>> 15)) >>> 0;
+    }
+
+    function createSeededRng(seed) {
+      let state = seed >>> 0;
+      return function rng() {
+        state += 0x6d2b79f5;
+        let t = state;
+        t = Math.imul(t ^ (t >>> 15), t | 1);
+        t ^= t + Math.imul(t ^ (t >>> 7), t | 61);
+        return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+      };
+    }
+
+    function seededShuffle(items, seed) {
+      const out = [...items];
+      const rng = createSeededRng(seed);
+      for (let i = out.length - 1; i > 0; i--) {
+        const j = Math.floor(rng() * (i + 1));
+        [out[i], out[j]] = [out[j], out[i]];
+      }
+      return out;
+    }
+
+    function patternKeyForLevel(levelNum) {
+      if (levelNum <= LEGACY_AUTHORED_LEVEL_COUNT) {
+        return LEGACY_PATTERN_KEYS[levelNum - 1];
+      }
+
+      const zeroBased = levelNum - LEGACY_AUTHORED_LEVEL_COUNT - 1;
+      const cycle = Math.floor(zeroBased / V2_FAMILY_KEYS.length);
+      const slot = zeroBased % V2_FAMILY_KEYS.length;
+      const order = seededShuffle(V2_FAMILY_KEYS, hashLevelSeed(cycle + 1, 0x51f15e));
+      return order[slot];
+    }
+
+    function hexDistanceFromCenter(q, r) {
+      return (Math.abs(q) + Math.abs(r) + Math.abs(q + r)) / 2;
+    }
+
+    function isOutwardFacing(q, r, dirIndex) {
+      const d = HEX_DIRECTIONS[dirIndex];
+      return hexDistanceFromCenter(q + d.dq, r + d.dr) > hexDistanceFromCenter(q, r);
+    }
+
+    function isDirectCliffExit(q, r, dirIndex, footprintSet) {
+      const d = HEX_DIRECTIONS[dirIndex];
+      return !footprintSet.has(`${q + d.dq},${r + d.dr}`);
+    }
+
+    function chooseV2Cell(candidates, rng, usedSet) {
+      const free = candidates.filter(c => !usedSet.has(`${c.q},${c.r}`));
+      if (!free.length) return null;
+      return free[Math.floor(rng() * free.length)];
+    }
+
+    function buildV2Mechanics(levelNum, baseCells, topologyVariation, rng) {
+      if (levelNum <= LEGACY_AUTHORED_LEVEL_COUNT) {
+        return {
+          redirectors: [], swappers: [], cyclers: [], obstacles: [], linkedPairs: [],
+          extraPits: [], forcedDirections: {}
+        };
+      }
+
+      const footprintSet = new Set(baseCells.map(c => `${c.q},${c.r}`));
+      const voidSet = new Set([
+        ...topologyVariation.floors.map(c => `${c.q},${c.r}`),
+        ...topologyVariation.pits.map(c => `${c.q},${c.r}`)
+      ]);
+      const used = new Set(voidSet);
+      const forcedDirections = {};
+      const result = {
+        redirectors: [],
+        swappers: [],
+        cyclers: [],
+        obstacles: [],
+        linkedPairs: [],
+        extraPits: [],
+        forcedDirections
+      };
+
+      const radius = Math.max(...baseCells.map(c => hexDistanceFromCenter(c.q, c.r)));
+      const interior = baseCells.filter(c =>
+        hexDistanceFromCenter(c.q, c.r) <= Math.max(1, radius - 1) &&
+        !voidSet.has(`${c.q},${c.r}`)
+      );
+
+      function reserve(cell) {
+        if (cell) used.add(`${cell.q},${cell.r}`);
+      }
+
+      function findMechanismCenter(kind) {
+        const shuffled = seededShuffle(interior, hashLevelSeed(levelNum, kind === 'swap' ? 0x8181 : 0x9292));
+        for (const c of shuffled) {
+          const key = `${c.q},${c.r}`;
+          if (used.has(key)) continue;
+
+          if (kind === 'swap') {
+            const axisStart = hashLevelSeed(levelNum, 0x1111) % 3;
+            for (let k = 0; k < 3; k++) {
+              const aDir = (axisStart + k) % 3;
+              const bDir = (aDir + 3) % 6;
+              const da = HEX_DIRECTIONS[aDir], db = HEX_DIRECTIONS[bDir];
+              const aKey = `${c.q + da.dq},${c.r + da.dr}`;
+              const bKey = `${c.q + db.dq},${c.r + db.dr}`;
+              if (footprintSet.has(aKey) && footprintSet.has(bKey) &&
+                  !used.has(aKey) && !used.has(bKey)) {
+                return { cell: c, aDir, bDir };
+              }
+            }
+          } else {
+            const variants = [[0, 2, 4], [1, 3, 5]];
+            const first = hashLevelSeed(levelNum, 0x2222) % 2;
+            for (let k = 0; k < 2; k++) {
+              const dirs = variants[(first + k) % 2];
+              const keys = dirs.map(d => {
+                const hd = HEX_DIRECTIONS[d];
+                return `${c.q + hd.dq},${c.r + hd.dr}`;
+              });
+              if (keys.every(k2 => footprintSet.has(k2) && !used.has(k2))) {
+                return { cell: c, dirs };
+              }
+            }
+          }
+        }
+        return null;
+      }
+
+      // Every V2 level usually gets 1 mechanic. Some get 2; a small minority stay simple.
+      // The exact mix is deterministic, not tied to monotonically increasing difficulty.
+      const selector = hashLevelSeed(levelNum, 0xabc123) % 10;
+      let mechanicKinds = [];
+      if (selector == 0) mechanicKinds = [];
+      else if (selector <= 2) mechanicKinds = ['redirect'];
+      else if (selector == 3) mechanicKinds = ['obstacle'];
+      else if (selector == 4) mechanicKinds = ['swap'];
+      else if (selector == 5) mechanicKinds = ['cycle'];
+      else if (selector == 6) mechanicKinds = ['linked'];
+      else if (selector == 7) mechanicKinds = ['redirect', 'obstacle'];
+      else if (selector == 8) mechanicKinds = ['swap', 'redirect'];
+      else mechanicKinds = ['cycle', 'obstacle'];
+
+      mechanicKinds.forEach((kind, mechanicIndex) => {
+        if (kind === 'redirect') {
+          const cell = chooseV2Cell(interior, rng, used);
+          if (!cell) return;
+          reserve(cell);
+          const dirIndex = hashLevelSeed(levelNum, 0x3010 + mechanicIndex) % 6;
+          result.redirectors.push({ q: cell.q, r: cell.r, dirIndex });
+          return;
+        }
+
+        if (kind === 'obstacle') {
+          const cell = chooseV2Cell(interior, rng, used);
+          if (!cell) return;
+          reserve(cell);
+          result.obstacles.push({ q: cell.q, r: cell.r });
+          return;
+        }
+
+        if (kind === 'swap') {
+          const found = findMechanismCenter('swap');
+          if (!found) return;
+          reserve(found.cell);
+          result.extraPits.push({ q: found.cell.q, r: found.cell.r });
+          result.swappers.push({
+            q: found.cell.q, r: found.cell.r,
+            aDir: found.aDir, bDir: found.bDir
+          });
+          return;
+        }
+
+        if (kind === 'cycle') {
+          const found = findMechanismCenter('cycle');
+          if (!found) return;
+          reserve(found.cell);
+          result.extraPits.push({ q: found.cell.q, r: found.cell.r });
+          result.cyclers.push({ q: found.cell.q, r: found.cell.r, dirs: found.dirs });
+          return;
+        }
+
+        if (kind === 'linked') {
+          // Rare linked pairs deliberately use two well-separated edge members.
+          // They are forced to clear directions so the paired rule cannot deadlock the level.
+          const edgeCells = baseCells.filter(c => {
+            const key = `${c.q},${c.r}`;
+            if (used.has(key)) return false;
+            return HEX_DIRECTIONS.some((d, di) => isDirectCliffExit(c.q, c.r, di, footprintSet));
+          });
+          if (edgeCells.length < 2) return;
+
+          const first = edgeCells[Math.floor(rng() * edgeCells.length)];
+          const secondPool = edgeCells.filter(c =>
+            `${c.q},${c.r}` !== `${first.q},${first.r}` &&
+            Math.abs(c.q - first.q) + Math.abs(c.r - first.r) >= 3
+          );
+          if (!secondPool.length) return;
+          const second = secondPool[Math.floor(rng() * secondPool.length)];
+
+          function outwardDir(cell) {
+            const dirs = [];
+            for (let d = 0; d < 6; d++) {
+              if (isDirectCliffExit(cell.q, cell.r, d, footprintSet)) dirs.push(d);
+            }
+            return dirs[Math.floor(rng() * dirs.length)];
+          }
+
+          reserve(first); reserve(second);
+          result.linkedPairs.push({
+            id: `v2-link-${levelNum}-${mechanicIndex}`,
+            a: { q: first.q, r: first.r },
+            b: { q: second.q, r: second.r }
+          });
+          forcedDirections[`${first.q},${first.r}`] = outwardDir(first);
+          forcedDirections[`${second.q},${second.r}`] = outwardDir(second);
+        }
+      });
+
+      return result;
+    }
+
+    function chooseDistributedCells(candidates, count, rng) {
+      if (!candidates.length || count <= 0) return [];
+      const pool = seededShuffle(candidates, Math.floor(rng() * 0xffffffff));
+      const chosen = [];
+
+      while (pool.length && chosen.length < count) {
+        let bestIndex = 0;
+        let bestScore = -Infinity;
+
+        pool.forEach((cell, index) => {
+          const edgePenalty = hexDistanceFromCenter(cell.q, cell.r) * 0.12;
+          const separation = chosen.length
+            ? Math.min(...chosen.map(c => Math.abs(c.q - cell.q) + Math.abs(c.r - cell.r)))
+            : 3;
+          const score = separation - edgePenalty + rng() * 0.20;
+          if (score > bestScore) {
+            bestScore = score;
+            bestIndex = index;
+          }
+        });
+
+        chosen.push(pool.splice(bestIndex, 1)[0]);
+      }
+      return chosen;
+    }
+
+    function buildV2TopologyVariation(levelNum, patternKey, baseCells, rng) {
+      if (levelNum <= LEGACY_AUTHORED_LEVEL_COUNT) {
+        return { floors: [], pits: [], profile: 'authored' };
+      }
+
+      const maxRadius = Math.max(...baseCells.map(c => hexDistanceFromCenter(c.q, c.r)));
+      const interior = baseCells.filter(c => hexDistanceFromCenter(c.q, c.r) <= Math.max(1, maxRadius - 1));
+
+      // Four deterministic shape moods. This affects empty-space structure, not difficulty order.
+      const profileIndex = hashLevelSeed(levelNum, 0x3456ab) % 4;
+      const profiles = ['pockets', 'lanes', 'split', 'compact'];
+      const profile = profiles[profileIndex];
+
+      let floorCount = 2;
+      if (profile === 'pockets') floorCount = 3 + (hashLevelSeed(levelNum, 0x9012) % 3);
+      if (profile === 'lanes') floorCount = 3 + (hashLevelSeed(levelNum, 0x9013) % 2);
+      if (profile === 'split') floorCount = 2 + (hashLevelSeed(levelNum, 0x9014) % 3);
+      if (profile === 'compact') floorCount = 1 + (hashLevelSeed(levelNum, 0x9015) % 2);
+
+      floorCount = Math.min(floorCount, Math.max(0, interior.length - 3));
+      let floors = chooseDistributedCells(interior, floorCount, rng);
+
+      // Lane profiles extend one selected floor into a short traversable lane where possible.
+      if (profile === 'lanes' && floors.length) {
+        const seedCell = floors[0];
+        const dir = HEX_DIRECTIONS[hashLevelSeed(levelNum, 0x7711) % 6];
+        const candidate = { q: seedCell.q + dir.dq, r: seedCell.r + dir.dr };
+        if (baseCells.some(c => c.q === candidate.q && c.r === candidate.r) &&
+            interior.some(c => c.q === candidate.q && c.r === candidate.r) &&
+            !floors.some(c => c.q === candidate.q && c.r === candidate.r)) {
+          floors.push(candidate);
+        }
+      }
+
+      // True pits are rarer than traversable floor gaps. A chosen floor becomes a pit,
+      // so overall void count stays controlled.
+      const pitRoll = hashLevelSeed(levelNum, 0x55aa) % 5;
+      const pitCount = pitRoll === 0 && floors.length >= 3 ? 1 : 0;
+      const pits = pitCount ? [floors[floors.length - 1]] : [];
+      if (pitCount) floors = floors.slice(0, -1);
+
+      return { floors, pits, profile };
+    }
 
     // Pit geometry is kept separate from visual patterns so future mechanics can share the same grid.
     const PIT_LAYOUTS = {
@@ -1184,10 +1718,13 @@
       // Swap center is also a true escape/drop cell.
       swapTrial: [{ q: 0, r: 0 }],
       swapTrialAxisB: [{ q: 0, r: 0 }],
-      swapTrialAxisC: [{ q: 0, r: 0 }]
+      swapTrialAxisC: [{ q: 0, r: 0 }],
+      cycleTrial: [{ q: 0, r: 0 }],
+      fixedObstacleTrial: [{ q: 0, r: 1 }]
     };
 
-    // Floor-only cells are visible grey board slots. They are passable space but NOT pits.
+    // Floor-only cells are visible grey board slots. They are passable space but NOT pits:
+    // a moving hex can cross them and continues until a blocker, redirector, pit, or escape.
     const FLOOR_LAYOUTS = {
       collisionDenseA: [
         { q: 2, r: 0 }, { q: -2, r: 0 },
@@ -1204,13 +1741,42 @@
         { q: 0, r: 0 }, { q: 1, r: 0 }, { q: -1, r: 0 },
         { q: 1, r: -1 }, { q: -1, r: 1 },
         { q: 3, r: -1 }, { q: -3, r: 1 }
+      ],
+      fixedObstacleTrial: [
+        { q: 1, r: 0 }
+      ],
+      linkedPairTrial: [
+        { q: 0, r: 0 },
+        { q: -2, r: 0 }
       ]
     };
 
+    // Hand-authored directions only for the three collision test boards.
+    // Each test pair has: inner mover -> grey floor -> edge blocker. The edge blocker itself
+    // points outward, so removing it later restores a valid escape route.
     const FORCED_TEST_DIRECTIONS = {
-      collisionDenseA: { '1,0': 2, '3,0': 2, '-1,0': 5, '-3,0': 5 },
-      collisionDenseB: { '0,1': 3, '0,3': 3, '0,-1': 0, '0,-3': 0 },
-      collisionDenseC: { '1,-1': 1, '3,-3': 1, '-1,1': 4, '-3,3': 4 }
+      collisionDenseA: {
+        '1,0': 2, '3,0': 2,
+        '-1,0': 5, '-3,0': 5
+      },
+      collisionDenseB: {
+        '0,1': 3, '0,3': 3,
+        '0,-1': 0, '0,-3': 0
+      },
+      collisionDenseC: {
+        '1,-1': 1, '3,-3': 1,
+        '-1,1': 4, '-3,3': 4
+      },
+      fixedObstacleTrial: {
+        '0,0': 2,
+        '0,2': 3,
+        '0,3': 3
+      },
+      linkedPairTrial: {
+        '-1,0': 5,
+        '1,0': 2,
+        '2,0': 2
+      }
     };
 
     // A redirect cell is passable space, not a block and not an escape hole.
@@ -1226,27 +1792,83 @@
     const SWAP_LAYOUTS = {
       swapTrial: [{ q: 0, r: 0, aDir: 2, bDir: 5 }],
       swapTrialAxisB: [{ q: 0, r: 0, aDir: 0, bDir: 3 }],
-      swapTrialAxisC: [{ q: 0, r: 0, aDir: 1, bDir: 4 }]
+      swapTrialAxisC: [{ q: 0, r: 0, aDir: 1, bDir: 4 }],
+      fixedObstacleTrial: [{ q: 0, r: 1, aDir: 0, bDir: 3 }]
+    };
+
+    // Three-way cycle changer: each activation rotates A -> B -> C -> A.
+    const CYCLE_LAYOUTS = {
+      cycleTrial: [{ q: 0, r: 0, dirs: [0, 2, 4] }]
+    };
+
+    // Fixed obstacles are permanent blockers and are deliberately rare.
+    const OBSTACLE_LAYOUTS = {
+      fixedObstacleTrial: [{ q: 2, r: 0 }]
+    };
+
+    // Linked pair: both members must have a valid escape route before either one can leave.
+    const LINKED_PAIR_LAYOUTS = {
+      linkedPairTrial: [{
+        id: 'pair-a',
+        a: { q: -1, r: 0 },
+        b: { q: 1, r: 0 }
+      }]
     };
 
     function generateSolvableLevel(levelNum) {
-      const patternKey = PATTERN_KEYS[(levelNum - 1) % PATTERN_KEYS.length];
+      const patternKey = patternKeyForLevel(levelNum);
+      const levelSeed = hashLevelSeed(levelNum, 0x7f4a7c15);
+      const rng = createSeededRng(levelSeed);
       const baseCells = PATTERNS[patternKey]();
+      const footprintSet = new Set(baseCells.map(c => `${c.q},${c.r}`));
+      const topologyVariation = buildV2TopologyVariation(levelNum, patternKey, baseCells, rng);
+      const v2Mechanics = buildV2Mechanics(levelNum, baseCells, topologyVariation, rng);
 
-      // Internal-drop topology is data-driven: a pattern may expose one or more true escape pits.
-      // The movement rule does not change; a block still travels only in its visible arrow direction.
-      const pitCells = (PIT_LAYOUTS[patternKey] || []).map(c => ({ ...c }));
+      // Internal-drop topology is data-driven. V2 mechanics can also contribute a center pit.
+      const pitCells = [
+        ...(PIT_LAYOUTS[patternKey] || []).map(c => ({ ...c })),
+        ...topologyVariation.pits.map(c => ({ ...c })),
+        ...v2Mechanics.extraPits.map(c => ({ ...c }))
+      ];
       const pitSet = new Set(pitCells.map(c => `${c.q},${c.r}`));
-      const floorCells = (FLOOR_LAYOUTS[patternKey] || []).map(c => ({ ...c }));
+      const floorCells = [
+        ...(FLOOR_LAYOUTS[patternKey] || []).map(c => ({ ...c })),
+        ...topologyVariation.floors.map(c => ({ ...c }))
+      ].filter(c => !pitSet.has(`${c.q},${c.r}`));
       const floorSet = new Set(floorCells.map(c => `${c.q},${c.r}`));
-      const redirectCells = (REDIRECT_LAYOUTS[patternKey] || []).map(c => ({ ...c }));
+      const redirectCells = [
+        ...(REDIRECT_LAYOUTS[patternKey] || []).map(c => ({ ...c })),
+        ...v2Mechanics.redirectors.map(c => ({ ...c }))
+      ];
       const redirectMap = new Map(redirectCells.map(c => [`${c.q},${c.r}`, c]));
-      const swapCells = (SWAP_LAYOUTS[patternKey] || []).map(c => ({ ...c }));
+      const swapCells = [
+        ...(SWAP_LAYOUTS[patternKey] || []).map(c => ({ ...c })),
+        ...v2Mechanics.swappers.map(c => ({ ...c }))
+      ];
+      const cycleCells = [
+        ...(CYCLE_LAYOUTS[patternKey] || []).map(c => ({ ...c })),
+        ...v2Mechanics.cyclers.map(c => ({ ...c }))
+      ];
+      const obstacleCells = [
+        ...(OBSTACLE_LAYOUTS[patternKey] || []).map(c => ({ ...c })),
+        ...v2Mechanics.obstacles.map(c => ({ ...c }))
+      ];
+      const obstacleSet = new Set(obstacleCells.map(c => `${c.q},${c.r}`));
+      const linkedPairs = [
+        ...(LINKED_PAIR_LAYOUTS[patternKey] || []).map(p => ({
+          id: p.id, a: { ...p.a }, b: { ...p.b }
+        })),
+        ...v2Mechanics.linkedPairs.map(p => ({
+          id: p.id, a: { ...p.a }, b: { ...p.b }
+        }))
+      ];
 
       const cellMap = new Map();
       baseCells.forEach(c => {
         const key = `${c.q},${c.r}`;
-        if (!pitSet.has(key) && !floorSet.has(key) && !redirectMap.has(key)) cellMap.set(key, { q: c.q, r: c.r });
+        if (!pitSet.has(key) && !floorSet.has(key) && !redirectMap.has(key) && !obstacleSet.has(key)) {
+          cellMap.set(key, { q: c.q, r: c.r });
+        }
       });
       const cells = Array.from(cellMap.values());
 
@@ -1268,6 +1890,7 @@
 
           // Reaching an internal pit is a valid escape even if cells exist beyond it.
           if (pitSet.has(key)) return true;
+          if (obstacleSet.has(key)) return false;
           if (currentRemaining.has(key)) return false;
 
           const redirect = redirectMap.get(key);
@@ -1283,32 +1906,36 @@
         return false;
       }
 
-      const peelQueue = [...cells].sort(() => Math.random() - 0.5);
+      const peelQueue = [...cells];
+      for (let i = peelQueue.length - 1; i > 0; i--) {
+        const j = Math.floor(rng() * (i + 1));
+        [peelQueue[i], peelQueue[j]] = [peelQueue[j], peelQueue[i]];
+      }
 
-      while (remaining.size > 0) {
-        let foundAny = false;
-        for (let i = 0; i < peelQueue.length; i++) {
-          const c = peelQueue[i];
-          const key = `${c.q},${c.r}`;
-          if (!remaining.has(key)) continue;
+      if (levelNum <= TUTORIAL_LEVEL_COUNT) {
+        // Keep only the opening tutorial levels deliberately simple and outward-friendly.
+        while (remaining.size > 0) {
+          let foundAny = false;
+          for (let i = 0; i < peelQueue.length; i++) {
+            const c = peelQueue[i];
+            const key = `${c.q},${c.r}`;
+            if (!remaining.has(key)) continue;
 
-          const validDirs = [];
-          for (let d = 0; d < 6; d++) {
-            if (isDirectionClear(c.q, c.r, d, remaining)) {
-              validDirs.push(d);
+            const validDirs = [];
+            for (let d = 0; d < 6; d++) {
+              if (isDirectionClear(c.q, c.r, d, remaining)) validDirs.push(d);
+            }
+
+            if (validDirs.length > 0) {
+              const chosenDir = validDirs[Math.floor(rng() * validDirs.length)];
+              solutionDirections.set(key, chosenDir);
+              remaining.delete(key);
+              foundAny = true;
             }
           }
 
-          if (validDirs.length > 0) {
-            const chosenDir = validDirs[Math.floor(Math.random() * validDirs.length)];
-            solutionDirections.set(key, chosenDir);
-            remaining.delete(key);
-            foundAny = true;
-          }
-        }
-
-        if (!foundAny && remaining.size > 0) {
-          for (const key of remaining) {
+          if (!foundAny && remaining.size > 0) {
+            const key = remaining.values().next().value;
             const [q, r] = key.split(',').map(Number);
             let bestDir = 0;
             let maxDist = -999;
@@ -1316,15 +1943,78 @@
               const nq = q + HEX_DIRECTIONS[d].dq;
               const nr = r + HEX_DIRECTIONS[d].dr;
               const dist = Math.abs(nq) + Math.abs(nr) + Math.abs(nq + nr);
-              if (dist > maxDist) {
-                maxDist = dist;
-                bestDir = d;
-              }
+              if (dist > maxDist) { maxDist = dist; bestDir = d; }
             }
             solutionDirections.set(key, bestDir);
             remaining.delete(key);
-            break;
           }
+        }
+      } else {
+        // Dependency-chain balancing for every non-tutorial level.
+        // Levels 5-34 keep their authored board/mechanic layouts; levels 35+ also use V2 topology families.
+        // Remove ONE block per iteration. If a valid route begins by staying on the physical board,
+        // prefer that. Direct cliff exits are used mainly as sparse chain starters.
+        while (remaining.size > 0) {
+          const candidates = [];
+
+          for (const c of peelQueue) {
+            const key = `${c.q},${c.r}`;
+            if (!remaining.has(key)) continue;
+
+            const validDirs = [];
+            for (let d = 0; d < 6; d++) {
+              if (isDirectionClear(c.q, c.r, d, remaining)) validDirs.push(d);
+            }
+            if (!validDirs.length) continue;
+
+            const internalFirst = validDirs.filter(d => !isDirectCliffExit(c.q, c.r, d, footprintSet));
+            candidates.push({ c, key, validDirs, internalFirst });
+          }
+
+          if (!candidates.length) {
+            // Defensive escape hatch. This should be rare; keep the level buildable rather than hang.
+            const key = remaining.values().next().value;
+            const [q, r] = key.split(',').map(Number);
+            const outward = [];
+            for (let d = 0; d < 6; d++) {
+              if (isDirectCliffExit(q, r, d, footprintSet)) outward.push(d);
+            }
+            const chosenDir = outward.length ? outward[Math.floor(rng() * outward.length)] : 0;
+            solutionDirections.set(key, chosenDir);
+            remaining.delete(key);
+            continue;
+          }
+
+          const internalCandidates = candidates.filter(x => x.internalFirst.length);
+          let pool = internalCandidates.length ? internalCandidates : candidates;
+
+          // Prefer a candidate with more board-internal route choices. Random tie-breaking
+          // keeps deterministic variety while suppressing a rim full of outward arrows.
+          let bestScore = -Infinity;
+          let best = [];
+          pool.forEach(candidate => {
+            const cell = candidate.c;
+            const internalChoiceCount = candidate.internalFirst.length;
+            const edge = HEX_DIRECTIONS.some((d, di) => isDirectCliffExit(cell.q, cell.r, di, footprintSet));
+            const score =              internalChoiceCount * 4 +
+              (edge ? 0 : 1.5) +
+              rng() * 0.35;
+            if (score > bestScore + 0.001) {
+              bestScore = score;
+              best = [candidate];
+            } else if (Math.abs(score - bestScore) <= 0.001) {
+              best.push(candidate);
+            }
+          });
+
+          const chosenCandidate = best[Math.floor(rng() * best.length)];
+          const dirs = chosenCandidate.internalFirst.length
+            ? chosenCandidate.internalFirst
+            : chosenCandidate.validDirs;
+          const chosenDir = dirs[Math.floor(rng() * dirs.length)];
+
+          solutionDirections.set(chosenCandidate.key, chosenDir);
+          remaining.delete(chosenCandidate.key);
         }
       }
 
@@ -1404,12 +2094,13 @@
         });
       }
 
-      const forcedDirections = FORCED_TEST_DIRECTIONS[patternKey] || null;
-      if (forcedDirections) {
-        Object.entries(forcedDirections).forEach(([key, dirIndex]) => {
-          if (cellMap.has(key)) solutionDirections.set(key, dirIndex);
-        });
-      }
+      const forcedDirections = {
+        ...(FORCED_TEST_DIRECTIONS[patternKey] || {}),
+        ...(v2Mechanics.forcedDirections || {})
+      };
+      Object.entries(forcedDirections).forEach(([key, dirIndex]) => {
+        if (cellMap.has(key)) solutionDirections.set(key, dirIndex);
+      });
 
       const levelBlocks = cells.map((c, idx) => {
         const key = `${c.q},${c.r}`;
@@ -1418,7 +2109,87 @@
         return { q: c.q, r: c.r, dirIndex, color };
       });
 
-      return { blocks: levelBlocks, pits: pitCells, floors: floorCells, redirectors: redirectCells, swappers: swapCells, patternKey };
+      // Generator V2 metrics. These are intentionally measured before hard thresholds are tuned.
+      // We will use playtesting to decide acceptable bands instead of inventing arbitrary numbers.
+      const fullRemaining = new Set(cells.map(c => `${c.q},${c.r}`));
+      let outwardFacingCount = 0;
+      let directCliffExitCount = 0;
+      let initiallyClearCount = 0;
+      let trivialDirectEscapeCount = 0;
+
+      levelBlocks.forEach(block => {
+        if (isOutwardFacing(block.q, block.r, block.dirIndex)) outwardFacingCount++;
+        if (isDirectCliffExit(block.q, block.r, block.dirIndex, footprintSet)) directCliffExitCount++;
+
+        const clear = isDirectionClear(block.q, block.r, block.dirIndex, fullRemaining);
+        if (clear) {
+          initiallyClearCount++;
+
+          let q = block.q;
+          let r = block.r;
+          let dirIndex = block.dirIndex;
+          let touchedSpecial = false;
+          const visited = new Set();
+
+          for (let guard = 0; guard < 48; guard++) {
+            const d = HEX_DIRECTIONS[dirIndex];
+            q += d.dq;
+            r += d.dr;
+            const key = `${q},${r}`;
+
+            if (pitSet.has(key)) {
+              touchedSpecial = true;
+              break;
+            }
+            const redirect = redirectMap.get(key);
+            if (redirect) {
+              touchedSpecial = true;
+              const stateKey = `${key}|${dirIndex}`;
+              if (visited.has(stateKey)) break;
+              visited.add(stateKey);
+              dirIndex = redirect.dirIndex;
+            }
+            if (Math.abs(q) > 12 || Math.abs(r) > 12) break;
+          }
+
+          if (!touchedSpecial) trivialDirectEscapeCount++;
+        }
+      });
+
+      const generationStats = {
+        levelSeed,
+        patternKey,
+        topologyProfile: topologyVariation.profile,
+        blockCount: levelBlocks.length,
+        outwardFacingCount,
+        outwardFacingRatio: levelBlocks.length ? outwardFacingCount / levelBlocks.length : 0,
+        directCliffExitCount,
+        directCliffExitRatio: levelBlocks.length ? directCliffExitCount / levelBlocks.length : 0,
+        mechanicTypes: [
+          ...(redirectCells.length ? ['redirect'] : []),
+          ...(swapCells.length ? ['swap'] : []),
+          ...(cycleCells.length ? ['cycle'] : []),
+          ...(obstacleCells.length ? ['obstacle'] : []),
+          ...(linkedPairs.length ? ['linked'] : [])
+        ],
+        initiallyClearCount,
+        initiallyClearRatio: levelBlocks.length ? initiallyClearCount / levelBlocks.length : 0,
+        trivialDirectEscapeCount,
+        trivialDirectEscapeRatio: levelBlocks.length ? trivialDirectEscapeCount / levelBlocks.length : 0
+      };
+
+      return {
+        blocks: levelBlocks,
+        pits: pitCells,
+        floors: floorCells,
+        redirectors: redirectCells,
+        swappers: swapCells,
+        cyclers: cycleCells,
+        obstacles: obstacleCells,
+        linkedPairs,
+        patternKey,
+        generationStats
+      };
     }
 
     let blocks = [];
@@ -1427,6 +2198,12 @@
     let activeRedirectorVisuals = [];
     let activeRedirectorVisualMap = new Map();
     let activeSwappers = [];
+    let activeCyclers = [];
+    let activeObstacles = [];
+    let activeObstacleMap = new Map();
+    let activeLinkedPairs = [];
+    let linkedPairByCell = new Map();
+    let activeLinkVisuals = [];
     let activeSwapInteractives = [];
     let swapAnimating = false;
     const boardGroup = new THREE.Group();
@@ -1441,16 +2218,36 @@
       activeRedirectorVisuals = [];
       activeRedirectorVisualMap = new Map();
       activeSwappers = [];
+      activeCyclers = [];
+      activeObstacles = [];
+      activeObstacleMap = new Map();
+      activeLinkedPairs = [];
+      linkedPairByCell = new Map();
+      activeLinkVisuals = [];
       activeSwapInteractives = [];
       swapAnimating = false;
 
       const generatedLevel = generateSolvableLevel(levelNum);
+      window.__hexaGeneratorStats = generatedLevel.generationStats || null;
+      window.__hexaPatternKey = generatedLevel.patternKey;
       const levelData = generatedLevel.blocks;
       activePitCells = new Set(generatedLevel.pits.map(c => `${c.q},${c.r}`));
       activeRedirectors = new Map(
         generatedLevel.redirectors.map(c => [`${c.q},${c.r}`, { ...c }])
       );
       activeSwappers = generatedLevel.swappers.map(c => ({ ...c }));
+      activeCyclers = (generatedLevel.cyclers || []).map(c => ({ ...c }));
+      activeObstacles = (generatedLevel.obstacles || []).map(c => ({ ...c }));
+      activeObstacleMap = new Map(activeObstacles.map(c => [`${c.q},${c.r}`, c]));
+      activeLinkedPairs = (generatedLevel.linkedPairs || []).map(p => ({
+        id: p.id,
+        a: { ...p.a },
+        b: { ...p.b }
+      }));
+      activeLinkedPairs.forEach(pair => {
+        linkedPairByCell.set(`${pair.a.q},${pair.a.r}`, pair);
+        linkedPairByCell.set(`${pair.b.q},${pair.b.r}`, pair);
+      });
 
       // Visible empty floor cells: traversable grey board slots, not escape pits.
       (generatedLevel.floors || []).forEach(cell => {
@@ -1460,6 +2257,53 @@
         floorPlate.receiveShadow = false;
         floorPlate.castShadow = false;
         boardGroup.add(floorPlate);
+      });
+
+      // Fixed obstacles: permanent, non-interactive blockers.
+      activeObstacles.forEach(item => {
+        const { x, z } = hexToWorld(item.q, item.r);
+
+        const basePlate = new THREE.Mesh(basePlateGeometry, basePlateMaterial);
+        basePlate.position.set(x, -0.22, z);
+        basePlate.receiveShadow = false;
+        basePlate.castShadow = false;
+        boardGroup.add(basePlate);
+
+        const obstacleGroup = new THREE.Group();
+        obstacleGroup.position.set(x, 0, z);
+        boardGroup.add(obstacleGroup);
+
+        const obstacle = new THREE.Mesh(obstacleGeometry, obstacleMaterial.clone());
+        obstacle.position.set(0, 0.10, 0);
+        obstacle.castShadow = false;
+        obstacle.receiveShadow = false;
+        obstacleGroup.add(obstacle);
+
+        const top = new THREE.Mesh(obstacleTopGeometry, obstacleTopMaterial.clone());
+        top.position.set(0, 0.345, 0);
+        top.castShadow = false;
+        top.receiveShadow = false;
+        obstacleGroup.add(top);
+
+        // Three armored ribs on top help the obstacle read as a solid blocker.
+        [-0.18, 0.0, 0.18].forEach(offset => {
+          const rib = new THREE.Mesh(obstacleRibGeometry, obstacleRibMaterial.clone());
+          rib.position.set(0, 0.405, offset);
+          rib.castShadow = false;
+          rib.receiveShadow = false;
+          obstacleGroup.add(rib);
+        });
+
+        // Six small bolts around the top rim to add a heavy mechanical feel.
+        for (let i = 0; i < 6; i++) {
+          const angle = (Math.PI / 3) * i + (Math.PI / 6);
+          const bolt = new THREE.Mesh(obstacleBoltGeometry, obstacleBoltMaterial.clone());
+          bolt.rotation.x = Math.PI / 2;
+          bolt.position.set(Math.cos(angle) * 0.42, 0.392, Math.sin(angle) * 0.42);
+          bolt.castShadow = false;
+          bolt.receiveShadow = false;
+          obstacleGroup.add(bolt);
+        }
       });
 
       // Direction changers are low-profile board mechanisms, not playable blocks.
@@ -1531,7 +2375,6 @@
       activeSwappers.forEach((item, swapIndex) => {
         const { x, z } = hexToWorld(item.q, item.r);
         const dirA = HEX_DIRECTIONS[item.aDir];
-        const dirB = HEX_DIRECTIONS[item.bDir];
         const axisX = dirA.dx;
         const axisZ = dirA.dz;
         const axisLen = Math.sqrt(axisX * axisX + axisZ * axisZ) || 1;
@@ -1539,52 +2382,156 @@
         const uz = axisZ / axisLen;
         const angle = Math.atan2(-uz, ux);
 
+        // Restore the grey base plate under the mechanism so it sits on the same board language.
+        const basePlate = new THREE.Mesh(basePlateGeometry, basePlateMaterial);
+        basePlate.position.set(x, -0.22, z);
+        basePlate.receiveShadow = false;
+        basePlate.castShadow = false;
+        boardGroup.add(basePlate);
+
         const group = new THREE.Group();
-        group.position.set(x, -0.08, z);
+        group.position.set(x, -0.10, z);
         boardGroup.add(group);
+
+        const pedestal = new THREE.Mesh(swapPedestalGeometry, swapPedestalMaterial.clone());
+        pedestal.rotation.y = Math.PI / 6;
+        pedestal.position.y = 0.04;
+        pedestal.castShadow = false;
+        pedestal.receiveShadow = false;
+        group.add(pedestal);
+
+        const pedestalTop = new THREE.Mesh(swapPedestalTopGeometry, swapPedestalTopMaterial.clone());
+        pedestalTop.position.y = 0.11;
+        pedestalTop.castShadow = false;
+        group.add(pedestalTop);
 
         const ring = new THREE.Mesh(swapRingGeometry, swapRingMaterial.clone());
         ring.rotation.x = Math.PI / 2;
-        ring.position.y = 0.09;
+        ring.position.y = 0.175;
         ring.castShadow = false;
         group.add(ring);
 
         const hub = new THREE.Mesh(swapHubGeometry, swapHubMaterial.clone());
-        hub.position.y = 0.13;
+        hub.position.y = 0.17;
         hub.castShadow = false;
         hub.receiveShadow = false;
         group.add(hub);
 
-        // Two arms point to the opposite cells that will swap.
+        const armParts = [];
         [-1, 1].forEach(sign => {
           const arm = new THREE.Mesh(swapArmGeometry, swapArmMaterial.clone());
-          arm.position.set(ux * 0.48 * sign, 0.13, uz * 0.48 * sign);
+          arm.position.set(ux * 0.42 * sign, 0.155, uz * 0.42 * sign);
           arm.rotation.y = angle;
           arm.castShadow = false;
           group.add(arm);
+          armParts.push(arm);
+
+          const jointOuter = new THREE.Mesh(swapJointGeometry, swapJointMaterial.clone());
+          jointOuter.position.set(ux * 0.72 * sign, 0.155, uz * 0.72 * sign);
+          jointOuter.castShadow = false;
+          group.add(jointOuter);
+          armParts.push(jointOuter);
         });
 
-        // Two tiny opposite arrows on the button communicate exchange rather than movement.
+        // Two small opposite arrows on the button communicate exchange.
         [-1, 1].forEach(sign => {
           const icon = new THREE.Mesh(arrowGeometry, swapIconMaterial.clone());
-          icon.position.set(ux * 0.10 * sign, 0.235, uz * 0.10 * sign);
+          icon.position.set(ux * 0.075 * sign, 0.245, uz * 0.075 * sign);
           icon.rotation.y = -(Math.atan2(ux * sign, -uz * sign));
-          icon.scale.set(0.28, 0.28, 0.28);
+          icon.scale.set(0.22, 0.22, 0.22);
+          icon.castShadow = false;
+          group.add(icon);
+          armParts.push(icon);
+        });
+
+        item.group = group;
+        item.hub = hub;
+        item.ring = ring;
+        item.pedestal = pedestal;
+        const swapObj = {
+          ...item,
+          swapIndex,
+          axisX: ux,
+          axisZ: uz
+        };
+        [hub, ring, pedestal, pedestalTop].forEach(part => {
+          part.userData.swapMechanism = swapObj;
+          activeSwapInteractives.push(part);
+        });
+      });
+
+
+      // Three-way cycle changer V1. Same visual family as the swap, but with 3 arms and a cyclic rotation.
+      activeCyclers.forEach((item, cycleIndex) => {
+        const { x, z } = hexToWorld(item.q, item.r);
+
+        const basePlate = new THREE.Mesh(basePlateGeometry, basePlateMaterial);
+        basePlate.position.set(x, -0.22, z);
+        basePlate.receiveShadow = false;
+        basePlate.castShadow = false;
+        boardGroup.add(basePlate);
+
+        const group = new THREE.Group();
+        group.position.set(x, -0.10, z);
+        boardGroup.add(group);
+
+        const pedestal = new THREE.Mesh(swapPedestalGeometry, swapPedestalMaterial.clone());
+        pedestal.rotation.y = Math.PI / 6;
+        pedestal.position.y = 0.04;
+        pedestal.castShadow = false;
+        group.add(pedestal);
+
+        const pedestalTop = new THREE.Mesh(swapPedestalTopGeometry, swapPedestalTopMaterial.clone());
+        pedestalTop.position.y = 0.11;
+        pedestalTop.castShadow = false;
+        group.add(pedestalTop);
+
+        const ring = new THREE.Mesh(swapRingGeometry, swapRingMaterial.clone());
+        ring.rotation.x = Math.PI / 2;
+        ring.position.y = 0.175;
+        ring.castShadow = false;
+        group.add(ring);
+
+        const hub = new THREE.Mesh(swapHubGeometry, swapHubMaterial.clone());
+        hub.position.y = 0.17;
+        hub.castShadow = false;
+        group.add(hub);
+
+        (item.dirs || []).forEach(dirIndex => {
+          const dir = HEX_DIRECTIONS[dirIndex];
+          const len = Math.sqrt(dir.dx * dir.dx + dir.dz * dir.dz) || 1;
+          const ux = dir.dx / len;
+          const uz = dir.dz / len;
+          const angle = Math.atan2(-uz, ux);
+
+          const arm = new THREE.Mesh(swapArmGeometry, swapArmMaterial.clone());
+          arm.position.set(ux * 0.42, 0.155, uz * 0.42);
+          arm.rotation.y = angle;
+          arm.castShadow = false;
+          group.add(arm);
+
+          const jointOuter = new THREE.Mesh(swapJointGeometry, swapJointMaterial.clone());
+          jointOuter.position.set(ux * 0.72, 0.155, uz * 0.72);
+          jointOuter.castShadow = false;
+          group.add(jointOuter);
+
+          const icon = new THREE.Mesh(arrowGeometry, swapIconMaterial.clone());
+          icon.position.set(ux * 0.11, 0.245, uz * 0.11);
+          icon.rotation.y = -(dir.angleDeg * Math.PI / 180);
+          icon.scale.set(0.18, 0.18, 0.18);
           icon.castShadow = false;
           group.add(icon);
         });
 
-        const swapObj = {
-          ...item,
-          swapIndex,
-          group,
-          hub,
-          axisX: ux,
-          axisZ: uz
-        };
-        hub.userData.swapMechanism = swapObj;
-        ring.userData.swapMechanism = swapObj;
-        activeSwapInteractives.push(hub, ring);
+        item.group = group;
+        item.hub = hub;
+        item.ring = ring;
+        item.pedestal = pedestal;
+        const cycleObj = { ...item, cycleIndex };
+        [hub, ring, pedestal, pedestalTop].forEach(part => {
+          part.userData.cycleMechanism = cycleObj;
+          activeSwapInteractives.push(part);
+        });
       });
 
       levelData.forEach(item => {
@@ -1629,6 +2576,84 @@
 
         boardGroup.add(blockMesh);
         blocks.push(blockObj);
+      });
+
+      // Linked-pair visuals: energy tether + bright core + endpoint clamps/rings.
+      activeLinkedPairs.forEach((pair, pairIndex) => {
+        const aWorld = hexToWorld(pair.a.q, pair.a.r);
+        const bWorld = hexToWorld(pair.b.q, pair.b.r);
+        const dx = bWorld.x - aWorld.x;
+        const dz = bWorld.z - aWorld.z;
+        const distance = Math.sqrt(dx * dx + dz * dz);
+        const midX = (aWorld.x + bWorld.x) / 2;
+        const midZ = (aWorld.z + bWorld.z) / 2;
+        const angle = Math.atan2(-dz, dx);
+
+        const linkGroup = new THREE.Group();
+        boardGroup.add(linkGroup);
+
+        const beamGeometry = new THREE.BoxGeometry(distance * 0.74, 0.052, 0.085);
+        const coreGeometry = new THREE.BoxGeometry(distance * 0.60, 0.024, 0.040);
+
+        const beam = new THREE.Mesh(beamGeometry, linkBeamMaterial.clone());
+        beam.position.set(midX, 0.19, midZ);
+        beam.rotation.y = angle;
+        beam.castShadow = false;
+        beam.receiveShadow = false;
+        linkGroup.add(beam);
+
+        const coreBeam = new THREE.Mesh(coreGeometry, linkCoreMaterial.clone());
+        coreBeam.position.set(midX, 0.202, midZ);
+        coreBeam.rotation.y = angle;
+        coreBeam.castShadow = false;
+        coreBeam.receiveShadow = false;
+        linkGroup.add(coreBeam);
+
+        const rings = [];
+        const clamps = [];
+        [aWorld, bWorld].forEach((pos, idx) => {
+          const ring = new THREE.Mesh(linkRingGeometry, linkRingMaterial.clone());
+          ring.rotation.x = Math.PI / 2;
+          ring.position.set(pos.x, (HEX_HEIGHT / 2) + 0.100, pos.z);
+          ring.castShadow = false;
+          ring.receiveShadow = false;
+          linkGroup.add(ring);
+          rings.push(ring);
+
+          const sign = idx === 0 ? 1 : -1;
+          const clamp = new THREE.Mesh(linkClampGeometry, linkClampMaterial.clone());
+          clamp.rotation.y = angle;
+          clamp.position.set(
+            pos.x + Math.cos(angle) * 0.17 * sign,
+            (HEX_HEIGHT / 2) + 0.120,
+            pos.z - Math.sin(angle) * 0.17 * sign
+          );
+          clamp.castShadow = false;
+          clamp.receiveShadow = false;
+          linkGroup.add(clamp);
+          clamps.push(clamp);
+
+          const cap = new THREE.Mesh(new THREE.BoxGeometry(0.10, 0.03, 0.16), linkClampMaterial.clone());
+          cap.rotation.y = angle;
+          cap.position.set(
+            pos.x + Math.cos(angle) * 0.10 * sign,
+            (HEX_HEIGHT / 2) + 0.145,
+            pos.z - Math.sin(angle) * 0.10 * sign
+          );
+          cap.castShadow = false;
+          cap.receiveShadow = false;
+          linkGroup.add(cap);
+          clamps.push(cap);
+        });
+
+        pair.group = linkGroup;
+        pair.beam = beam;
+        pair.coreBeam = coreBeam;
+        pair.rings = rings;
+        pair.clamps = clamps;
+        pair.phase = pairIndex * 0.85;
+        pair.flashUntil = 0;
+        activeLinkVisuals.push(pair);
       });
 
       centerBoard();
@@ -1685,6 +2710,54 @@
       });
     }
 
+    function updateSwapMechanismVisuals(time) {
+      if (!activeSwappers.length && !activeCyclers.length) return;
+      const wave = Math.sin(time * 0.0017);
+      [...activeSwappers, ...activeCyclers].forEach(item => {
+        const visual = item.group;
+        if (!visual) return;
+        if (item.ring && item.ring.material.emissiveIntensity !== undefined) {
+          item.ring.material.emissiveIntensity = 0.04 + (wave + 1) * 0.03;
+        }
+        if (item.hub && item.hub.material.emissiveIntensity !== undefined) {
+          item.hub.material.emissiveIntensity = 0.08 + (wave + 1) * 0.02;
+        }
+        if (item.pedestal && item.pedestal.material.emissiveIntensity !== undefined) {
+          item.pedestal.material.emissiveIntensity = 0.14 + (wave + 1) * 0.02;
+        }
+      });
+    }
+
+    function updateLinkedPairVisuals(time) {
+      if (!activeLinkVisuals.length) return;
+      const now = performance.now();
+      activeLinkVisuals.forEach(pair => {
+        const breathe = (Math.sin(time * 0.0022 + pair.phase) + 1) * 0.5;
+        const flash = Math.max(0, (pair.flashUntil - now) / 420);
+
+        if (pair.beam && pair.beam.material) {
+          pair.beam.material.emissiveIntensity = 0.22 + breathe * 0.18 + flash * 0.55;
+          pair.beam.material.opacity = 0.72 + breathe * 0.10 + flash * 0.10;
+        }
+        if (pair.coreBeam && pair.coreBeam.material) {
+          pair.coreBeam.material.emissiveIntensity = 0.24 + breathe * 0.26 + flash * 0.70;
+          pair.coreBeam.material.opacity = 0.84 + breathe * 0.08 + flash * 0.08;
+        }
+        (pair.rings || []).forEach((ring, index) => {
+          ring.rotation.z += 0.01 * (index === 0 ? 1 : -1);
+          if (ring.material) {
+            ring.material.emissiveIntensity = 0.20 + breathe * 0.18 + flash * 0.45;
+            ring.material.opacity = 0.86 + breathe * 0.06 + flash * 0.08;
+          }
+        });
+        (pair.clamps || []).forEach(clamp => {
+          if (clamp.material) {
+            clamp.material.emissiveIntensity = 0.12 + breathe * 0.10 + flash * 0.30;
+          }
+        });
+      });
+    }
+
     function getSwapEndpoint(item, which) {
       const dirIndex = which === 'a' ? item.aDir : item.bDir;
       const d = HEX_DIRECTIONS[dirIndex];
@@ -1693,6 +2766,59 @@
 
     function findLiveBlockAt(q, r) {
       return blocks.find(b => !b.isRemoved && b.q === q && b.r === r) || null;
+    }
+
+    function getCycleEndpoints(item) {
+      return (item.dirs || []).map(dirIndex => {
+        const d = HEX_DIRECTIONS[dirIndex];
+        return { dirIndex, q: item.q + d.dq, r: item.r + d.dr };
+      });
+    }
+
+    function activateCycleMechanism(item) {
+      if (swapAnimating || levelCompleted) return;
+
+      const endpoints = getCycleEndpoints(item);
+      const entries = endpoints.map(ep => ({ ...ep, block: findLiveBlockAt(ep.q, ep.r) }));
+      if (entries.some(e => !e.block)) {
+        showHint('Üç kolda da altıgen olmalı!');
+        return;
+      }
+
+      swapAnimating = true;
+      playSound('rotate');
+
+      const normalY = (HEX_HEIGHT / 2) + 0.01;
+      const liftY = (HEX_HEIGHT / 2) + 0.22;
+      let completed = 0;
+
+      entries.forEach((entry, index) => {
+        const next = endpoints[(index + 1) % endpoints.length];
+        const nextWorld = hexToWorld(next.q, next.r);
+        const block = entry.block;
+        const oldQ = block.q;
+        const oldR = block.r;
+
+        new TWEEN.Tween(block.mesh.position)
+          .to({ x: nextWorld.x, y: liftY, z: nextWorld.z }, 360)
+          .easing(TWEEN.Easing.Quadratic.InOut)
+          .onComplete(() => {
+            block.mesh.position.y = normalY;
+            block.q = next.q;
+            block.r = next.r;
+            completed++;
+            if (completed === entries.length) {
+              swapAnimating = false;
+              showHint('Üçlü Değiştirici Döndü! 🔄');
+            }
+          })
+          .start();
+      });
+
+      new TWEEN.Tween(item.group.rotation)
+        .to({ y: item.group.rotation.y - (Math.PI * 2 / 3) }, 360)
+        .easing(TWEEN.Easing.Back.Out)
+        .start();
     }
 
     function activateSwapMechanism(item) {
@@ -1838,6 +2964,19 @@
           };
         }
 
+        const fixedObstacle = activeObstacleMap.get(key);
+        if (fixedObstacle) {
+          return {
+            canFly: false,
+            blocker: { ...fixedObstacle, isFixedObstacle: true },
+            blockerQ: testQ,
+            blockerR: testR,
+            steps,
+            routePoints,
+            finalDirIndex: dirIndex
+          };
+        }
+
         const blocker = blocks.find(b => !b.isRemoved && b.q === testQ && b.r === testR);
         if (blocker) {
           return {
@@ -1856,669 +2995,3 @@
           const stateKey = `${key}|${dirIndex}`;
           if (visitedStates.has(stateKey)) return { canFly: false, loop: true };
           visitedStates.add(stateKey);
-
-          routePoints.push({
-            q: testQ,
-            r: testR,
-            type: 'redirect',
-            fromDirIndex: dirIndex,
-            toDirIndex: redirect.dirIndex
-          });
-          dirIndex = redirect.dirIndex;
-        }
-
-        if (Math.abs(testQ) > 12 || Math.abs(testR) > 12) {
-          return {
-            canFly: true,
-            escapeType: 'edge',
-            steps,
-            routePoints,
-            finalDirIndex: dirIndex,
-            edgeQ: testQ,
-            edgeR: testR
-          };
-        }
-      }
-
-      return { canFly: false, loop: true };
-    }
-
-    function animateFlyAway(block, escapeInfo = null) {
-      block.isRemoved = true;
-      playSound('slide');
-
-      const startY = block.mesh.position.y;
-      const routePoints = (escapeInfo && escapeInfo.routePoints) ? [...escapeInfo.routePoints] : [];
-      const finalDirIndex = escapeInfo && escapeInfo.finalDirIndex !== undefined
-        ? escapeInfo.finalDirIndex
-        : block.dirIndex;
-
-      // Build visible turn waypoints first. This makes direction changers readable:
-      // the block reaches the changer, visibly turns, then continues.
-      const waypoints = routePoints
-        .filter(p => p.type === 'redirect')
-        .map(p => {
-          const w = hexToWorld(p.q, p.r);
-          return { x: w.x, z: w.z, redirect: p };
-        });
-
-      if (escapeInfo && escapeInfo.escapeType === 'pit') {
-        const pitWorld = hexToWorld(escapeInfo.pitQ, escapeInfo.pitR);
-        waypoints.push({ x: pitWorld.x, z: pitWorld.z, pit: true });
-      } else {
-        const finalDir = HEX_DIRECTIONS[finalDirIndex];
-        let lastX = block.mesh.position.x;
-        let lastZ = block.mesh.position.z;
-        if (waypoints.length) {
-          lastX = waypoints[waypoints.length - 1].x;
-          lastZ = waypoints[waypoints.length - 1].z;
-        }
-
-        // Preserve the familiar off-board slide distance after the final direction is known.
-        waypoints.push({
-          x: lastX + finalDir.dx * 3.0,
-          z: lastZ + finalDir.dz * 3.0,
-          edge: true
-        });
-      }
-
-      function finishDrop(lastPoint) {
-        playSound('fall');
-
-        const fallingIntoPit = escapeInfo && escapeInfo.escapeType === 'pit';
-        const finalDir = HEX_DIRECTIONS[finalDirIndex];
-        const fallDistance = fallingIntoPit ? 0 : 2.0;
-        const fallX = lastPoint.x + finalDir.dx * fallDistance;
-        const fallZ = lastPoint.z + finalDir.dz * fallDistance;
-        const fallY = -15;
-        const fallDuration = 360;
-
-        new TWEEN.Tween(block.mesh.position)
-          .to({ x: fallX, y: fallY, z: fallZ }, fallDuration)
-          .easing(TWEEN.Easing.Cubic.In)
-          .onComplete(() => {
-            boardGroup.remove(block.mesh);
-            checkLevelWin();
-          })
-          .start();
-
-        const stepUnit = Math.sqrt(3) * HEX_RADIUS;
-        const uX = finalDir.dx / stepUnit;
-        const uZ = finalDir.dz / stepUnit;
-
-        new TWEEN.Tween(block.mesh.rotation)
-          .to({
-            x: block.mesh.rotation.x + uZ * 2.2,
-            z: block.mesh.rotation.z - uX * 2.2,
-            y: block.mesh.rotation.y + (Math.random() - 0.5) * 0.6
-          }, fallDuration)
-          .easing(TWEEN.Easing.Quadratic.In)
-          .start();
-
-        new TWEEN.Tween(block.mesh.scale)
-          .to({ x: 0.3, y: 0.3, z: 0.3 }, fallDuration)
-          .easing(TWEEN.Easing.Quadratic.In)
-          .start();
-      }
-
-      function runWaypoint(index) {
-        if (index >= waypoints.length) {
-          finishDrop({
-            x: block.mesh.position.x,
-            z: block.mesh.position.z
-          });
-          return;
-        }
-
-        const point = waypoints[index];
-        const dx = point.x - block.mesh.position.x;
-        const dz = point.z - block.mesh.position.z;
-        const distance = Math.sqrt(dx * dx + dz * dz);
-        const duration = Math.max(110, Math.min(300, 95 + distance * 45));
-
-        new TWEEN.Tween(block.mesh.position)
-          .to({ x: point.x, y: startY, z: point.z }, duration)
-          .easing(TWEEN.Easing.Quadratic.InOut)
-          .onComplete(() => {
-            if (point.redirect) {
-              // Rotate the visible arrow only after the block physically reaches the changer.
-              activateRedirectorVisual(point.redirect.q, point.redirect.r);
-              block.dirIndex = point.redirect.toDirIndex;
-              const targetAngle = -(HEX_DIRECTIONS[block.dirIndex].angleDeg * Math.PI / 180);
-              new TWEEN.Tween(block.arrowMesh.rotation)
-                .to({ y: targetAngle }, 140)
-                .easing(TWEEN.Easing.Back.Out)
-                .onComplete(() => runWaypoint(index + 1))
-                .start();
-            } else if (point.pit || point.edge) {
-              finishDrop(point);
-            } else {
-              runWaypoint(index + 1);
-            }
-          })
-          .start();
-      }
-
-      runWaypoint(0);
-    }
-
-    function animateBlocked(block, blockedInfo = null) {
-      if (block.isAnimating) return;
-      block.isAnimating = true;
-      playSound('slide');
-
-      const start = {
-        x: block.mesh.position.x,
-        y: block.mesh.position.y,
-        z: block.mesh.position.z,
-        dirIndex: block.dirIndex
-      };
-
-      const routePoints = (blockedInfo && blockedInfo.routePoints)
-        ? [...blockedInfo.routePoints]
-        : [];
-      const finalDirIndex = blockedInfo && blockedInfo.finalDirIndex !== undefined
-        ? blockedInfo.finalDirIndex
-        : block.dirIndex;
-      const finalDir = HEX_DIRECTIONS[finalDirIndex];
-
-      const outward = routePoints
-        .filter(p => p.type === 'redirect')
-        .map(p => {
-          const w = hexToWorld(p.q, p.r);
-          return { x: w.x, z: w.z, redirect: p };
-        });
-
-      if (blockedInfo && blockedInfo.blocker) {
-        const previousQ = blockedInfo.blocker.q - finalDir.dq;
-        const previousR = blockedInfo.blocker.r - finalDir.dr;
-        const previousWorld = hexToWorld(previousQ, previousR);
-        const dirLen = Math.sqrt(finalDir.dx * finalDir.dx + finalDir.dz * finalDir.dz) || 1;
-        const ux = finalDir.dx / dirLen;
-        const uz = finalDir.dz / dirLen;
-        const bump = 0.20;
-
-        outward.push({
-          x: previousWorld.x + ux * bump,
-          z: previousWorld.z + uz * bump,
-          collision: true
-        });
-      } else {
-        const dirLen = Math.sqrt(finalDir.dx * finalDir.dx + finalDir.dz * finalDir.dz) || 1;
-        outward.push({
-          x: start.x + (finalDir.dx / dirLen) * 0.22,
-          z: start.z + (finalDir.dz / dirLen) * 0.22,
-          collision: true
-        });
-      }
-
-      const visitedPositions = [{ x: start.x, z: start.z }];
-
-      function restoreAtStart() {
-        block.mesh.position.set(start.x, start.y, start.z);
-        block.dirIndex = start.dirIndex;
-        const originalAngle = -(HEX_DIRECTIONS[start.dirIndex].angleDeg * Math.PI / 180);
-        new TWEEN.Tween(block.arrowMesh.rotation)
-          .to({ y: originalAngle }, 110)
-          .easing(TWEEN.Easing.Quadratic.Out)
-          .onComplete(() => { block.isAnimating = false; })
-          .start();
-      }
-
-      function returnAlongPath(index) {
-        if (index < 0) {
-          restoreAtStart();
-          return;
-        }
-        const point = visitedPositions[index];
-        const dx = point.x - block.mesh.position.x;
-        const dz = point.z - block.mesh.position.z;
-        const distance = Math.sqrt(dx * dx + dz * dz);
-        const duration = Math.max(90, Math.min(220, 75 + distance * 40));
-
-        new TWEEN.Tween(block.mesh.position)
-          .to({ x: point.x, y: start.y, z: point.z }, duration)
-          .easing(TWEEN.Easing.Quadratic.Out)
-          .onComplete(() => returnAlongPath(index - 1))
-          .start();
-      }
-
-      function runOutward(index) {
-        if (index >= outward.length) {
-          playSound('blocked');
-          new TWEEN.Tween(block.mesh.scale)
-            .to({ x: 1.04, y: 0.96, z: 1.04 }, 70)
-            .easing(TWEEN.Easing.Quadratic.Out)
-            .yoyo(true)
-            .repeat(1)
-            .onComplete(() => {
-              block.mesh.scale.set(1, 1, 1);
-              returnAlongPath(visitedPositions.length - 1);
-            })
-            .start();
-          return;
-        }
-
-        const point = outward[index];
-        const dx = point.x - block.mesh.position.x;
-        const dz = point.z - block.mesh.position.z;
-        const distance = Math.sqrt(dx * dx + dz * dz);
-        const duration = Math.max(95, Math.min(260, 80 + distance * 42));
-
-        new TWEEN.Tween(block.mesh.position)
-          .to({ x: point.x, y: start.y, z: point.z }, duration)
-          .easing(point.collision ? TWEEN.Easing.Quadratic.In : TWEEN.Easing.Quadratic.InOut)
-          .onComplete(() => {
-            visitedPositions.push({ x: point.x, z: point.z });
-            if (point.redirect) {
-              activateRedirectorVisual(point.redirect.q, point.redirect.r);
-              block.dirIndex = point.redirect.toDirIndex;
-              const targetAngle = -(HEX_DIRECTIONS[block.dirIndex].angleDeg * Math.PI / 180);
-              new TWEEN.Tween(block.arrowMesh.rotation)
-                .to({ y: targetAngle }, 120)
-                .easing(TWEEN.Easing.Back.Out)
-                .onComplete(() => runOutward(index + 1))
-                .start();
-            } else {
-              runOutward(index + 1);
-            }
-          })
-          .start();
-      }
-
-      runOutward(0);
-    }
-
-    function rotateBlockDirection(block) {
-      playSound('rotate');
-      block.dirIndex = (block.dirIndex + 1) % 6;
-      const targetAngle = -(HEX_DIRECTIONS[block.dirIndex].angleDeg * Math.PI / 180);
-
-      new TWEEN.Tween(block.arrowMesh.rotation)
-        .to({ y: targetAngle }, 200)
-        .easing(TWEEN.Easing.Back.Out)
-        .start();
-
-      showHint("Yön Değiştirildi! 🔄");
-    }
-
-    function hammerSmashBlock(block) {
-      playSound('hammer');
-      block.isRemoved = true;
-
-      new TWEEN.Tween(block.mesh.scale)
-        .to({ x: 1.35, y: 0.05, z: 1.35 }, 130)
-        .easing(TWEEN.Easing.Bounce.Out)
-        .onComplete(() => {
-          boardGroup.remove(block.mesh);
-          checkLevelWin();
-        })
-        .start();
-
-      showHint("Blok Kırıldı! 🔨");
-    }
-
-    const raycaster = new THREE.Raycaster();
-    const mouse = new THREE.Vector2();
-
-    function handleInteraction(clientX, clientY) {
-      if (!isGameActive) return;
-
-      const rect = canvas.getBoundingClientRect();
-      mouse.x = ((clientX - rect.left) / rect.width) * 2 - 1;
-      mouse.y = -((clientY - rect.top) / rect.height) * 2 + 1;
-
-      raycaster.setFromCamera(mouse, camera);
-
-      if (activeSwapInteractives.length) {
-        const swapHits = raycaster.intersectObjects(activeSwapInteractives, true);
-        if (swapHits.length > 0) {
-          let hit = swapHits[0].object;
-          let swapObj = hit.userData && hit.userData.swapMechanism;
-          while (!swapObj && hit.parent) {
-            hit = hit.parent;
-            swapObj = hit.userData && hit.userData.swapMechanism;
-          }
-          if (swapObj) {
-            activateSwapMechanism(swapObj);
-            return;
-          }
-        }
-      }
-
-      if (swapAnimating) return;
-
-      const activeMeshes = blocks.filter(b => !b.isRemoved).map(b => b.mesh);
-      const intersects = raycaster.intersectObjects(activeMeshes, true);
-
-      if (intersects.length > 0) {
-        let hit = intersects[0].object;
-        let block = hit.userData;
-        while (!block && hit.parent) {
-          hit = hit.parent;
-          block = hit.userData;
-        }
-        if (!block || block.isRemoved || block.isAnimating) return;
-
-        if (activeBooster === 'hammer') {
-          hammerSmashBlock(block);
-          hammerCount--;          updateUI();
-          resetBoosterState();
-          triggerSave();
-          return;
-        }
-
-        if (activeBooster === 'rotate') {
-          rotateBlockDirection(block);
-          rotateCount--;
-          updateUI();
-          resetBoosterState();
-          triggerSave();
-          return;
-        }
-
-        playSound('tap');
-        const check = checkCanTapAway(block);
-        if (check.canFly) {
-          animateFlyAway(block, check);
-        } else {
-          animateBlocked(block, check);
-        }
-      }
-    }
-
-    // Direct, ultra-responsive touch event listeners without 300ms delay
-    canvas.addEventListener('touchstart', (e) => {
-      e.preventDefault();
-      if (e.touches.length > 0) {
-        handleInteraction(e.touches[0].clientX, e.touches[0].clientY);
-      }
-    }, { passive: false });
-
-    canvas.addEventListener('mousedown', (e) => {
-      handleInteraction(e.clientX, e.clientY);
-    });
-
-    const hammerBtn = document.getElementById('hammer-btn');
-    const rotateBtn = document.getElementById('rotate-btn');
-
-    function resetBoosterState() {
-      activeBooster = null;
-      hammerBtn.classList.remove('booster-active');
-      rotateBtn.classList.remove('booster-active');
-    }
-
-    hammerBtn.addEventListener('click', () => {
-      initAudio();
-      if (hammerCount <= 0) {
-        showHint("Çekiç bitti! Dükkandan al.");
-        openShop();
-        return;
-      }
-      if (activeBooster === 'hammer') {
-        resetBoosterState();
-      } else {
-        resetBoosterState();
-        activeBooster = 'hammer';
-        hammerBtn.classList.add('booster-active');
-        showHint("Kırmak istediğin bloğa dokun! 🔨");
-      }
-    });
-
-    rotateBtn.addEventListener('click', () => {
-      initAudio();
-      if (rotateCount <= 0) {
-        showHint("Döndürme bitti! Dükkandan al.");
-        openShop();
-        return;
-      }
-      if (activeBooster === 'rotate') {
-        resetBoosterState();
-      } else {
-        resetBoosterState();
-        activeBooster = 'rotate';
-        rotateBtn.classList.add('booster-active');
-        showHint("Yönünü çevirmek istediğin bloğa dokun! 🔄");
-      }
-    });
-
-    function showHint(text) {
-      const hint = document.getElementById('status-hint');
-      hint.innerText = text;
-      hint.classList.remove('opacity-0');
-      clearTimeout(hint._timer);
-      hint._timer = setTimeout(() => {
-        hint.classList.add('opacity-0');
-      }, 1800);
-    }
-
-    function checkLevelWin() {
-      if (levelCompleted) return;
-      const remaining = blocks.filter(b => !b.isRemoved);
-      if (remaining.length === 0) {
-        levelCompleted = true;
-        playSound('win');
-        coins += 100;
-        highestUnlocked = Math.max(highestUnlocked, currentLevel + 1);
-        triggerSave();
-        updateUI();
-
-        document.getElementById('victory-level-text').innerText = `Bölüm ${currentLevel} Başarıyla Geçildi!`;
-        document.getElementById('victory-modal').classList.remove('hidden');
-      }
-    }
-
-    document.getElementById('next-level-btn').addEventListener('click', () => {
-      document.getElementById('victory-modal').classList.add('hidden');
-      if (currentLevel < 100) currentLevel++;
-      else currentLevel = 1;
-      triggerSave();
-      buildLevel(currentLevel);
-    });
-
-    document.getElementById('restart-btn').addEventListener('click', () => {
-      initAudio();
-      buildLevel(currentLevel);
-      showHint("Bölüm Yeniden Başlatıldı!");
-    });
-
-    // TEMP DEBUG SHORTCUTS (desktop testing only)
-    // A = next level, S = return to level 1.
-    // These shortcuts deliberately do not save progress or unlock levels.
-    window.addEventListener('keydown', (event) => {
-      if (event.repeat || event.ctrlKey || event.metaKey || event.altKey) return;
-      const target = event.target;
-      if (target && (target.tagName === 'INPUT' || target.tagName === 'TEXTAREA' || target.isContentEditable)) return;
-
-      const key = event.key.toLowerCase();
-      if (key !== 'a' && key !== 's') return;
-
-      event.preventDefault();
-      initAudio();
-      document.getElementById('victory-modal').classList.add('hidden');
-      document.getElementById('levels-modal').classList.add('hidden');
-      mainMenu.classList.add('hidden');
-      isGameActive = true;
-
-      if (key === 'a') {
-        currentLevel += 1;
-        buildLevel(currentLevel);
-        showHint(`TEST: Bölüm ${currentLevel}`);
-      } else {
-        currentLevel = 1;
-        buildLevel(currentLevel);
-        showHint('TEST: Bölüm 1');
-      }
-    });
-
-    const mainMenu = document.getElementById('main-menu');
-    const mainPlayBtn = document.getElementById('main-play-btn');
-
-    mainPlayBtn.addEventListener('click', () => {
-      initAudio();
-      mainMenu.classList.add('hidden');
-      isGameActive = true;
-      buildLevel(currentLevel);
-    });
-
-    document.getElementById('home-btn').addEventListener('click', () => {
-      initAudio();
-      isGameActive = false;
-      updateMenuUI();
-      mainMenu.classList.remove('hidden');
-    });
-
-    /* Level Selection Grid Generation */
-    const levelsModal = document.getElementById('levels-modal');
-    const levelsGrid = document.getElementById('levels-grid');
-
-    function populateLevelsGrid() {
-      levelsGrid.innerHTML = '';
-      for (let i = 1; i <= 100; i++) {
-        const btn = document.createElement('button');
-        const isUnlocked = i <= highestUnlocked;
-        const isCurrent = i === currentLevel;
-
-        btn.className = `game-btn h-12 rounded-xl font-black text-sm flex items-center justify-center border-2 transition ${
-          isCurrent 
-            ? 'bg-yellow-400 text-slate-900 border-white ring-2 ring-yellow-400' 
-            : isUnlocked 
-              ? 'bg-indigo-600 text-white border-indigo-400 active:bg-indigo-700' 
-              : 'bg-slate-300 text-slate-500 border-slate-400 opacity-60 cursor-not-allowed'
-        }`;
-
-        btn.innerHTML = isUnlocked ? `${i}` : `<i class="fa-solid fa-lock text-xs"></i>`;
-
-        if (isUnlocked) {
-          btn.addEventListener('click', () => {
-            currentLevel = i;
-            triggerSave();
-            levelsModal.classList.add('hidden');
-            mainMenu.classList.add('hidden');
-            isGameActive = true;
-            buildLevel(currentLevel);
-          });
-        }
-        levelsGrid.appendChild(btn);
-      }
-    }
-
-    document.getElementById('menu-levels-btn').addEventListener('click', () => {
-      initAudio();
-      populateLevelsGrid();
-      levelsModal.classList.remove('hidden');
-    });
-    document.getElementById('close-levels-btn').addEventListener('click', () => {
-      levelsModal.classList.add('hidden');
-    });
-
-    /* Shop Logic */
-    const shopModal = document.getElementById('shop-modal');
-    function openShop() {
-      initAudio();
-      shopModal.classList.remove('hidden');
-    }
-    document.getElementById('shop-btn').addEventListener('click', openShop);
-    document.getElementById('menu-shop-btn').addEventListener('click', openShop);
-    document.getElementById('close-shop-btn').addEventListener('click', () => {
-      shopModal.classList.add('hidden');
-    });
-
-    document.getElementById('buy-hammer-btn').addEventListener('click', () => {
-      if (coins < 200) { showHint("Yetersiz altın! 🪙"); return; }
-      coins -= 200;
-      hammerCount += 3;
-      updateUI();
-      triggerSave();
-      showHint("+3 Çekiç Eklendi! 🔨");
-    });
-
-    document.getElementById('buy-rotate-btn').addEventListener('click', () => {
-      if (coins < 150) { showHint("Yetersiz altın! 🪙"); return; }
-      coins -= 150;
-      rotateCount += 3;
-      updateUI();
-      triggerSave();
-      showHint("+3 Döndürme Eklendi! 🔄");
-    });
-
-    /* Special Offer Logic */
-    const offerModal = document.getElementById('offer-modal');
-    document.getElementById('special-offer-btn').addEventListener('click', () => {
-      initAudio();
-      offerModal.classList.remove('hidden');
-    });
-    document.getElementById('claim-offer-btn').addEventListener('click', () => {
-      initAudio();
-      coins += 500;
-      hammerCount += 2;
-      rotateCount += 2;
-      updateUI();
-      triggerSave();
-      offerModal.classList.add('hidden');
-      showHint("Ödüller Çantana Eklendi! 🎁");
-    });
-
-    document.getElementById('add-coins-btn').addEventListener('click', () => {
-      initAudio();
-      coins += 250;
-      updateUI();
-      triggerSave();
-      showHint("+250 Altın Eklendi! 🪙");
-    });
-
-    /* Sound Toggle */
-    const quickSoundBtn = document.getElementById('quick-sound-btn');
-    const quickSoundIcon = document.getElementById('quick-sound-icon');
-    quickSoundBtn.addEventListener('click', () => {
-      audioEnabled = !audioEnabled;
-      if (audioEnabled) {
-        quickSoundIcon.className = "fa-solid fa-volume-high";
-        showHint("Ses Açık 🔊");
-      } else {
-        quickSoundIcon.className = "fa-solid fa-volume-xmark";
-        showHint("Ses Kapalı 🔇");
-      }
-    });
-
-    window.addEventListener('resize', onWindowResize);
-
-    function onWindowResize() {
-      const width = window.innerWidth;
-      const height = window.innerHeight;
-      frustumSize = getFrustumSize();
-      aspect = width / height;
-
-      camera.left = -frustumSize * aspect / 2;
-      camera.right = frustumSize * aspect / 2;
-      camera.top = frustumSize / 2;
-      camera.bottom = -frustumSize / 2;
-      camera.updateProjectionMatrix();
-
-      renderer.setSize(width, height);
-      renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2.0));
-      centerBoard();
-      fitBoardToMobileViewport();
-    }
-
-    function animate(time) {
-      requestAnimationFrame(animate);
-      TWEEN.update();
-      updateRedirectorVisuals(time);
-
-      if (isGameActive) {
-        const idle = Math.sin(time * 0.0014) * 0.035;
-        boardGroup.position.y = idle;
-      }
-
-      renderer.render(scene, camera);
-    }
-
-    window.onload = function () {
-      updateUI();
-      updateMenuUI();
-      animate(0);
-    };
-  </script>
-</body>
-</html>
