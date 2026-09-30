@@ -685,3 +685,18 @@ Fix:
 - offline/APK packaging strips all V43 QA marker constants as before.
 
 This changes only presentation scale/placement; V43 puzzle topology, arrows, mechanics, catalog identity and solution logic are untouched.
+
+
+## V43.2 - softer arrow contrast
+
+Live web review showed that pure white arrows on saturated yellow blocks were visually tiring.
+
+Changes:
+- playable arrow fill changed from pure white to warm off-white,
+- added a subtle dark blue-grey underlay beneath each playable arrow,
+- underlay is slightly enlarged and lowered so it reads as a soft contour,
+- outline is parented to the arrow mesh so runtime rotations stay synchronized,
+- block palette and puzzle logic are unchanged,
+- a fresh one-time QA build marker was added for deployment verification.
+
+Goal: reduce glare on bright blocks, especially yellow and orange, while preserving readability on dark blocks.
