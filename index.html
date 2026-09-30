@@ -142,9 +142,28 @@
       padding: 0;
       width: 100%;
       height: 100%;
+      min-height: 100dvh;
       overflow: hidden;
+      overscroll-behavior: none;
       touch-action: none;
       background: radial-gradient(circle at 50% 30%, #f6f8fd 0%, #d8e2f3 100%);
+    }
+
+    #gameplay-ui {
+      padding-top: max(0.75rem, env(safe-area-inset-top));
+      padding-right: max(0.75rem, env(safe-area-inset-right));
+      padding-bottom: max(0.75rem, env(safe-area-inset-bottom));
+      padding-left: max(0.75rem, env(safe-area-inset-left));
+    }
+
+    #portrait-guard {
+      display: none;
+    }
+
+    @media (orientation: landscape) and (pointer: coarse) {
+      #portrait-guard {
+        display: flex;
+      }
     }
 
     #game-canvas {
@@ -226,6 +245,22 @@
   </style>
 </head>
 <body class="w-full h-full relative select-none">
+
+  <div id="portrait-guard" class="fixed inset-0 z-[100] bg-slate-950/95 text-white items-center justify-center text-center p-8">
+    <div class="max-w-xs">
+      <div class="text-5xl mb-4">📱</div>
+      <div class="text-2xl font-black mb-2">Telefonu Dikey Çevir</div>
+      <div class="text-sm font-bold text-slate-300">Hexiva dikey ekran için tasarlandı.</div>
+    </div>
+  </div>
+
+  <div id="webgl-recovery" class="fixed inset-0 z-[110] bg-slate-950/95 text-white hidden items-center justify-center text-center p-8">
+    <div class="max-w-xs">
+      <div class="text-4xl mb-4">⚙️</div>
+      <div class="text-xl font-black mb-2">Grafik sistemi yeniden başlatılıyor</div>
+      <div class="text-sm font-bold text-slate-300">İlerlemen cihazda kayıtlı.</div>
+    </div>
+  </div>
 
   <div id="game-container" class="absolute inset-0">
     <canvas id="game-canvas"></canvas>
@@ -465,63 +500,67 @@
   </div>
 
   <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
-    import { getAuth, signInAnonymously, signInWithCustomToken } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
-    import { getFirestore, doc, getDoc, setDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
-
-    // Firestore Integration adhering strictly to Rules 1, 2, and 3
+    // Cloud persistence is optional. Do not let Firebase/network availability block the game.
     let cloudDb = null;
     let cloudAuth = null;
     let activeUserId = null;
+    let firebaseApi = null;
     const appId = typeof __app_id !== 'undefined' ? __app_id : 'hexiva-v1';
 
     async function initCloudStorage() {
-      if (typeof __firebase_config !== 'undefined') {
-        try {
-          const config = JSON.parse(__firebase_config);
-          const app = initializeApp(config);
-          cloudAuth = getAuth(app);
-          cloudDb = getFirestore(app);
+      if (typeof __firebase_config === 'undefined') {
+        updateSyncStatus('offline');
+        return;
+      }
 
-          // Authenticate first before any query
-          if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
-            await signInWithCustomToken(cloudAuth, __initial_auth_token);
-          } else {
-            await signInAnonymously(cloudAuth);
-          }
+      try {
+        const [appMod, authMod, firestoreMod] = await Promise.all([
+          import("https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js"),
+          import("https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js"),
+          import("https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js")
+        ]);
 
-          activeUserId = cloudAuth.currentUser ? cloudAuth.currentUser.uid : null;
-          updateSyncStatus('saved');
-          loadCloudSave();
-        } catch (e) {
-          console.warn("Cloud persistence setup error:", e);
-          updateSyncStatus('offline');
+        firebaseApi = { ...appMod, ...authMod, ...firestoreMod };
+        const config = JSON.parse(__firebase_config);
+        const app = firebaseApi.initializeApp(config);
+        cloudAuth = firebaseApi.getAuth(app);
+        cloudDb = firebaseApi.getFirestore(app);
+
+        if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
+          await firebaseApi.signInWithCustomToken(cloudAuth, __initial_auth_token);
+        } else {
+          await firebaseApi.signInAnonymously(cloudAuth);
         }
-      } else {
+
+        activeUserId = cloudAuth.currentUser ? cloudAuth.currentUser.uid : null;
+        updateSyncStatus('saved');
+        loadCloudSave();
+      } catch (e) {
+        console.warn("Cloud persistence unavailable; local save remains active.", e);
         updateSyncStatus('offline');
       }
     }
 
     async function loadCloudSave() {
-      if (!cloudDb || !activeUserId) return;
+      if (!firebaseApi || !cloudDb || !activeUserId) return;
       try {
-        const docRef = doc(cloudDb, 'artifacts', appId, 'users', activeUserId, 'profile', 'saveState');
-        const docSnap = await getDoc(docRef);
+        const docRef = firebaseApi.doc(cloudDb, 'artifacts', appId, 'users', activeUserId, 'profile', 'saveState');
+        const docSnap = await firebaseApi.getDoc(docRef);
         if (docSnap.exists()) {
           const data = docSnap.data();
           window.applyLoadedSave(data);
         }
       } catch (err) {
-        console.warn("Cloud load failed:", err);
+        console.warn("Cloud load failed; continuing with local save.", err);
       }
     }
 
     async function saveToCloud(state) {
-      if (!cloudDb || !activeUserId) return;
+      if (!firebaseApi || !cloudDb || !activeUserId) return;
       updateSyncStatus('saving');
       try {
-        const docRef = doc(cloudDb, 'artifacts', appId, 'users', activeUserId, 'profile', 'saveState');
-        await setDoc(docRef, {
+        const docRef = firebaseApi.doc(cloudDb, 'artifacts', appId, 'users', activeUserId, 'profile', 'saveState');
+        await firebaseApi.setDoc(docRef, {
           level: state.level,
           highest: state.highest,
           coins: state.coins,
@@ -532,7 +571,7 @@
         }, { merge: true });
         updateSyncStatus('saved');
       } catch (err) {
-        console.warn("Cloud save failed:", err);
+        console.warn("Cloud save failed; local save remains active.", err);
         updateSyncStatus('offline');
       }
     }
@@ -727,7 +766,15 @@
     camera.position.set(0, 24, 9.5);
     camera.lookAt(0, 0, 0);
 
-    // Performance-focused WebGL Renderer for Android
+    function getSafePixelRatio() {
+      const nativeRatio = window.devicePixelRatio || 1;
+      const memory = Number(navigator.deviceMemory || 0);
+      const cores = Number(navigator.hardwareConcurrency || 0);
+      const constrainedDevice = (memory > 0 && memory <= 4) || (cores > 0 && cores <= 4);
+      return Math.min(nativeRatio, constrainedDevice ? 1.5 : 2.0);
+    }
+
+    // Performance-focused WebGL Renderer for Android.
     const renderer = new THREE.WebGLRenderer({
       canvas: canvas,
       antialias: true,
@@ -736,7 +783,7 @@
     });
 
     renderer.setSize(window.innerWidth, window.innerHeight);
-    renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2.0));
+    renderer.setPixelRatio(getSafePixelRatio());
     renderer.shadowMap.enabled = false;
     renderer.shadowMap.type = THREE.PCFSoftShadowMap;
 
@@ -766,6 +813,34 @@
 
     const HEX_RADIUS = 0.98;
     const HEX_HEIGHT = 0.42;
+
+    function cloneLevelMaterial(material) {
+      const cloned = material.clone();
+      cloned.userData = { ...(cloned.userData || {}), disposeOnLevelClear: true };
+      return cloned;
+    }
+
+    function createLevelBoxGeometry(...args) {
+      const geometry = new THREE.BoxGeometry(...args);
+      geometry.userData = { ...(geometry.userData || {}), disposeOnLevelClear: true };
+      return geometry;
+    }
+
+    function clearBoardLevelResources() {
+      boardGroup.traverse(obj => {
+        if (!obj || !obj.isMesh) return;
+        if (obj.geometry && obj.geometry.userData && obj.geometry.userData.disposeOnLevelClear) {
+          obj.geometry.dispose();
+        }
+        const materials = Array.isArray(obj.material) ? obj.material : [obj.material];
+        materials.forEach(material => {
+          if (material && material.userData && material.userData.disposeOnLevelClear) {
+            material.dispose();
+          }
+        });
+      });
+      boardGroup.clear();
+    }
 
     const HEX_DIRECTIONS = [
       { dq: 0, dr: -1, angleDeg: 0,   dx: 0,                 dz: -Math.sqrt(3) * HEX_RADIUS },
@@ -2252,9 +2327,7 @@
 
     function buildLevel(levelNum) {
       levelCompleted = false;
-      while (boardGroup.children.length > 0) {
-        boardGroup.remove(boardGroup.children[0]);
-      }
+      clearBoardLevelResources();
       blocks = [];
       activeBoardFootprint = new Set();
       activeRedirectorVisuals = [];
@@ -2316,13 +2389,13 @@
         obstacleGroup.position.set(x, 0, z);
         boardGroup.add(obstacleGroup);
 
-        const obstacle = new THREE.Mesh(obstacleGeometry, obstacleMaterial.clone());
+        const obstacle = new THREE.Mesh(obstacleGeometry, cloneLevelMaterial(obstacleMaterial));
         obstacle.position.set(0, 0.10, 0);
         obstacle.castShadow = false;
         obstacle.receiveShadow = false;
         obstacleGroup.add(obstacle);
 
-        const top = new THREE.Mesh(obstacleTopGeometry, obstacleTopMaterial.clone());
+        const top = new THREE.Mesh(obstacleTopGeometry, cloneLevelMaterial(obstacleTopMaterial));
         top.position.set(0, 0.345, 0);
         top.castShadow = false;
         top.receiveShadow = false;
@@ -2330,7 +2403,7 @@
 
         // Three armored ribs on top help the obstacle read as a solid blocker.
         [-0.18, 0.0, 0.18].forEach(offset => {
-          const rib = new THREE.Mesh(obstacleRibGeometry, obstacleRibMaterial.clone());
+          const rib = new THREE.Mesh(obstacleRibGeometry, cloneLevelMaterial(obstacleRibMaterial));
           rib.position.set(0, 0.405, offset);
           rib.castShadow = false;
           rib.receiveShadow = false;
@@ -2340,7 +2413,7 @@
         // Six small bolts around the top rim to add a heavy mechanical feel.
         for (let i = 0; i < 6; i++) {
           const angle = (Math.PI / 3) * i + (Math.PI / 6);
-          const bolt = new THREE.Mesh(obstacleBoltGeometry, obstacleBoltMaterial.clone());
+          const bolt = new THREE.Mesh(obstacleBoltGeometry, cloneLevelMaterial(obstacleBoltMaterial));
           bolt.rotation.x = Math.PI / 2;
           bolt.position.set(Math.cos(angle) * 0.42, 0.392, Math.sin(angle) * 0.42);
           bolt.castShadow = false;
@@ -2365,13 +2438,13 @@
         redirectGroup.position.set(x, -0.125, z);
         boardGroup.add(redirectGroup);
 
-        const tile = new THREE.Mesh(redirectTileGeometry, redirectTileMaterial.clone());
+        const tile = new THREE.Mesh(redirectTileGeometry, cloneLevelMaterial(redirectTileMaterial));
         tile.position.y = 0.045;
         tile.receiveShadow = false;
         tile.castShadow = false;
         redirectGroup.add(tile);
 
-        const inset = new THREE.Mesh(redirectInsetGeometry, redirectInsetMaterial.clone());
+        const inset = new THREE.Mesh(redirectInsetGeometry, cloneLevelMaterial(redirectInsetMaterial));
         inset.position.y = 0.103;
         inset.receiveShadow = false;
         inset.castShadow = false;
@@ -2390,7 +2463,7 @@
         const gap = 0.12;
 
         [[-ux * gap, -uz * gap], [ux * gap, uz * gap]].forEach(([ox, oz]) => {
-          const chevron = new THREE.Mesh(redirectChevronGeometry, redirectChevronMaterial.clone());
+          const chevron = new THREE.Mesh(redirectChevronGeometry, cloneLevelMaterial(redirectChevronMaterial));
           chevron.position.set(ox, 0.138, oz);
           chevron.rotation.y = chevronRotation;
           chevron.scale.set(0.52, 0.52, 0.52);
@@ -2436,25 +2509,25 @@
         group.position.set(x, -0.10, z);
         boardGroup.add(group);
 
-        const pedestal = new THREE.Mesh(swapPedestalGeometry, swapPedestalMaterial.clone());
+        const pedestal = new THREE.Mesh(swapPedestalGeometry, cloneLevelMaterial(swapPedestalMaterial));
         pedestal.rotation.y = Math.PI / 6;
         pedestal.position.y = 0.04;
         pedestal.castShadow = false;
         pedestal.receiveShadow = false;
         group.add(pedestal);
 
-        const pedestalTop = new THREE.Mesh(swapPedestalTopGeometry, swapPedestalTopMaterial.clone());
+        const pedestalTop = new THREE.Mesh(swapPedestalTopGeometry, cloneLevelMaterial(swapPedestalTopMaterial));
         pedestalTop.position.y = 0.11;
         pedestalTop.castShadow = false;
         group.add(pedestalTop);
 
-        const ring = new THREE.Mesh(swapRingGeometry, swapRingMaterial.clone());
+        const ring = new THREE.Mesh(swapRingGeometry, cloneLevelMaterial(swapRingMaterial));
         ring.rotation.x = Math.PI / 2;
         ring.position.y = 0.175;
         ring.castShadow = false;
         group.add(ring);
 
-        const hub = new THREE.Mesh(swapHubGeometry, swapHubMaterial.clone());
+        const hub = new THREE.Mesh(swapHubGeometry, cloneLevelMaterial(swapHubMaterial));
         hub.position.y = 0.17;
         hub.castShadow = false;
         hub.receiveShadow = false;
@@ -2462,14 +2535,14 @@
 
         const armParts = [];
         [-1, 1].forEach(sign => {
-          const arm = new THREE.Mesh(swapArmGeometry, swapArmMaterial.clone());
+          const arm = new THREE.Mesh(swapArmGeometry, cloneLevelMaterial(swapArmMaterial));
           arm.position.set(ux * 0.42 * sign, 0.155, uz * 0.42 * sign);
           arm.rotation.y = angle;
           arm.castShadow = false;
           group.add(arm);
           armParts.push(arm);
 
-          const jointOuter = new THREE.Mesh(swapJointGeometry, swapJointMaterial.clone());
+          const jointOuter = new THREE.Mesh(swapJointGeometry, cloneLevelMaterial(swapJointMaterial));
           jointOuter.position.set(ux * 0.72 * sign, 0.155, uz * 0.72 * sign);
           jointOuter.castShadow = false;
           group.add(jointOuter);
@@ -2478,7 +2551,7 @@
 
         // Two small opposite arrows on the button communicate exchange.
         [-1, 1].forEach(sign => {
-          const icon = new THREE.Mesh(arrowGeometry, swapIconMaterial.clone());
+          const icon = new THREE.Mesh(arrowGeometry, cloneLevelMaterial(swapIconMaterial));
           icon.position.set(ux * 0.075 * sign, 0.245, uz * 0.075 * sign);
           icon.rotation.y = -(Math.atan2(ux * sign, -uz * sign));
           icon.scale.set(0.22, 0.22, 0.22);
@@ -2518,24 +2591,24 @@
         group.position.set(x, -0.10, z);
         boardGroup.add(group);
 
-        const pedestal = new THREE.Mesh(swapPedestalGeometry, swapPedestalMaterial.clone());
+        const pedestal = new THREE.Mesh(swapPedestalGeometry, cloneLevelMaterial(swapPedestalMaterial));
         pedestal.rotation.y = Math.PI / 6;
         pedestal.position.y = 0.04;
         pedestal.castShadow = false;
         group.add(pedestal);
 
-        const pedestalTop = new THREE.Mesh(swapPedestalTopGeometry, swapPedestalTopMaterial.clone());
+        const pedestalTop = new THREE.Mesh(swapPedestalTopGeometry, cloneLevelMaterial(swapPedestalTopMaterial));
         pedestalTop.position.y = 0.11;
         pedestalTop.castShadow = false;
         group.add(pedestalTop);
 
-        const ring = new THREE.Mesh(swapRingGeometry, swapRingMaterial.clone());
+        const ring = new THREE.Mesh(swapRingGeometry, cloneLevelMaterial(swapRingMaterial));
         ring.rotation.x = Math.PI / 2;
         ring.position.y = 0.175;
         ring.castShadow = false;
         group.add(ring);
 
-        const hub = new THREE.Mesh(swapHubGeometry, swapHubMaterial.clone());
+        const hub = new THREE.Mesh(swapHubGeometry, cloneLevelMaterial(swapHubMaterial));
         hub.position.y = 0.17;
         hub.castShadow = false;
         group.add(hub);
@@ -2547,18 +2620,18 @@
           const uz = dir.dz / len;
           const angle = Math.atan2(-uz, ux);
 
-          const arm = new THREE.Mesh(swapArmGeometry, swapArmMaterial.clone());
+          const arm = new THREE.Mesh(swapArmGeometry, cloneLevelMaterial(swapArmMaterial));
           arm.position.set(ux * 0.42, 0.155, uz * 0.42);
           arm.rotation.y = angle;
           arm.castShadow = false;
           group.add(arm);
 
-          const jointOuter = new THREE.Mesh(swapJointGeometry, swapJointMaterial.clone());
+          const jointOuter = new THREE.Mesh(swapJointGeometry, cloneLevelMaterial(swapJointMaterial));
           jointOuter.position.set(ux * 0.72, 0.155, uz * 0.72);
           jointOuter.castShadow = false;
           group.add(jointOuter);
 
-          const icon = new THREE.Mesh(arrowGeometry, swapIconMaterial.clone());
+          const icon = new THREE.Mesh(arrowGeometry, cloneLevelMaterial(swapIconMaterial));
           icon.position.set(ux * 0.11, 0.245, uz * 0.11);
           icon.rotation.y = -(dir.angleDeg * Math.PI / 180);
           icon.scale.set(0.18, 0.18, 0.18);
@@ -2635,17 +2708,17 @@
         const linkGroup = new THREE.Group();
         boardGroup.add(linkGroup);
 
-        const beamGeometry = new THREE.BoxGeometry(distance * 0.74, 0.052, 0.085);
-        const coreGeometry = new THREE.BoxGeometry(distance * 0.60, 0.024, 0.040);
+        const beamGeometry = createLevelBoxGeometry(distance * 0.74, 0.052, 0.085);
+        const coreGeometry = createLevelBoxGeometry(distance * 0.60, 0.024, 0.040);
 
-        const beam = new THREE.Mesh(beamGeometry, linkBeamMaterial.clone());
+        const beam = new THREE.Mesh(beamGeometry, cloneLevelMaterial(linkBeamMaterial));
         beam.position.set(midX, 0.19, midZ);
         beam.rotation.y = angle;
         beam.castShadow = false;
         beam.receiveShadow = false;
         linkGroup.add(beam);
 
-        const coreBeam = new THREE.Mesh(coreGeometry, linkCoreMaterial.clone());
+        const coreBeam = new THREE.Mesh(coreGeometry, cloneLevelMaterial(linkCoreMaterial));
         coreBeam.position.set(midX, 0.202, midZ);
         coreBeam.rotation.y = angle;
         coreBeam.castShadow = false;
@@ -2655,7 +2728,7 @@
         const rings = [];
         const clamps = [];
         [aWorld, bWorld].forEach((pos, idx) => {
-          const ring = new THREE.Mesh(linkRingGeometry, linkRingMaterial.clone());
+          const ring = new THREE.Mesh(linkRingGeometry, cloneLevelMaterial(linkRingMaterial));
           ring.rotation.x = Math.PI / 2;
           ring.position.set(pos.x, (HEX_HEIGHT / 2) + 0.100, pos.z);
           ring.castShadow = false;
@@ -2664,7 +2737,7 @@
           rings.push(ring);
 
           const sign = idx === 0 ? 1 : -1;
-          const clamp = new THREE.Mesh(linkClampGeometry, linkClampMaterial.clone());
+          const clamp = new THREE.Mesh(linkClampGeometry, cloneLevelMaterial(linkClampMaterial));
           clamp.rotation.y = angle;
           clamp.position.set(
             pos.x + Math.cos(angle) * 0.17 * sign,
@@ -2676,7 +2749,7 @@
           linkGroup.add(clamp);
           clamps.push(clamp);
 
-          const cap = new THREE.Mesh(new THREE.BoxGeometry(0.10, 0.03, 0.16), linkClampMaterial.clone());
+          const cap = new THREE.Mesh(createLevelBoxGeometry(0.10, 0.03, 0.16), cloneLevelMaterial(linkClampMaterial));
           cap.rotation.y = angle;
           cap.position.set(
             pos.x + Math.cos(angle) * 0.10 * sign,
@@ -3878,11 +3951,19 @@
       }
     });
 
-    window.addEventListener('resize', onWindowResize);
+    let resizeScheduled = false;
+    window.addEventListener('resize', () => {
+      if (resizeScheduled) return;
+      resizeScheduled = true;
+      requestAnimationFrame(() => {
+        resizeScheduled = false;
+        onWindowResize();
+      });
+    });
 
     function onWindowResize() {
-      const width = window.innerWidth;
-      const height = window.innerHeight;
+      const width = Math.max(1, window.innerWidth);
+      const height = Math.max(1, window.innerHeight);
       frustumSize = getFrustumSize();
       aspect = width / height;
 
@@ -3893,14 +3974,32 @@
       camera.updateProjectionMatrix();
 
       renderer.setSize(width, height);
-      renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2.0));
+      renderer.setPixelRatio(getSafePixelRatio());
       centerBoard();
       fitBoardToMobileViewport();
     }
 
+    let webglContextLost = false;
+
+    canvas.addEventListener('webglcontextlost', (event) => {
+      event.preventDefault();
+      webglContextLost = true;
+      saveLocalState();
+      const recovery = document.getElementById('webgl-recovery');
+      recovery.classList.remove('hidden');
+      recovery.classList.add('flex');
+    }, false);
+
+    canvas.addEventListener('webglcontextrestored', () => {
+      saveLocalState();
+      location.reload();
+    }, false);
+
     function animate(time) {
       requestAnimationFrame(animate);
-      TWEEN.update();
+      if (document.hidden || webglContextLost) return;
+
+      TWEEN.update(time);
       updateRedirectorVisuals(time);
       updateSwapMechanismVisuals(time);
       updateLinkedPairVisuals(time);
