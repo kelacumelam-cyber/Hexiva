@@ -4,7 +4,7 @@ Last updated: 2026-09-30
 
 ## Current checkpoint
 
-The current playable baseline is `index.html`, now at V21. All three swap axes are approved; blocked taps now travel to the first blocker and return.
+The current playable baseline is `index.html`, now at V22. Dense collision-test boards and traversable grey floor cells were added so collision-return movement can be tested properly.
 
 The game is working as a mobile-first Three.js/WebGL prototype. The current visual identity must be preserved while the board presentation, mechanics, level generation, and eventual Android packaging are improved.
 
@@ -247,3 +247,15 @@ Awaiting gameplay feel approval.
 - If a direction changer lies on the blocked route, the hex follows it on the outward trip and restores its original direction when back at the starting cell.
 - Clear routes still escape/fall exactly as before.
 - A block cannot be re-tapped while its blocked-return animation is running.
+
+
+## V22 dense collision test boards
+
+- level 29: dense collision board A
+- level 30: dense collision board B
+- level 31: dense collision board C
+- Layouts are original; user reference images were used only for density/topology direction.
+- Grey floor cell = visible, traversable empty board space; does not cause a fall.
+- Pit cell = true escape/drop space.
+- Each dense test board contains authored routes where a hex crosses grey empty space, reaches a blocker, collides, and returns.
+- These are test/checkpoint boards, not the final level-generation overhaul.
