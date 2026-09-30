@@ -119,3 +119,13 @@ Not every mechanic must be present in every level. Completely plain levels shoul
 
 Board and hex visual scale may adapt to layout size and density.
 
+
+
+### Generator V2 staged rollout
+Generator V2 should be introduced in stages rather than replacing the whole level system at once.
+
+Stage 1 is deterministic identity + measurement. Existing authored mechanic test levels remain stable. Structural metrics are collected before choosing difficulty thresholds.
+
+Stage 2 will add new topology families and stronger cross-level diversity.
+
+Stage 3 will enforce/tune limits for excessive outward-facing arrows, excessive immediately playable blocks, and trivial direct escapes based on playtesting rather than arbitrary constants.
