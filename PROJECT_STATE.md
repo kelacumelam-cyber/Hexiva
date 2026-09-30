@@ -544,3 +544,21 @@ Changes:
 - telemetry now records `openingRepairCount`.
 
 This is the first structural enforcement of the rule "easy != automatic": when geometry permits, the opening must present at least two playable choices and more than one direction.
+
+
+## V42.4 Absolute same-direction cluster control
+
+Web playtesting through levels 19, 20 and 24 showed that ratio-only cluster scoring still missed visually obvious sweep groups on larger boards. Level 20 exposed a six-block same-direction cluster: its board was large enough that the ratio did not look extreme, but the local visual repetition was still poor.
+
+Changes:
+- max same-direction connected cluster size is now penalized directly, not only as a board ratio,
+- clusters above 3 receive escalating penalties,
+- 5+ and 6+ clusters receive additional heavy penalties,
+- non-tutorial candidate search increased to 24 candidates to give the ranker more alternatives.
+
+Design intent:
+- 3-block local groups may still appear naturally,
+- 4-block groups should be uncommon,
+- 5-6+ sweep groups should almost never survive candidate selection unless geometry leaves no better solvable option.
+
+Next validation should focus on actual web play through levels 19-24 rather than another broad console audit first.
