@@ -3107,13 +3107,13 @@
       penalty += Math.max(0, stats.trivialDirectEscapeRatio - trivialRedZone) * 5.0;
       penalty += Math.max(0, stats.maxSameDirectionClusterRatio - clusterRedZone) * 6.0;
 
-      // Large boards can hide ugly same-direction runs behind a harmless-looking ratio.
-      // Physical playtest caught a six-block cluster on level 20, so absolute cluster size
-      // is now treated as a first-class quality signal as well.
-      const clusterExcess = Math.max(0, (stats.maxSameDirectionClusterSize || 0) - 3);
-      penalty += clusterExcess * 3.5;
-      if ((stats.maxSameDirectionClusterSize || 0) >= 5) penalty += 6.0;
-      if ((stats.maxSameDirectionClusterSize || 0) >= 6) penalty += 10.0;
+      // Same-direction connected groups are capped at two by design.
+      // A three-block group already reads as a sweep instruction in playtesting, so 3+
+      // is treated as a near-rejection condition rather than a soft aesthetic preference.
+      const clusterSize = stats.maxSameDirectionClusterSize || 0;
+      if (clusterSize >= 3) {
+        penalty += 40 + (clusterSize - 3) * 20;
+      }
 
       // "Easy" must still contain a choice. One legal opener is a forced instruction, not a decision.
       if (stats.initiallyClearCount < 2) penalty += tutorial ? 2.0 : 3.5;
@@ -3136,20 +3136,31 @@
       const candidateCount = levelNum <= TUTORIAL_LEVEL_COUNT ? 24 : 24;
       let best = null;
       let bestPenalty = Infinity;
+      let bestCompliant = null;
+      let bestCompliantPenalty = Infinity;
 
       for (let attempt = 0; attempt < candidateCount; attempt++) {
         const candidate = generateSolvableLevelCandidate(levelNum, attempt);
         const penalty = levelQualityPenalty(candidate.generationStats);
+        const clusterCompliant = (candidate.generationStats.maxSameDirectionClusterSize || 0) <= 2;
 
         if (penalty < bestPenalty) {
           best = candidate;
           bestPenalty = penalty;
         }
+        if (clusterCompliant && penalty < bestCompliantPenalty) {
+          bestCompliant = candidate;
+          bestCompliantPenalty = penalty;
+        }
       }
 
-      best.generationStats.qualityPenalty = bestPenalty;
-      best.generationStats.candidatesEvaluated = candidateCount;
-      return best;
+      const chosen = bestCompliant || best;
+      const chosenPenalty = bestCompliant ? bestCompliantPenalty : bestPenalty;
+      chosen.generationStats.qualityPenalty = chosenPenalty;
+      chosen.generationStats.candidatesEvaluated = candidateCount;
+      chosen.generationStats.sameDirectionClusterCompliant =
+        (chosen.generationStats.maxSameDirectionClusterSize || 0) <= 2;
+      return chosen;
     }
 
     window.__hexivaAuditCatalog = function(startLevel = 1, endLevel = LEVEL_CATALOG_SIZE) {
