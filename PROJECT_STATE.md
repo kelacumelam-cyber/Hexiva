@@ -396,3 +396,9 @@ It now removes known source ranges using explicit start/end markers, which is mo
 
 Root cause of the release-cleanup marker failure was Windows CRLF line endings in the local checkout.
 The offline builder now normalizes `\r\n` to `\n` immediately after reading `index.html`, so release cleanup behaves consistently across Windows, macOS and Linux.
+
+
+## V41.6 Windows Gradle wrapper quoting fix
+
+The debug APK helper now invokes `gradlew.bat` from the Android working directory using `cmd.exe /c call gradlew.bat assembleDebug`.
+This avoids nested-quote path parsing failures on Windows paths containing spaces.
