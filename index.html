@@ -660,8 +660,8 @@
     const scene = new THREE.Scene();
     scene.background = new THREE.Color(0xdce5f5);
 
-    // Mobile-first camera framing. Keep the original camera character,
-    // but reserve breathing room for the HUD and bottom boosters.
+    // Mobile-first camera framing. Stronger top-down presentation while
+    // preserving enough perspective to keep the chunky 3D block identity.
     function getFrustumSize() {
       const aspect = window.innerWidth / window.innerHeight;
       if (aspect < 0.50) return 16.2; // Extra-tall phones
@@ -682,7 +682,10 @@
       1000
     );
 
-    camera.position.set(0, 19, 15);
+    // Presentation checkpoint: the old camera was too low and made the board
+    // look slightly laid down. Move toward a top-down board-game view without
+    // flattening the 3D depth completely.
+    camera.position.set(0, 24, 9.5);
     camera.lookAt(0, 0, 0);
 
     // Performance-focused WebGL Renderer for Android
@@ -1511,9 +1514,9 @@
       fitScale = Math.max(0.72, fitScale);
       boardGroup.scale.setScalar(fitScale);
 
-      // With the tilted camera, a small +Z shift moves the board down the screen.
-      // Use viewport aspect rather than level data so the visual rhythm stays consistent.
-      boardGroup.position.z += aspectNow < 0.75 ? 0.72 : 0.48;
+      // With the stronger top-down camera, +Z still moves the board down the screen
+      // but needs a smaller offset than the old tilted presentation.
+      boardGroup.position.z += aspectNow < 0.75 ? 0.58 : 0.40;
     }
 
     function checkCanTapAway(block) {
