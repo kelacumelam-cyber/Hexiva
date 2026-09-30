@@ -37,3 +37,26 @@ test("anne-grid draft generation is deterministic for the same slot and attempt"
     draft(27, built.attempt, { anneGrid: true, specialIndex: 4 }),
   );
 });
+
+
+test("anne-grid special cadence uses only proven mechanic combinations", () => {
+  const expected = [
+    "redirectSwap",
+    "obstacleCycle",
+    "obstacle",
+    "swap",
+    "cycle",
+    "redirectSwap",
+  ];
+  for (let specialIndex = 1; specialIndex <= expected.length; specialIndex++) {
+    let built = null;
+    for (let attempt = 0; attempt < 900 && !built; attempt++) {
+      built = draft(20 + specialIndex, attempt, {
+        anneGrid: true,
+        specialIndex,
+      });
+    }
+    assert.ok(built, `no constructed anne-grid draft for special ${specialIndex}`);
+    assert.equal(built.mechanicKind, expected[specialIndex - 1]);
+  }
+});
