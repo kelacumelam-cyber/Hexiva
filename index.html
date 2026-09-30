@@ -428,7 +428,8 @@
   </div>
 
   <div id="offer-modal" class="fixed inset-0 z-50 bg-black/70 backdrop-blur-sm hidden flex items-center justify-center p-4">
-    <div class="bg-gradient-to-b from-purple-700 to-indigo-900 rounded-3xl p-6 w-full max-w-xs text-center border-4 border-yellow-300 shadow-2xl animate-pop text-white">
+    <div id="offer-card" class="relative bg-gradient-to-b from-purple-700 to-indigo-900 rounded-3xl p-6 w-full max-w-xs text-center border-4 border-yellow-300 shadow-2xl animate-pop text-white">
+      <button id="close-offer-btn" aria-label="Günlük hediyeyi kapat" class="absolute top-3 right-3 w-8 h-8 rounded-full bg-white/15 hover:bg-white/25 text-white font-black flex items-center justify-center border border-white/20">✕</button>
       <div class="text-4xl mb-2 animate-bounce">🎁</div>
       <h2 class="text-2xl font-black text-yellow-300 mb-1">GÜNLÜK HEDİYE!</h2>
       <p class="text-purple-200 text-xs font-bold mb-4">Günde bir kez küçük bir destek paketi al!</p>
@@ -452,7 +453,7 @@
       
       <div class="bg-amber-100 border-2 border-amber-300 rounded-2xl py-3 px-4 mb-5 flex items-center justify-center gap-2">
         <span class="text-2xl">🪙</span>
-        <span class="text-amber-800 font-black text-xl">+100 Altın</span>
+        <span class="text-amber-800 font-black text-xl">+25 Altın</span>
       </div>
 
       <button id="next-level-btn" class="game-btn w-full py-3.5 bg-gradient-to-r from-emerald-500 to-green-600 rounded-2xl text-white font-black text-lg shadow-lg border-2 border-white">
@@ -3213,8 +3214,11 @@
           if (!activeBoardFootprint.has(nextKey)) {
             const insideWorld = hexToWorld(q, r);
             cliffPoint = {
-              x: insideWorld.x + dir.dx * 0.56,
-              z: insideWorld.z + dir.dz * 0.56,
+              // Move the whole block clear of the physical board before dropping.
+              // One full grid step places its center over the missing neighbor cell,
+              // so no part of the block appears to fall while still on the cliff.
+              x: insideWorld.x + dir.dx,
+              z: insideWorld.z + dir.dz,
               edge: true
             };
             break;
@@ -3229,8 +3233,8 @@
         if (!cliffPoint) {
           const finalDir = HEX_DIRECTIONS[finalDirIndex];
           cliffPoint = {
-            x: block.mesh.position.x + finalDir.dx * 0.56,
-            z: block.mesh.position.z + finalDir.dz * 0.56,
+            x: block.mesh.position.x + finalDir.dx,
+            z: block.mesh.position.z + finalDir.dz,
             edge: true
           };
         }
@@ -3811,6 +3815,16 @@
       initAudio();
       updateDailyGiftButton();
       offerModal.classList.remove('hidden');
+    });
+
+    document.getElementById('close-offer-btn').addEventListener('click', () => {
+      offerModal.classList.add('hidden');
+    });
+
+    offerModal.addEventListener('click', (event) => {
+      if (event.target === offerModal) {
+        offerModal.classList.add('hidden');
+      }
     });
 
     claimOfferBtn.addEventListener('click', () => {
