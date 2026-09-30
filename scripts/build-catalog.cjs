@@ -112,7 +112,6 @@ function draft(level, attempt, options = {}) {
     ks = new Set(cells.map(P.key));
   const l = {
     level,
-    mechanicKind: kind,
     patternKey: family,
     footprint: cells,
     pits: [],
@@ -160,6 +159,7 @@ function draft(level, attempt, options = {}) {
             "obstacleCycle",
           ][level % 8];
   }
+  l.mechanicKind = kind;
   const interiors = shuffle(
     cells.filter(
       (c) => P.D.filter((_, d) => ks.has(P.key(P.step(c, d)))).length >= 4,
