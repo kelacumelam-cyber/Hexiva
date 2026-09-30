@@ -429,7 +429,7 @@
 
   <div id="offer-modal" class="fixed inset-0 z-50 bg-black/70 backdrop-blur-sm hidden flex items-center justify-center p-4">
     <div id="offer-card" class="relative bg-gradient-to-b from-purple-700 to-indigo-900 rounded-3xl p-6 w-full max-w-xs text-center border-4 border-yellow-300 shadow-2xl animate-pop text-white">
-      <button id="close-offer-btn" aria-label="Günlük hediyeyi kapat" class="absolute top-3 right-3 w-8 h-8 rounded-full bg-white/15 hover:bg-white/25 text-white font-black flex items-center justify-center border border-white/20">✕</button>
+      <button id="close-offer-btn" aria-label="Günlük hediyeyi kapat" class="absolute top-2 right-2 w-11 h-11 rounded-full bg-white/15 hover:bg-white/25 active:scale-95 text-white font-black flex items-center justify-center border border-white/20 touch-manipulation select-none">✕</button>
       <div class="text-4xl mb-2 animate-bounce">🎁</div>
       <h2 class="text-2xl font-black text-yellow-300 mb-1">GÜNLÜK HEDİYE!</h2>
       <p class="text-purple-200 text-xs font-bold mb-4">Günde bir kez küçük bir destek paketi al!</p>
@@ -3817,13 +3817,21 @@
       offerModal.classList.remove('hidden');
     });
 
-    document.getElementById('close-offer-btn').addEventListener('click', () => {
-      offerModal.classList.add('hidden');
-    });
+    const closeOfferBtn = document.getElementById('close-offer-btn');
 
-    offerModal.addEventListener('click', (event) => {
+    function closeDailyGift(event) {
+      if (event) {
+        event.preventDefault();
+        event.stopPropagation();
+      }
+      offerModal.classList.add('hidden');
+    }
+
+    closeOfferBtn.addEventListener('pointerdown', closeDailyGift);
+
+    offerModal.addEventListener('pointerdown', (event) => {
       if (event.target === offerModal) {
-        offerModal.classList.add('hidden');
+        closeDailyGift(event);
       }
     });
 
