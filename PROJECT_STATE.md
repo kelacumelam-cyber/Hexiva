@@ -174,3 +174,12 @@ Add mechanics one at a time:
 5. only then combine it with other mechanics.
 
 Do not sacrifice the established visual identity while extending the board system.
+
+
+## V13 checkpoint
+
+- Record correction completed: the arm-based reference belongs to the future swap mechanism, not the direction changer.
+- V13 direction-changer visual is now implemented as a low-profile board-mounted pink mechanic tile with a double-chevron symbol and subtle light/activation feedback.
+- Direction-changing movement logic is unchanged.
+- Approved V11/V12 top-down camera presentation is preserved.
+- Next review target: verify that the new changer is readable, clearly non-playable, and visually compatible with the board.
