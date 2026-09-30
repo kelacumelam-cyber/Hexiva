@@ -330,3 +330,22 @@ User clarified the intended rule:
 - internal movement and collision-return behavior is desirable and should appear regularly,
 - board/hex scale may shrink or grow with layout size and density.
 
+
+
+## Generator V2 foundation candidate (V31)
+
+A new local playable candidate, V31, starts Generator V2 without disturbing the existing authored/mechanic test levels.
+
+Foundation changes:
+- levels keep fixed identity through deterministic seeded generation,
+- existing authored/test ordering is preserved before Generator V2 expansion,
+- later family ordering is deterministically shuffled per cycle instead of repeating the exact same sequence forever,
+- generator randomness inside solution-direction construction now uses a level seed instead of Math.random(),
+- generator records QA metrics for:
+  - outward-facing arrow count/ratio,
+  - initially clear/playable count/ratio,
+  - trivial direct escape count/ratio,
+- thresholds are deliberately not hard-coded yet; they will be tuned from playtests,
+- the next phase is to add genuinely new topology families and then use these metrics to reduce trivial outward-arrow-heavy boards.
+
+Local candidate file: hexa_tap_away_game_mobile_v31.html
