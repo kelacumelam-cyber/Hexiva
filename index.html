@@ -1938,6 +1938,88 @@
       return !footprintSet.has(`${q + d.dq},${r + d.dr}`);
     }
 
+    // Level-quality telemetry V1.
+    // Canonical footprint fingerprints collapse translation, 60-degree rotations and mirrors
+    // so visually equivalent boards can be detected even when they are oriented differently.
+    function canonicalFootprintFingerprint(cells) {
+      if (!cells.length) return '';
+
+      const cube = cells.map(({ q, r }) => ({ x: q, y: -q - r, z: r }));
+      const transforms = [
+        ({x,y,z}) => ({x, y, z}),
+        ({x,y,z}) => ({x: -z, y: -x, z: -y}),
+        ({x,y,z}) => ({x: y, y: z, z: x}),
+        ({x,y,z}) => ({x: -x, y: -y, z: -z}),
+        ({x,y,z}) => ({x: z, y: x, z: y}),
+        ({x,y,z}) => ({x: -y, y: -z, z: -x})
+      ];
+
+      const reflected = cube.map(({x,y,z}) => ({ x, y: z, z: y }));
+      const variants = [];
+
+      [cube, reflected].forEach(source => {
+        transforms.forEach(transform => {
+          const axial = source.map(point => {
+            const out = transform(point);
+            return { q: out.x, r: out.z };
+          });
+          const minQ = Math.min(...axial.map(p => p.q));
+          const minR = Math.min(...axial.map(p => p.r));
+          const normalized = axial
+            .map(p => `${p.q - minQ},${p.r - minR}`)
+            .sort()
+            .join(';');
+          variants.push(normalized);
+        });
+      });
+
+      variants.sort();
+      return variants[0];
+    }
+
+    function computeSameDirectionClusterMetrics(levelBlocks) {
+      const byKey = new Map(levelBlocks.map(block => [`${block.q},${block.r}`, block]));
+      const seen = new Set();
+      let maxClusterSize = 0;
+      let sameDirectionAdjacencyCount = 0;
+
+      levelBlocks.forEach(block => {
+        const key = `${block.q},${block.r}`;
+        HEX_DIRECTIONS.forEach((d, index) => {
+          const neighbor = byKey.get(`${block.q + d.dq},${block.r + d.dr}`);
+          if (neighbor && neighbor.dirIndex === block.dirIndex && index < 3) {
+            sameDirectionAdjacencyCount++;
+          }
+        });
+
+        if (seen.has(key)) return;
+        seen.add(key);
+        const queue = [block];
+        let size = 0;
+
+        while (queue.length) {
+          const current = queue.pop();
+          size++;
+          HEX_DIRECTIONS.forEach(d => {
+            const neighborKey = `${current.q + d.dq},${current.r + d.dr}`;
+            const neighbor = byKey.get(neighborKey);
+            if (!neighbor || neighbor.dirIndex !== current.dirIndex || seen.has(neighborKey)) return;
+            seen.add(neighborKey);
+            queue.push(neighbor);
+          });
+        }
+
+        maxClusterSize = Math.max(maxClusterSize, size);
+      });
+
+      return {
+        sameDirectionAdjacencyCount,
+        sameDirectionAdjacencyRatio: levelBlocks.length ? sameDirectionAdjacencyCount / levelBlocks.length : 0,
+        maxSameDirectionClusterSize,
+        maxSameDirectionClusterRatio: levelBlocks.length ? maxSameDirectionClusterSize / levelBlocks.length : 0
+      };
+    }
+
     function difficultyProfileForLevel(levelNum) {
       if (levelNum <= TUTORIAL_LEVEL_COUNT) return 'tutorial';
       const roll = hashLevelSeed(levelNum, 0xd1ff1c) % 100;
@@ -2721,6 +2803,7 @@
       let directCliffExitCount = 0;
       let initiallyClearCount = 0;
       let trivialDirectEscapeCount = 0;
+      const initiallyClearDirectionCounts = Array(6).fill(0);
 
       levelBlocks.forEach(block => {
         if (isOutwardFacing(block.q, block.r, block.dirIndex)) outwardFacingCount++;
@@ -2729,6 +2812,7 @@
         const clear = isDirectionClear(block.q, block.r, block.dirIndex, fullRemaining);
         if (clear) {
           initiallyClearCount++;
+          initiallyClearDirectionCounts[block.dirIndex]++;
 
           let q = block.q;
           let r = block.r;
@@ -2761,12 +2845,23 @@
         }
       });
 
+      const directionClusterMetrics = computeSameDirectionClusterMetrics(levelBlocks);
+      const initialClearDirectionCount = initiallyClearDirectionCounts.filter(count => count > 0).length;
+      const dominantInitialClearDirectionCount = Math.max(0, ...initiallyClearDirectionCounts);
+
       const generationStats = {
+        telemetryVersion: 1,
         levelSeed,
         patternKey,
+        footprintFingerprint: canonicalFootprintFingerprint(baseCells),
         difficultyProfile,
         topologyProfile: topologyVariation.profile,
         blockCount: levelBlocks.length,
+        ...directionClusterMetrics,
+        initialClearDirectionCount,
+        dominantInitialClearDirectionRatio: initiallyClearCount
+          ? dominantInitialClearDirectionCount / initiallyClearCount
+          : 0,
         outwardFacingCount,
         outwardFacingRatio: levelBlocks.length ? outwardFacingCount / levelBlocks.length : 0,
         directCliffExitCount,
@@ -2846,6 +2941,64 @@
     let blocks = [];
     let activePitCells = new Set();
     let activeBoardFootprint = new Set();
+    function auditGeneratedCatalog(limit = LEVEL_CATALOG_SIZE) {
+      const capped = Math.max(1, Math.min(LEVEL_CATALOG_SIZE, Math.floor(limit)));
+      const levels = [];
+      const byFingerprint = new Map();
+
+      for (let levelNum = 1; levelNum <= capped; levelNum++) {
+        const generated = generateSolvableLevel(levelNum);
+        const stats = { level: levelNum, ...(generated.generationStats || {}) };
+        levels.push(stats);
+
+        const fingerprint = stats.footprintFingerprint || '';
+        if (!byFingerprint.has(fingerprint)) byFingerprint.set(fingerprint, []);
+        byFingerprint.get(fingerprint).push(levelNum);
+      }
+
+      const footprintRepeats = [...byFingerprint.entries()]
+        .filter(([, levelNums]) => levelNums.length > 1)
+        .map(([fingerprint, levelNums]) => {
+          let minimumGap = Infinity;
+          for (let i = 1; i < levelNums.length; i++) {
+            minimumGap = Math.min(minimumGap, levelNums[i] - levelNums[i - 1]);
+          }
+          return {
+            fingerprint,
+            levels: levelNums,
+            count: levelNums.length,
+            minimumGap: Number.isFinite(minimumGap) ? minimumGap : null
+          };
+        })
+        .sort((a, b) => (a.minimumGap ?? Infinity) - (b.minimumGap ?? Infinity) || b.count - a.count);
+
+      function topBy(metric, count = 20) {
+        return [...levels]
+          .sort((a, b) => (b[metric] || 0) - (a[metric] || 0))
+          .slice(0, count)
+          .map(item => ({
+            level: item.level,
+            patternKey: item.patternKey,
+            difficultyProfile: item.difficultyProfile,
+            value: item[metric] || 0
+          }));
+      }
+
+      return {
+        auditedLevels: capped,
+        footprintFamilyCount: byFingerprint.size,
+        repeatedFootprintFamilyCount: footprintRepeats.length,
+        footprintRepeats,
+        highestInitiallyClearRatio: topBy('initiallyClearRatio'),
+        highestTrivialDirectEscapeRatio: topBy('trivialDirectEscapeRatio'),
+        largestSameDirectionClusters: topBy('maxSameDirectionClusterRatio'),
+        strongestInitialDirectionDominance: topBy('dominantInitialClearDirectionRatio'),
+        levels
+      };
+    }
+
+    window.__hexivaAuditCatalog = auditGeneratedCatalog;
+
     let activeRedirectors = new Map();
     let activeRedirectorVisuals = [];
     let activeRedirectorVisualMap = new Map();
