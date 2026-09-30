@@ -292,3 +292,26 @@ V22 levels 29-31 should be kept as reference examples when the generator is rede
 - Final visual-quality polish after gameplay/mechanics stabilize.
 - Add local/offline persistence and remove release dependence on injected Firebase config.
 - Bundle external CDN dependencies locally before standalone APK release.
+
+
+## Generator V2 arrow-direction balance
+
+User explicitly wants the generator to greatly reduce the number of hexes initially pointing directly outward.
+
+Design intent:
+- easy does NOT mean "most arrows point outward",
+- easy levels should still require some thought,
+- medium/hard levels should more often require clearing routes, creating space, or using mechanics,
+- control the number of immediately playable / free-escape moves,
+- avoid laborious "tap everything that already points out" gameplay,
+- allow difficulty to fluctuate naturally across levels,
+- very hard levels are acceptable as long as they are fair and solvable,
+- preserve visible-arrow movement contract at all times.
+
+Generator V2 should therefore include explicit targets/limits for:
+- outward-facing arrow ratio,
+- initially playable move count,
+- trivial one-step escape count,
+- dependency depth / unlock chain length.
+
+The exact thresholds should be tuned from playtesting rather than chosen arbitrarily.
