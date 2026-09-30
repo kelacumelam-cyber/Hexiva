@@ -313,3 +313,13 @@ Board fitting:
 - board vertical bias was tuned for the mobile-safe lane.
 
 Desktop remains a preview/testing surface and is not the sizing authority.
+
+
+## V40.1 animation + fallback polish
+
+- edge escapes now get a tiny deterministic tip before the fall,
+- pit drops stay straighter and slightly quicker than edge drops,
+- fall spin is deterministic rather than random,
+- blocked bump distance was reduced and impact squash tightened,
+- local Tween fallback now implements Quadratic.InOut used by gameplay,
+- utility labels localized: GÜNLÜK HEDİYE, DÜKKAN, ANA.
