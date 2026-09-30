@@ -450,3 +450,15 @@ Fix:
 - retain the existing main script opening exactly once after removing the cloud module,
 - parse-check all generated inline classic scripts during `build:web`,
 - abort packaging immediately if release-only transformation introduces JavaScript syntax damage.
+
+
+## V41.12 physical mobile HUD + typography fix
+
+Physical-device testing revealed that the mobile utility-strip rule applied a left anchor to both utility groups. The right-side home strip therefore had both left and right anchors, stretching its interactive container across the screen and causing visual/control overlap and blocked taps.
+
+Fixes:
+- home-strip explicitly clears the inherited left anchor on phones,
+- utility strips get an explicit interaction layer and touch-action manipulation,
+- sound control keeps a 44px minimum touch target even on narrow phones,
+- Fredoka / Google Fonts usage is removed from the source UI,
+- typography now uses the native system mobile stack for a conventional mobile-game interface.
