@@ -3107,6 +3107,14 @@
       penalty += Math.max(0, stats.trivialDirectEscapeRatio - trivialRedZone) * 5.0;
       penalty += Math.max(0, stats.maxSameDirectionClusterRatio - clusterRedZone) * 6.0;
 
+      // Large boards can hide ugly same-direction runs behind a harmless-looking ratio.
+      // Physical playtest caught a six-block cluster on level 20, so absolute cluster size
+      // is now treated as a first-class quality signal as well.
+      const clusterExcess = Math.max(0, (stats.maxSameDirectionClusterSize || 0) - 3);
+      penalty += clusterExcess * 3.5;
+      if ((stats.maxSameDirectionClusterSize || 0) >= 5) penalty += 6.0;
+      if ((stats.maxSameDirectionClusterSize || 0) >= 6) penalty += 10.0;
+
       // "Easy" must still contain a choice. One legal opener is a forced instruction, not a decision.
       if (stats.initiallyClearCount < 2) penalty += tutorial ? 2.0 : 3.5;
       if (stats.initiallyClearCount >= 2 && stats.initialClearDirectionCount < 2) {
@@ -3125,7 +3133,7 @@
     }
 
     function generateSolvableLevel(levelNum) {
-      const candidateCount = levelNum <= TUTORIAL_LEVEL_COUNT ? 24 : 16;
+      const candidateCount = levelNum <= TUTORIAL_LEVEL_COUNT ? 24 : 24;
       let best = null;
       let bestPenalty = Infinity;
 
