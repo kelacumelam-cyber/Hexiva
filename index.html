@@ -698,7 +698,7 @@
 
     renderer.setSize(window.innerWidth, window.innerHeight);
     renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2.0));
-    renderer.shadowMap.enabled = true;
+    renderer.shadowMap.enabled = false;
     renderer.shadowMap.type = THREE.PCFSoftShadowMap;
 
     // Lighting
@@ -707,7 +707,7 @@
 
     const dirLight = new THREE.DirectionalLight(0xffffff, 0.6);
     dirLight.position.set(8, 22, 14);
-    dirLight.castShadow = true;
+    dirLight.castShadow = false;
     dirLight.shadow.mapSize.width = 1024;
     dirLight.shadow.mapSize.height = 1024;
     dirLight.shadow.bias = -0.00015;
@@ -1304,7 +1304,7 @@
 
         const basePlate = new THREE.Mesh(basePlateGeometry, basePlateMaterial);
         basePlate.position.set(x, -0.22, z);
-        basePlate.receiveShadow = true;
+        basePlate.receiveShadow = false;
         basePlate.castShadow = false;
         boardGroup.add(basePlate);
 
@@ -1314,7 +1314,7 @@
 
         const tile = new THREE.Mesh(redirectTileGeometry, redirectTileMaterial.clone());
         tile.position.y = 0.055;
-        tile.receiveShadow = true;
+        tile.receiveShadow = false;
         tile.castShadow = false;
         redirectGroup.add(tile);
 
@@ -1359,14 +1359,14 @@
         // 1. Base Grey Platform Tile
         const baseMesh = new THREE.Mesh(basePlateGeometry, basePlateMaterial);
         baseMesh.position.set(x, -0.22, z);
-        baseMesh.receiveShadow = true;
+        baseMesh.receiveShadow = false;
         boardGroup.add(baseMesh);
 
         // 2. Playable Hex Block
         const blockMat = getBlockMaterial(item.color);
         const blockMesh = new THREE.Mesh(blockGeometry, blockMat);
         blockMesh.position.set(x, (HEX_HEIGHT / 2) + 0.01, z);
-        blockMesh.castShadow = true;
+        blockMesh.castShadow = false;
         // Avoid self-shadow acne / dotted dark seams on the colored bevels.
         // The grey plate still receives the block shadow, so depth is preserved.
         blockMesh.receiveShadow = false;
@@ -1374,7 +1374,7 @@
         // 3. Tactile 3D Arrow
         const arrowMesh = new THREE.Mesh(arrowGeometry, arrowMaterial);
         arrowMesh.position.set(0, (HEX_HEIGHT / 2) + 0.04, 0);
-        arrowMesh.castShadow = true;
+        arrowMesh.castShadow = false;
 
         const dirData = HEX_DIRECTIONS[item.dirIndex];
         arrowMesh.rotation.y = -(dirData.angleDeg * Math.PI / 180);
