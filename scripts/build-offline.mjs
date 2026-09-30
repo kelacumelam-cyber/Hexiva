@@ -79,36 +79,47 @@ html = html.replace(
   "\n"
 );
 
+function removeRange(source, startMarker, endMarker, replacement = "") {
+  const start = source.indexOf(startMarker);
+  if (start < 0) {
+    throw new Error(`Release cleanup start marker missing: ${startMarker}`);
+  }
+
+  const end = source.indexOf(endMarker, start);
+  if (end < 0) {
+    throw new Error(`Release cleanup end marker missing: ${endMarker}`);
+  }
+
+  return source.slice(0, start) + replacement + source.slice(end);
+}
+
 // Release artifact must not contain development-only grants.
 html = html.replace(
   "    const QA_COIN_GRANT_KEY = 'hexiva-qa-coin-grant-v1';\n",
   ""
 );
 
-const qaGrantBlock = /\n\s*\/\/ Temporary development grant: once per browser\/profile, never per refresh\.\n\s*if \(!localStorage\.getItem\(QA_COIN_GRANT_KEY\)\) \{[\s\S]*?\n\s*\}\n/;
-if (!qaGrantBlock.test(html)) {
-  throw new Error("QA coin grant block not found in source");
-}
-html = html.replace(qaGrantBlock, "\n");
+html = removeRange(
+  html,
+  "        // Temporary development grant: once per browser/profile, never per refresh.\n",
+  "      } catch (e) {",
+  ""
+);
 
 // Desktop A/S navigation is useful for web QA, never for release.
-const debugShortcutBlock = /\n\s*\/\/ TEMP DEBUG SHORTCUTS \(desktop testing only\)[\s\S]*?\n\s*\}\);\n\n\s*const mainMenu = document\.getElementById\('main-menu'\);/;
-if (!debugShortcutBlock.test(html)) {
-  throw new Error("Desktop debug shortcut block not found in source");
-}
-html = html.replace(
-  debugShortcutBlock,
-  "\n\n    const mainMenu = document.getElementById('main-menu');"
+html = removeRange(
+  html,
+  "    // TEMP DEBUG SHORTCUTS (desktop testing only)\n",
+  "    const mainMenu = document.getElementById('main-menu');",
+  ""
 );
 
 // Native release uses local persistence only. Remove dormant Firebase imports too.
-const cloudModule = /\n\s*<script type="module">[\s\S]*?\/\/ Cloud persistence is optional\.[\s\S]*?<\/script>\n/;
-if (!cloudModule.test(html)) {
-  throw new Error("Optional Firebase cloud module not found in source");
-}
-html = html.replace(
-  cloudModule,
-  '\n  <script>window.cloudSaveHandler = null;<\/script>\n'
+html = removeRange(
+  html,
+  '  <script type="module">\n    // Cloud persistence is optional.',
+  '  <script>\n    let audioEnabled = true;',
+  '  <script>window.cloudSaveHandler = null;<\/script>\n\n  <script>\n    let audioEnabled = true;'
 );
 
 // Release sanity checks before writing the artifact.
