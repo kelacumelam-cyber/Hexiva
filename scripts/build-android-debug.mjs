@@ -85,17 +85,32 @@ async function detectJdk21() {
     if (!(await pathExists(java))) continue;
 
     try {
-      const output = execFileSync(java, ["-version"], {
+      const result = execFileSync(java, ["-version"], {
         encoding: "utf8",
         stdio: ["ignore", "pipe", "pipe"]
       });
-      const major = parseJavaMajor(output);
+      const major = parseJavaMajor(result);
       if (major >= 21) return { home, major };
     } catch (error) {
       const combined = `${error.stdout || ""}\n${error.stderr || ""}`;
       const major = parseJavaMajor(combined);
       if (major >= 21) return { home, major };
     }
+
+    // java -version writes its version banner to stderr even on success.
+    // execFileSync only returns stdout, so probe again with spawnSync and
+    // inspect both streams before rejecting the candidate.
+    try {
+      const probe = await import("node:child_process").then(({ spawnSync }) =>
+        spawnSync(java, ["-version"], {
+          encoding: "utf8",
+          stdio: ["ignore", "pipe", "pipe"]
+        })
+      );
+      const combined = `${probe.stdout || ""}\n${probe.stderr || ""}`;
+      const major = parseJavaMajor(combined);
+      if (major >= 21) return { home, major };
+    } catch {}
   }
 
   return null;
