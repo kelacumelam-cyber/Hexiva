@@ -283,7 +283,7 @@ V22 levels 29-31 are approved quality references, but only one example family am
 ## Later work backlog
 
 - Broaden the level generator beyond repeated fixed patterns.
-- Do not lock a level number to one immutable board design by default; prioritize rich variation across replays and across level numbers.
+- Keep each level number deterministic/fixed, while maximizing structural variety across different level numbers.
 - Support 1000+ levels without a fixed linear difficulty curve.
 - Increase topology variety: density, holes, corridors, asymmetric shapes, internal floor spaces.
 - Mix approved mechanics only after each is individually stable.
@@ -317,12 +317,16 @@ Generator V2 should therefore include explicit targets/limits for:
 The exact thresholds should be tuned from playtesting rather than chosen arbitrarily.
 
 
-## Clarification: variety over fixed level identity
+## Clarification: fixed levels, rich cross-level variety
 
-User clarified that the main goal is level richness and structural variety.
+User clarified the intended rule:
 
-- A level number should not imply one forever-fixed board layout by default.
-- Replays may generate a different valid variation if that improves freshness.
-- V22 dense boards are quality references only, not a canonical template.
-- Generator V2 should support many topology families and many variations within each family.
-- Repetition avoidance is more important than preserving one exact board per level number.
+- each level number is fixed; once authored/generated for that number, replaying it should give the same puzzle,
+- the goal is for the full set (e.g. 1000 levels) to be as varied as possible,
+- players should not feel "I already played this exact kind of level a few levels ago",
+- variety should come from board size, density, topology, internal empty spaces, corridors, pits, traversable grey cells, arrow dependencies, and selective mechanic combinations,
+- not every mechanic must appear in every level,
+- fully plain levels should be rare because they can feel flat,
+- internal movement and collision-return behavior is desirable and should appear regularly,
+- board/hex scale may shrink or grow with layout size and density.
+
