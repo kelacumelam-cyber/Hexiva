@@ -71,6 +71,54 @@ html = html.replace(
   "\n"
 );
 
+// Release artifact must not contain development-only grants.
+html = html.replace(
+  "    const QA_COIN_GRANT_KEY = 'hexiva-qa-coin-grant-v1';\n",
+  ""
+);
+
+const qaGrantBlock = /\n\s*\/\/ Temporary development grant: once per browser\/profile, never per refresh\.\n\s*if \(!localStorage\.getItem\(QA_COIN_GRANT_KEY\)\) \{[\s\S]*?\n\s*\}\n/;
+if (!qaGrantBlock.test(html)) {
+  throw new Error("QA coin grant block not found in source");
+}
+html = html.replace(qaGrantBlock, "\n");
+
+// Desktop A/S navigation is useful for web QA, never for release.
+const debugShortcutBlock = /\n\s*\/\/ TEMP DEBUG SHORTCUTS \(desktop testing only\)[\s\S]*?\n\s*\}\);\n\n\s*const mainMenu = document\.getElementById\('main-menu'\);/;
+if (!debugShortcutBlock.test(html)) {
+  throw new Error("Desktop debug shortcut block not found in source");
+}
+html = html.replace(
+  debugShortcutBlock,
+  "\n\n    const mainMenu = document.getElementById('main-menu');"
+);
+
+// Native release uses local persistence only. Remove dormant Firebase imports too.
+const cloudModule = /\n\s*<script type="module">[\s\S]*?\/\/ Cloud persistence is optional\.[\s\S]*?<\/script>\n/;
+if (!cloudModule.test(html)) {
+  throw new Error("Optional Firebase cloud module not found in source");
+}
+html = html.replace(
+  cloudModule,
+  '\n  <script>window.cloudSaveHandler = null;<\/script>\n'
+);
+
+// Release sanity checks before writing the artifact.
+const forbidden = [
+  "QA_COIN_GRANT_KEY",
+  "TEMP DEBUG SHORTCUTS",
+  "www.gstatic.com/firebase",
+  "cdn.tailwindcss.com",
+  "cdnjs.cloudflare.com",
+  "fonts.googleapis.com"
+];
+
+for (const token of forbidden) {
+  if (html.includes(token)) {
+    throw new Error(`Release artifact still contains forbidden token: ${token}`);
+  }
+}
+
 await writeFile(path.join(dist, "index.html"), html, "utf8");
 
 console.log("Hexiva offline web bundle created in dist/");
