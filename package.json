@@ -9,7 +9,8 @@
     "android:add": "npm run build:web && npx cap add android && node scripts/configure-android.mjs",
     "android:sync": "npm run build:web && npx cap sync android && node scripts/configure-android.mjs",
     "android:open": "npx cap open android",
-    "verify:source": "node scripts/verify-source.mjs"
+    "verify:source": "node scripts/verify-source.mjs",
+    "android:debug": "npm run android:sync && node scripts/build-android-debug.mjs"
   },
   "dependencies": {
     "@tweenjs/tween.js": "18.6.4",
