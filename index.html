@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-  <title>Hexa Tap Away - 100 Levels</title>
+  <title>Hexiva</title>
   
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
@@ -325,7 +325,7 @@
       </div>
       <div class="flex items-center gap-2 bg-white/10 px-3 py-1.5 rounded-full border border-white/20 text-xs font-bold">
         <i class="fa-solid fa-gamepad text-emerald-400"></i>
-        <span>100 BÖLÜM</span>
+        <span>1000+ BÖLÜM</span>
       </div>
     </div>
 
@@ -336,7 +336,7 @@
         <div class="absolute text-4xl">✨</div>
       </div>
       <h1 class="text-4xl sm:text-5xl font-black text-transparent bg-clip-text bg-gradient-to-r from-yellow-300 via-amber-400 to-orange-500 tracking-wider filter drop-shadow-lg">
-        HEXA TAP AWAY
+        HEXIVA
       </h1>
       <p class="text-indigo-200 font-bold text-xs sm:text-sm mt-2 tracking-wide uppercase">
         3D Blok Çözme Bulmacası
@@ -345,7 +345,7 @@
       <!-- Player Progress Summary Card -->
       <div class="mt-6 bg-white/10 backdrop-blur-md border border-white/20 rounded-2xl px-6 py-3 text-center">
         <span class="text-xs text-indigo-300 font-bold block">İLERLEME DURUMU</span>
-        <span id="menu-level-indicator" class="text-xl font-extrabold text-white">Bölüm 1 / 100</span>
+        <span id="menu-level-indicator" class="text-xl font-extrabold text-white">Bölüm 1</span>
       </div>
     </div>
 
@@ -376,7 +376,7 @@
       <div class="flex items-center justify-between pb-3 border-b border-slate-200">
         <div>
           <h2 class="text-xl font-black text-slate-800">BÖLÜM SEÇ</h2>
-          <span class="text-xs text-slate-500 font-bold">100 Benzersiz Çözülebilir Tasarım</span>
+          <span class="text-xs text-slate-500 font-bold">Deterministik Bölüm Kataloğu</span>
         </div>
         <button id="close-levels-btn" class="w-8 h-8 rounded-full bg-slate-200 text-slate-600 font-black flex items-center justify-center hover:bg-slate-300">✕</button>
       </div>
@@ -473,7 +473,7 @@
     let cloudDb = null;
     let cloudAuth = null;
     let activeUserId = null;
-    const appId = typeof __app_id !== 'undefined' ? __app_id : 'hexa-tap-away-v1';
+    const appId = typeof __app_id !== 'undefined' ? __app_id : 'hexiva-v1';
 
     async function initCloudStorage() {
       if (typeof __firebase_config !== 'undefined') {
@@ -608,6 +608,9 @@
     const LEVEL_REWARD_COINS = 25;
     const HAMMER_PRICE = 75;
     const ROTATE_PRICE = 50;
+    const LEVEL_CATALOG_SIZE = 1000;
+    const LEVEL_SELECTOR_MIN_PREVIEW = 40;
+    const LEVEL_SELECTOR_AHEAD = 24;
 
     let currentLevel = 1;
     let highestUnlocked = 1;
@@ -652,8 +655,8 @@
     // Apply save data loaded from cloud
     window.applyLoadedSave = function(data) {
       if (!data) return;
-      currentLevel = data.level || currentLevel;
-      highestUnlocked = Math.max(highestUnlocked, data.highest || 1);
+      currentLevel = Math.max(1, Math.min(LEVEL_CATALOG_SIZE, Number(data.level) || currentLevel));
+      highestUnlocked = Math.max(1, Math.min(LEVEL_CATALOG_SIZE, Math.max(highestUnlocked, Number(data.highest) || 1)));
       coins = data.coins !== undefined ? data.coins : coins;
       hammerCount = data.hammer !== undefined ? data.hammer : hammerCount;
       rotateCount = data.rotate !== undefined ? data.rotate : rotateCount;
@@ -680,7 +683,7 @@
 
     function updateMenuUI() {
       document.getElementById('menu-coin-counter').innerText = coins.toLocaleString();
-      document.getElementById('menu-level-indicator').innerText = `Bölüm ${currentLevel} / 100`;
+      document.getElementById('menu-level-indicator').innerText = `Bölüm ${currentLevel}`;
 
       const playBtnText = document.getElementById('main-play-btn-text');
       if (highestUnlocked > 1 || currentLevel > 1) {
@@ -3647,7 +3650,7 @@
         levelCompleted = true;
         playSound('win');
         coins += LEVEL_REWARD_COINS;
-        highestUnlocked = Math.max(highestUnlocked, currentLevel + 1);
+        highestUnlocked = Math.min(LEVEL_CATALOG_SIZE, Math.max(highestUnlocked, currentLevel + 1));
         triggerSave();
         updateUI();
 
@@ -3658,10 +3661,16 @@
 
     document.getElementById('next-level-btn').addEventListener('click', () => {
       document.getElementById('victory-modal').classList.add('hidden');
-      if (currentLevel < 100) currentLevel++;
-      else currentLevel = 1;
-      triggerSave();
-      buildLevel(currentLevel);
+      if (currentLevel < LEVEL_CATALOG_SIZE) {
+        currentLevel++;
+        triggerSave();
+        buildLevel(currentLevel);
+      } else {
+        showHint("Mevcut bölüm kataloğunun sonuna ulaştın! 🎉");
+        mainMenu.classList.remove('hidden');
+        isGameActive = false;
+        updateMenuUI();
+      }
     });
 
     document.getElementById('restart-btn').addEventListener('click', () => {
@@ -3689,7 +3698,7 @@
       isGameActive = true;
 
       if (key === 'a') {
-        currentLevel += 1;
+        currentLevel = Math.min(LEVEL_CATALOG_SIZE, currentLevel + 1);
         buildLevel(currentLevel);
         showHint(`TEST: Bölüm ${currentLevel}`);
       } else {
@@ -3722,7 +3731,11 @@
 
     function populateLevelsGrid() {
       levelsGrid.innerHTML = '';
-      for (let i = 1; i <= 100; i++) {
+      const visibleLimit = Math.min(
+        LEVEL_CATALOG_SIZE,
+        Math.max(LEVEL_SELECTOR_MIN_PREVIEW, highestUnlocked + LEVEL_SELECTOR_AHEAD)
+      );
+      for (let i = 1; i <= visibleLimit; i++) {
         const btn = document.createElement('button');
         const isUnlocked = i <= highestUnlocked;
         const isCurrent = i === currentLevel;
