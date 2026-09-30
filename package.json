@@ -1,0 +1,18 @@
+{
+  "name": "hexiva",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Hexiva mobile-first 3D puzzle game",
+  "scripts": {
+    "build:web": "node scripts/build-offline.mjs",
+    "build:css": "tailwindcss -c tailwind.config.cjs -i src/tailwind.css -o dist/app.css --minify"
+  },
+  "dependencies": {
+    "@tweenjs/tween.js": "18.6.4",
+    "three": "0.128.0",
+    "tone": "14.8.49"
+  },
+  "devDependencies": {
+    "tailwindcss": "3.4.17"
+  }
+}
