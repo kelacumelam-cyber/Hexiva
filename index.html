@@ -1603,6 +1603,15 @@
       return !footprintSet.has(`${q + d.dq},${r + d.dr}`);
     }
 
+    function difficultyProfileForLevel(levelNum) {
+      if (levelNum <= TUTORIAL_LEVEL_COUNT) return 'tutorial';
+      const roll = hashLevelSeed(levelNum, 0xd1ff1c) % 100;
+      if (roll < 18) return 'relaxed';
+      if (roll < 68) return 'normal';
+      if (roll < 94) return 'hard';
+      return 'veryHard';
+    }
+
     function chooseV2Cell(candidates, rng, usedSet) {
       const free = candidates.filter(c => !usedSet.has(`${c.q},${c.r}`));
       if (!free.length) return null;
@@ -1681,19 +1690,46 @@
         return null;
       }
 
-      // Every V2 level usually gets 1 mechanic. Some get 2; a small minority stay simple.
-      // The exact mix is deterministic, not tied to monotonically increasing difficulty.
-      const selector = hashLevelSeed(levelNum, 0xabc123) % 10;
+      // Difficulty is deterministic but intentionally non-linear by level number.
+      // Hard profiles use denser mechanic combinations; relaxed profiles stay cleaner.
+      const difficultyProfile = difficultyProfileForLevel(levelNum);
+      const selector = hashLevelSeed(levelNum, 0xabc123) % 12;
       let mechanicKinds = [];
-      if (selector == 0) mechanicKinds = [];
-      else if (selector <= 2) mechanicKinds = ['redirect'];
-      else if (selector == 3) mechanicKinds = ['obstacle'];
-      else if (selector == 4) mechanicKinds = ['swap'];
-      else if (selector == 5) mechanicKinds = ['cycle'];
-      else if (selector == 6) mechanicKinds = ['linked'];
-      else if (selector == 7) mechanicKinds = ['redirect', 'obstacle'];
-      else if (selector == 8) mechanicKinds = ['swap', 'redirect'];
-      else mechanicKinds = ['cycle', 'obstacle'];
+
+      if (difficultyProfile === 'relaxed') {
+        const relaxedPool = [[], ['redirect'], ['obstacle'], ['swap'], ['linked']];
+        mechanicKinds = relaxedPool[selector % relaxedPool.length];
+      } else if (difficultyProfile === 'hard') {
+        const hardPool = [
+          ['redirect', 'obstacle'],
+          ['swap', 'redirect'],
+          ['cycle', 'obstacle'],
+          ['linked', 'redirect'],
+          ['swap', 'obstacle'],
+          ['cycle', 'redirect']
+        ];
+        mechanicKinds = hardPool[selector % hardPool.length];
+      } else if (difficultyProfile === 'veryHard') {
+        const veryHardPool = [
+          ['cycle', 'obstacle'],
+          ['swap', 'redirect'],
+          ['linked', 'obstacle'],
+          ['cycle', 'redirect'],
+          ['swap', 'obstacle'],
+          ['redirect', 'obstacle']
+        ];
+        mechanicKinds = veryHardPool[selector % veryHardPool.length];
+      } else {
+        if (selector == 0) mechanicKinds = [];
+        else if (selector <= 3) mechanicKinds = ['redirect'];
+        else if (selector == 4) mechanicKinds = ['obstacle'];
+        else if (selector == 5) mechanicKinds = ['swap'];
+        else if (selector == 6) mechanicKinds = ['cycle'];
+        else if (selector == 7) mechanicKinds = ['linked'];
+        else if (selector == 8) mechanicKinds = ['redirect', 'obstacle'];
+        else if (selector == 9) mechanicKinds = ['swap', 'redirect'];
+        else mechanicKinds = ['cycle', 'obstacle'];
+      }
 
       mechanicKinds.forEach((kind, mechanicIndex) => {
         if (kind === 'redirect') {
@@ -1956,6 +1992,7 @@
       const patternKey = patternKeyForLevel(levelNum);
       const levelSeed = hashLevelSeed(levelNum, 0x7f4a7c15);
       const rng = createSeededRng(levelSeed);
+      const difficultyProfile = difficultyProfileForLevel(levelNum);
       const baseCells = PATTERNS[patternKey]();
       const footprintSet = new Set(baseCells.map(c => `${c.q},${c.r}`));
       const topologyVariation = buildV2TopologyVariation(levelNum, patternKey, baseCells, rng);
@@ -2048,6 +2085,39 @@
         return false;
       }
 
+      function routeDependencyScore(q, r, initialDirIndex, removedSet) {
+        let testQ = q;
+        let testR = r;
+        let dirIndex = initialDirIndex;
+        let score = 0;
+        const visitedStates = new Set();
+
+        for (let step = 0; step < 48; step++) {
+          const dir = HEX_DIRECTIONS[dirIndex];
+          testQ += dir.dq;
+          testR += dir.dr;
+          const key = `${testQ},${testR}`;
+
+          if (pitSet.has(key)) return score + 0.5;
+          if (!footprintSet.has(key)) return score;
+
+          // Previously peeled playable cells become dependencies in the final board.
+          if (removedSet.has(key)) score += 2.0;
+          else score += 0.08;
+
+          const redirect = redirectMap.get(key);
+          if (redirect) {
+            score += 0.4;
+            const stateKey = `${key}|${dirIndex}`;
+            if (visitedStates.has(stateKey)) return score;
+            visitedStates.add(stateKey);
+            dirIndex = redirect.dirIndex;
+          }
+        }
+        return score;
+      }
+
+      const removedKeys = new Set();
       const peelQueue = [...cells];
       for (let i = peelQueue.length - 1; i > 0; i--) {
         const j = Math.floor(rng() * (i + 1));
@@ -2072,6 +2142,7 @@
               const chosenDir = validDirs[Math.floor(rng() * validDirs.length)];
               solutionDirections.set(key, chosenDir);
               remaining.delete(key);
+              removedKeys.add(key);
               foundAny = true;
             }
           }
@@ -2089,6 +2160,7 @@
             }
             solutionDirections.set(key, bestDir);
             remaining.delete(key);
+            removedKeys.add(key);
           }
         }
       } else {
@@ -2110,7 +2182,12 @@
             if (!validDirs.length) continue;
 
             const internalFirst = validDirs.filter(d => !isDirectCliffExit(c.q, c.r, d, footprintSet));
-            candidates.push({ c, key, validDirs, internalFirst });
+            const dependencyByDir = new Map(
+              validDirs.map(d => [d, routeDependencyScore(c.q, c.r, d, removedKeys)])
+            );
+            const maxDependency = Math.max(...dependencyByDir.values());
+            const minDependency = Math.min(...dependencyByDir.values());
+            candidates.push({ c, key, validDirs, internalFirst, dependencyByDir, maxDependency, minDependency });
           }
 
           if (!candidates.length) {
@@ -2124,23 +2201,32 @@
             const chosenDir = outward.length ? outward[Math.floor(rng() * outward.length)] : 0;
             solutionDirections.set(key, chosenDir);
             remaining.delete(key);
+            removedKeys.add(key);
             continue;
           }
 
           const internalCandidates = candidates.filter(x => x.internalFirst.length);
           let pool = internalCandidates.length ? internalCandidates : candidates;
 
-          // Prefer a candidate with more board-internal route choices. Random tie-breaking
-          // keeps deterministic variety while suppressing a rim full of outward arrows.
+          // Difficulty profile changes dependency depth, not the visible movement rules.
           let bestScore = -Infinity;
           let best = [];
           pool.forEach(candidate => {
             const cell = candidate.c;
             const internalChoiceCount = candidate.internalFirst.length;
             const edge = HEX_DIRECTIONS.some((d, di) => isDirectCliffExit(cell.q, cell.r, di, footprintSet));
-            const score =              internalChoiceCount * 4 +
-              (edge ? 0 : 1.5) +
-              rng() * 0.35;
+
+            let score;
+            if (difficultyProfile === 'veryHard') {
+              score = candidate.maxDependency * 7 + internalChoiceCount * 1.2 + (edge ? 0 : 2.0) + rng() * 0.20;
+            } else if (difficultyProfile === 'hard') {
+              score = candidate.maxDependency * 4 + internalChoiceCount * 1.6 + (edge ? 0 : 1.5) + rng() * 0.28;
+            } else if (difficultyProfile === 'relaxed') {
+              score = -candidate.minDependency * 2 + internalChoiceCount * 2.5 + (edge ? 1.0 : 0) + rng() * 0.45;
+            } else {
+              score = candidate.maxDependency * 1.5 + internalChoiceCount * 3 + (edge ? 0 : 1.5) + rng() * 0.35;
+            }
+
             if (score > bestScore + 0.001) {
               bestScore = score;
               best = [candidate];
@@ -2153,10 +2239,23 @@
           const dirs = chosenCandidate.internalFirst.length
             ? chosenCandidate.internalFirst
             : chosenCandidate.validDirs;
-          const chosenDir = dirs[Math.floor(rng() * dirs.length)];
+
+          let chosenDir;
+          if (difficultyProfile === 'hard' || difficultyProfile === 'veryHard') {
+            const bestDependency = Math.max(...dirs.map(d => chosenCandidate.dependencyByDir.get(d) || 0));
+            const hardestDirs = dirs.filter(d => Math.abs((chosenCandidate.dependencyByDir.get(d) || 0) - bestDependency) < 0.001);
+            chosenDir = hardestDirs[Math.floor(rng() * hardestDirs.length)];
+          } else if (difficultyProfile === 'relaxed') {
+            const lightestDependency = Math.min(...dirs.map(d => chosenCandidate.dependencyByDir.get(d) || 0));
+            const lighterDirs = dirs.filter(d => Math.abs((chosenCandidate.dependencyByDir.get(d) || 0) - lightestDependency) < 0.001);
+            chosenDir = lighterDirs[Math.floor(rng() * lighterDirs.length)];
+          } else {
+            chosenDir = dirs[Math.floor(rng() * dirs.length)];
+          }
 
           solutionDirections.set(chosenCandidate.key, chosenDir);
           remaining.delete(chosenCandidate.key);
+          removedKeys.add(chosenCandidate.key);
         }
       }
 
@@ -2251,6 +2350,35 @@
         return { q: c.q, r: c.r, dirIndex, color };
       });
 
+      function computeClearanceWaveMetrics() {
+        const simRemaining = new Set(cells.map(c => `${c.q},${c.r}`));
+        const blockByKey = new Map(levelBlocks.map(block => [`${block.q},${block.r}`, block]));
+        let waves = 0;
+        let maxWaveSize = 0;
+
+        while (simRemaining.size > 0 && waves <= levelBlocks.length + 2) {
+          const clearNow = [];
+          simRemaining.forEach(key => {
+            const block = blockByKey.get(key);
+            if (block && isDirectionClear(block.q, block.r, block.dirIndex, simRemaining)) {
+              clearNow.push(key);
+            }
+          });
+
+          if (!clearNow.length) {
+            return { clearanceWaveCount: waves, maxClearanceWaveSize: maxWaveSize, solvabilityStalled: true };
+          }
+
+          clearNow.forEach(key => simRemaining.delete(key));
+          maxWaveSize = Math.max(maxWaveSize, clearNow.length);
+          waves++;
+        }
+
+        return { clearanceWaveCount: waves, maxClearanceWaveSize: maxWaveSize, solvabilityStalled: simRemaining.size > 0 };
+      }
+
+      const clearanceMetrics = computeClearanceWaveMetrics();
+
       // Generator V2 metrics. These are intentionally measured before hard thresholds are tuned.
       // We will use playtesting to decide acceptable bands instead of inventing arbitrary numbers.
       const fullRemaining = new Set(cells.map(c => `${c.q},${c.r}`));
@@ -2301,6 +2429,7 @@
       const generationStats = {
         levelSeed,
         patternKey,
+        difficultyProfile,
         topologyProfile: topologyVariation.profile,
         blockCount: levelBlocks.length,
         outwardFacingCount,
@@ -2317,7 +2446,10 @@
         initiallyClearCount,
         initiallyClearRatio: levelBlocks.length ? initiallyClearCount / levelBlocks.length : 0,
         trivialDirectEscapeCount,
-        trivialDirectEscapeRatio: levelBlocks.length ? trivialDirectEscapeCount / levelBlocks.length : 0
+        trivialDirectEscapeRatio: levelBlocks.length ? trivialDirectEscapeCount / levelBlocks.length : 0,
+        clearanceWaveCount: clearanceMetrics.clearanceWaveCount,
+        maxClearanceWaveSize: clearanceMetrics.maxClearanceWaveSize,
+        solvabilityStalled: clearanceMetrics.solvabilityStalled
       };
 
       return {
@@ -2334,6 +2466,42 @@
         generationStats
       };
     }
+
+    window.__hexivaAuditCatalog = function(startLevel = 1, endLevel = LEVEL_CATALOG_SIZE) {
+      const start = Math.max(1, Math.floor(startLevel));
+      const end = Math.min(LEVEL_CATALOG_SIZE, Math.max(start, Math.floor(endLevel)));
+      const profileCounts = { tutorial: 0, relaxed: 0, normal: 0, hard: 0, veryHard: 0 };
+      const stalledLevels = [];
+      const suspiciouslyEasyHardLevels = [];
+      let totalBlocks = 0;
+      let totalWaves = 0;
+
+      for (let level = start; level <= end; level++) {
+        const generated = generateSolvableLevel(level);
+        const stats = generated.generationStats || {};
+        profileCounts[stats.difficultyProfile] = (profileCounts[stats.difficultyProfile] || 0) + 1;
+        totalBlocks += stats.blockCount || 0;
+        totalWaves += stats.clearanceWaveCount || 0;
+
+        if (stats.solvabilityStalled) stalledLevels.push(level);
+        if ((stats.difficultyProfile === 'hard' || stats.difficultyProfile === 'veryHard') &&
+            stats.blockCount >= 8 &&
+            stats.clearanceWaveCount <= 2 &&
+            stats.initiallyClearRatio > 0.45) {
+          suspiciouslyEasyHardLevels.push(level);
+        }
+      }
+
+      return {
+        range: [start, end],
+        checked: end - start + 1,
+        profileCounts,
+        stalledLevels,
+        suspiciouslyEasyHardLevels,
+        averageBlockCount: totalBlocks / (end - start + 1),
+        averageClearanceWaves: totalWaves / (end - start + 1)
+      };
+    };
 
     let blocks = [];
     let activePitCells = new Set();
