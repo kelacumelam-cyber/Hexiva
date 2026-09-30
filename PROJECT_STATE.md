@@ -293,3 +293,23 @@ Background islands were refined after visual review:
 - replaced simple green circles with small tree silhouettes using trunks and clustered foliage,
 - added several trees across the distant islands,
 - kept all decoration static and inline SVG to preserve mobile performance.
+
+
+## V40 portrait phone polish checkpoint
+
+Mobile portrait is now explicitly treated as the product target rather than the desktop preview.
+
+UI:
+- added phone-specific HUD sizing for <=430px and <=360px widths,
+- compacted coin / level / restart controls on narrow phones,
+- compacted utility buttons and audio control,
+- compacted the 3-booster row while preserving distinct touch targets,
+- added explicit fixed utility-card sizing instead of relying on wide-screen appearance.
+
+Board fitting:
+- phone portrait gets its own visual safe corridor between the top utility strip and bottom boosters,
+- large boards may scale below the former 0.72 floor when a narrow phone truly needs it,
+- minimum scale is 0.62 for typical portrait phones and 0.58 for <=380px widths,
+- board vertical bias was tuned for the mobile-safe lane.
+
+Desktop remains a preview/testing surface and is not the sizing authority.
