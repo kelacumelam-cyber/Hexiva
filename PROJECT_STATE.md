@@ -485,3 +485,29 @@ This batch intentionally does not add guessed rejection thresholds yet. It adds 
 - repeat-family reporting with exact level numbers and minimum recurrence gap.
 
 Next step: run the web/catalog audit, inspect the worst offenders and then turn the measured failure modes into generator candidate rejection/scoring rules.
+
+
+## V42.1 Quality-ranked candidate generation + anti-repeat V2 schedule
+
+The first 100-level telemetry audit confirmed the physical playtest complaint:
+- several early non-tutorial levels had opening-direction dominance = 1.0,
+- same-direction connected clusters reached 0.50 of the board,
+- trivial direct escapes reached 0.50,
+- canonical footprints repeated on adjacent levels in multiple families.
+
+Changes:
+- generator now produces multiple deterministic candidates per level (12 tutorial, 8 otherwise),
+- candidates are ranked by a continuous quality penalty using opening-clear ratio, trivial escapes, same-direction clusters/adjacency and opening direction dominance,
+- empirical red-zone penalties are based on the observed first-100 audit rather than arbitrary difficulty-by-block-count,
+- solvability stalls are heavily penalized,
+- six new asymmetric V2 footprint families were added,
+- V2 pattern scheduling now avoids canonical rotation/mirror-equivalent footprints within a four-level recent window when alternatives exist,
+- telemetry is bumped to version 2 and records the chosen generation attempt, candidates evaluated and quality penalty.
+
+Legacy levels 1-34 keep their authored/test footprint identities for now, but their arrow layouts benefit from best-of-N candidate ranking. Levels 35+ receive both the quality-ranked arrow generation and the anti-repeat expanded footprint schedule.
+
+Next validation:
+- hard refresh the GitHub Pages web build,
+- run `__hexivaAuditCatalog(100)`,
+- compare repeat gaps, direction dominance, same-direction clusters and trivial escape ratios against the previous baseline,
+- then physically/web-play the first 20-30 levels before tightening thresholds further.
