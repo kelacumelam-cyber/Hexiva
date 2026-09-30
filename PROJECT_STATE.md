@@ -651,3 +651,16 @@ The remote Chrome browser fails to create a WebGL context on unchanged V42.6 and
 - Four-step forced segments and distant repeats remain explicitly visible. Current combinations are wall+swap, wall+cycle and redirect+swap; linked/rearrangement combinations await generalization of the coordinate-bound runtime link model.
 
 Turkish review report: `docs/audits/V43_REPORT_TR.md`. The structural audit passes; real web/GPU perceptual acceptance remains open due to the documented browser limitation.
+
+
+### V43 live-source deployment verification
+
+- Code/catalog commit published to `main`: `50b451984bceb4a311dba6d256bf16c8ea4f8c9e`. The remote tree was checked against the tested local tree (`83b1806aa6b2a05251cd6197407edcfd708b806e`) and matched exactly.
+- GitHub Pages returned HTTP 200 for `index.html`, `src/catalog.js` and `src/puzzle-engine.js`; all three responses match the tested local bytes exactly. This verifies publication rather than assuming a pushed commit is already live.
+- Reloaded browser DOM includes both new local script URLs and the fresh `hexiva-qa-v43-20260930-c74f9e21` marker. The player-visible coin credit still cannot be observed here because renderer initialization fails first.
+- Published V43 also produced `THREE.WebGLRenderer: Error creating WebGL context` in remote Chrome (2026-09-30T16:26:02Z). No V43 levels were visually played. Automated route/geometry proofs and live-source verification are separate from unresolved perceptual/GPU gameplay acceptance.
+
+Live byte hashes:
+- `index.html`: SHA-256 `da5cc410c634ce89f963480329851cf3ae3ea5fd69eca5a424a5ba69f787c3c9`.
+- `src/catalog.js`: SHA-256 `2d9d023da7a19886dfdfbf446aac6654cf169dd6a743416d93e21b757d804e55`.
+- `src/puzzle-engine.js`: SHA-256 `4bb6d20367c708a7d93e119d3bec7494399601d6d37329820e8571072063f874`.

@@ -78,3 +78,8 @@ Yeni tek kullanımlık QA anahtarı `hexiva-qa-v43-20260930-c74f9e21` mevcut kay
 - `docs/audits/v43-generation.json`: aday ve ret kayıtları.
 
 Tekrar doğrulama: `npm test`, `npm run audit:catalog`, `npm run verify:source`, `npm run build:web`. Kataloğu yeniden üretmek için `npm run catalog:build`.
+
+
+## Yayın doğrulaması
+
+Kod/katalog `50b4519` ile `main`e yayımlandı. GitHub Pages'ten gelen HTML, katalog ve hareket motoru HTTP 200 döndü ve test edilen dosyalarla byte byte eşleşti. Tarayıcıda yeni script adresleri ve tek kullanımlık V43 QA anahtarı görüldü. Yeni V43 sayfasında da bu ortamın WebGL context hatası doğrulandı: yayın tamam, gerçek web oynanışı ve görünen altın kredisi bu tarayıcıda doğrulanamadı.
