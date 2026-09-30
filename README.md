@@ -1,23 +1,29 @@
-# Hexa Nut Sort - Android APK wrapper
+# Hexa Tap Away
 
-Bu proje, `index.html` içindeki Hexa Nut Sort oyununu Android WebView içinde çalıştırır.
+Mobile-first hexagonal tap-away puzzle game.
 
-## Özellikler
-- Portre moduna kilitli.
-- JavaScript ve WebAudio açık.
-- `localStorage` destekli: bölüm/altın/joker ilerlemesi cihazda saklanır.
-- İnternet izni vardır çünkü mevcut HTML Tailwind CDN ve Google Fonts kullanır.
-- Kaynak oyun `app/src/main/assets/index.html` içindedir.
+This repository was reset on 2026-09-30 to use the current HTML/WebGL prototype as the new baseline. The previous Android/Godot experiment remains available in Git history but is no longer part of the current main tree.
 
-## Android Studio ile APK alma
-1. Android Studio'da bu klasörü aç.
-2. Gradle senkronizasyonunun bitmesini bekle.
-3. `Build > Build App Bundle(s) / APK(s) > Build APK(s)` seç.
-4. APK: `app/build/outputs/apk/debug/app-debug.apk`
+## Current baseline
 
-## GitHub Actions ile APK alma
-Projeyi bir GitHub deposuna koyup `main` dalına gönder. `Build Android APK` workflow'u çalışır.
-Actions sayfasındaki `hexa-nut-sort-debug-apk` artifact'ından APK indirilebilir.
+- Main playable prototype: `index.html`
+- Three.js/WebGL rendering
+- Mobile-first board fitting and responsive scale
+- Colored hexagonal blocks with fixed visible arrow directions
+- A block always moves in the direction shown by its arrow
+- Internal pit / escape cells
+- Direction-changer mechanic V1
+- Temporary desktop test shortcuts:
+  - `A`: next level
+  - `S`: return to level 1
+- Debug shortcuts do not unlock or persist progression
 
-## Not
-Tamamen çevrimdışı APK istenirse Tailwind CSS'in derlenip yerel dosyaya alınması ve uzaktaki fontların kaldırılması/değiştirilmesi gerekir.
+## Core design rule
+
+The game must never lie about movement. If an arrow points in a direction, the block moves in that direction. New mechanics may redirect a moving block only through a clearly visible board mechanism.
+
+## Project direction
+
+The project is not designed around a fixed 100-level limit. It should support hundreds or thousands of deterministic, solvable, varied levels without tying difficulty directly to the level number.
+
+See `PROJECT_STATE.md` for the current checkpoint and `docs/DESIGN_DECISIONS.md` for accepted design decisions.
