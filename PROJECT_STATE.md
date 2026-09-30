@@ -700,3 +700,23 @@ Changes:
 - a fresh one-time QA build marker was added for deployment verification.
 
 Goal: reduce glare on bright blocks, especially yellow and orange, while preserving readability on dark blocks.
+
+
+## Temporary family-edition Turkish voice cheat
+
+A temporary family-only voice shortcut was added for the user's mother's device.
+
+Behavior:
+- a small SES microphone button starts one-shot Turkish speech recognition,
+- recognition language is tr-TR and checks multiple alternatives,
+- acceptance is tolerant to a few natural variants but still requires the ordered core meaning:
+  oglum -> seni -> cok -> seviyorum/seviyom,
+- unrelated speech does not trigger the reward,
+- one successful listening session grants +200 coins and +2 bombs,
+- success message: "200 Altın ve 2 Bomba kazandın! ❤️",
+- every new button press can be used again; one recognition session can reward only once,
+- microphone permission errors and unsupported browsers show a user-facing hint,
+- a fresh one-time QA deployment marker adds +100 coins on the web build,
+- offline build cleanup strips all QA deploy-marker constants generically so later APK packaging does not fail.
+
+This feature is intentionally temporary and should be removed in a later public update when requested.
