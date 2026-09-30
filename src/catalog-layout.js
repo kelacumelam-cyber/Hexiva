@@ -11,6 +11,8 @@ const SPECIAL_PAIRS = [
 ];
 
 function specialPositionsForDecade(decadeIndex) {
+  // Preserve the original V43 tutorial sequence at final levels 1-4.
+  if (decadeIndex === 0) return [5, 9];
   return SPECIAL_PAIRS[decadeIndex % SPECIAL_PAIRS.length];
 }
 
