@@ -9,7 +9,6 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/tween.js/18.6.4/tween.umd.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/tone/14.8.49/Tone.js"></script>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700;800&display=swap" rel="stylesheet">
 
   <script>
@@ -617,7 +616,7 @@
 
       <!-- Restart Button (Red Circular Icon) -->
       <button id="restart-btn" class="game-btn w-11 h-11 rounded-full bg-red-600 border-2 border-white flex items-center justify-center text-white text-xl shadow-lg active:scale-95" aria-label="Bölümü Yeniden Başlat">
-        <i class="fa-solid fa-arrow-rotate-right"></i>
+        <span aria-hidden="true" class="text-2xl leading-none">↻</span>
       </button>
     </div>
 
@@ -637,7 +636,7 @@
 
       <!-- Quick Audio Toggle -->
       <button id="quick-sound-btn" class="game-btn w-10 h-10 bg-slate-800/80 border-2 border-white/80 rounded-xl flex items-center justify-center text-white text-sm shadow">
-        <i id="quick-sound-icon" class="fa-solid fa-volume-high"></i>
+        <span id="quick-sound-icon" aria-hidden="true" class="text-base leading-none">🔊</span>
       </button>
     </div>
 
@@ -691,7 +690,7 @@
         <span id="menu-coin-counter" class="font-extrabold text-amber-300">0</span>
       </div>
       <div class="flex items-center gap-2 bg-white/10 px-3 py-1.5 rounded-full border border-white/20 text-xs font-bold">
-        <i class="fa-solid fa-gamepad text-emerald-400"></i>
+        <span aria-hidden="true">🎮</span>
         <span>1000+ BÖLÜM</span>
       </div>
     </div>
@@ -720,13 +719,13 @@
     <div class="w-full max-w-xs flex flex-col gap-3 pb-8">
       <!-- Dynamic Play/Continue Button -->
       <button id="main-play-btn" class="game-btn w-full py-4 bg-gradient-to-r from-emerald-500 to-green-600 rounded-2xl text-white font-black text-xl tracking-wider shadow-xl border-2 border-white flex items-center justify-center gap-3">
-        <i class="fa-solid fa-play"></i>
+        <span aria-hidden="true">▶</span>
         <span id="main-play-btn-text">OYUNA BAŞLA</span>
       </button>
 
       <!-- Level Selector Button -->
       <button id="menu-levels-btn" class="game-btn w-full py-3 bg-gradient-to-r from-indigo-500 to-purple-600 rounded-2xl text-white font-bold text-base shadow-md border-2 border-white/80 flex items-center justify-center gap-2">
-        <i class="fa-solid fa-layer-group"></i>
+        <span aria-hidden="true">▦</span>
         <span>BÖLÜM SEÇİMİ</span>
       </button>
 
@@ -919,15 +918,8 @@
     }
 
     function updateSyncStatus(status) {
-      const icon = document.getElementById('sync-icon');
-      if (!icon) return;
-      if (status === 'saving') {
-        icon.className = "fa-solid fa-arrows-rotate animate-spin text-[11px] text-amber-500";
-      } else if (status === 'saved') {
-        icon.className = "fa-solid fa-cloud text-[11px] text-emerald-500";
-      } else {
-        icon.className = "fa-solid fa-cloud-slash text-[11px] text-slate-400";
-      }
+      // Sync still works, but the old visual status bubble was intentionally removed.
+      // Keep this hook as a no-op so cloud persistence can call it safely.
     }
 
     window.cloudSaveHandler = saveToCloud;
@@ -4464,7 +4456,7 @@
               : 'bg-slate-300 text-slate-500 border-slate-400 opacity-60 cursor-not-allowed'
         }`;
 
-        btn.innerHTML = isUnlocked ? `${i}` : `<i class="fa-solid fa-lock text-xs"></i>`;
+        btn.textContent = isUnlocked ? `${i}` : '🔒';
 
         if (isUnlocked) {
           btn.addEventListener('click', () => {
@@ -4595,10 +4587,10 @@
     quickSoundBtn.addEventListener('click', () => {
       audioEnabled = !audioEnabled;
       if (audioEnabled) {
-        quickSoundIcon.className = "fa-solid fa-volume-high";
+        quickSoundIcon.textContent = "🔊";
         showHint("Ses Açık 🔊");
       } else {
-        quickSoundIcon.className = "fa-solid fa-volume-xmark";
+        quickSoundIcon.textContent = "🔇";
         showHint("Ses Kapalı 🔇");
       }
     });
