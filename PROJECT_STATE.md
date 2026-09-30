@@ -278,12 +278,12 @@ Accepted direction:
 - the goal is not to repeat one template with different colors,
 - the goal is for each level to have its own board character.
 
-V22 levels 29-31 should be kept as reference examples when the generator is redesigned.
+V22 levels 29-31 are approved quality references, but only one example family among many future topology families. Generator V2 must not converge on the V22 shape/style.
 
 ## Later work backlog
 
 - Broaden the level generator beyond repeated fixed patterns.
-- Add seeded deterministic generation so restarting a level reproduces the same puzzle.
+- Do not lock a level number to one immutable board design by default; prioritize rich variation across replays and across level numbers.
 - Support 1000+ levels without a fixed linear difficulty curve.
 - Increase topology variety: density, holes, corridors, asymmetric shapes, internal floor spaces.
 - Mix approved mechanics only after each is individually stable.
@@ -315,3 +315,14 @@ Generator V2 should therefore include explicit targets/limits for:
 - dependency depth / unlock chain length.
 
 The exact thresholds should be tuned from playtesting rather than chosen arbitrarily.
+
+
+## Clarification: variety over fixed level identity
+
+User clarified that the main goal is level richness and structural variety.
+
+- A level number should not imply one forever-fixed board layout by default.
+- Replays may generate a different valid variation if that improves freshness.
+- V22 dense boards are quality references only, not a canonical template.
+- Generator V2 should support many topology families and many variations within each family.
+- Repetition avoidance is more important than preserving one exact board per level number.
