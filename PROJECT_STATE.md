@@ -664,3 +664,24 @@ Live byte hashes:
 - `index.html`: SHA-256 `da5cc410c634ce89f963480329851cf3ae3ea5fd69eca5a424a5ba69f787c3c9`.
 - `src/catalog.js`: SHA-256 `2d9d023da7a19886dfdfbf446aac6654cf169dd6a743416d93e21b757d804e55`.
 - `src/puzzle-engine.js`: SHA-256 `4bb6d20367c708a7d93e119d3bec7494399601d6d37329820e8571072063f874`.
+
+
+## V43.1 — adaptive viewport fitting for tall catalog silhouettes
+
+A live web screenshot exposed a presentation regression introduced by the broader V43 silhouette space: tall/narrow boards could overlap the top HUD and bottom booster row.
+
+Root cause:
+- `fitBoardToMobileViewport()` correctly calculated the scale needed to fit the board,
+- then a fixed `minimumReadableScale` clamp (0.58–0.72) enlarged tall boards again and forced them outside the safe lane.
+
+Fix:
+- removed the fixed minimum-readable scale as a fitting constraint,
+- the safe vertical lane is now derived from the actual rendered top HUD / utility controls and booster-row DOM rectangles,
+- the board is scaled only as much as necessary to fit that live lane,
+- after scaling, orthographic projection is solved for the exact X/Z translation required to centre the board in the safe lane,
+- resize/orientation changes continue to re-run the same fit,
+- `window.__hexaBoardFitStats` exposes current scale, board/safe bounds and a boolean `fits` for QA,
+- a fresh one-time web QA marker `hexiva-qa-v43-fit-20260930-7c6a2f1d` adds +100 coins so deployment can be visually confirmed,
+- offline/APK packaging strips all V43 QA marker constants as before.
+
+This changes only presentation scale/placement; V43 puzzle topology, arrows, mechanics, catalog identity and solution logic are untouched.
