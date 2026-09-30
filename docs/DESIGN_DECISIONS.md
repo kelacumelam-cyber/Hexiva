@@ -164,3 +164,14 @@ Bomb is an explicit limited booster, not a board mechanic:
 - remove only that selected block,
 - do not destroy fixed obstacles,
 - if the selected block belongs to a linked pair, detach the link first so the surviving member becomes a normal playable block.
+
+
+### Difficulty distribution
+Difficulty must not rise linearly with level number. Deterministic profiles are distributed through the catalog:
+- relaxed ~18%
+- normal ~50%
+- hard ~26%
+- very hard ~6%
+- opening tutorial levels are separate
+
+Hardness should come from deeper dependency chains, fewer trivial direct escapes, and meaningful mechanic combinations rather than hidden rules or misleading arrows.
