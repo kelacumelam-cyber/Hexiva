@@ -76,3 +76,10 @@ All three opposite direction-pair axes on the hex grid are approved as working. 
 
 ### Collision-return behavior implemented
 Blocked taps now physically travel toward the first blocker and return to origin. This is feedback/animation only and does not change the core arrow-direction movement contract.
+
+
+### Traversable grey floor cells
+Grey board slots are a distinct topology type from pits. A grey floor cell is empty and passable; a moving hex crosses it and continues. A pit is an escape/drop cell and ends the move by falling.
+
+### Dense collision-test layouts
+Reference images may guide density and topology without being copied. V22 adds three original dense test boards to validate collision-return movement before the broader generator redesign.
