@@ -202,3 +202,12 @@ General consistency audit found and fixed:
 - This removes a generator/runtime physics mismatch around concave boards and internal true gaps.
 - Hammering one member of a linked pair now explicitly removes the link relationship and visual, leaving the surviving member as a normal playable block instead of a half-linked stuck state.
 - Bomb processing deduplicates linked-pair cleanup and removes affected pair relationships from active state.
+
+
+## V37.2 bomb tuning + UI localization
+
+- Bottom booster labels localized to Turkish: ÇEKİÇ, DÖNDÜR, BOMBA.
+- Bomb changed from area-of-effect to single-target behavior.
+- Bomb now removes only the selected playable block.
+- If the selected block belongs to a linked pair, the link is detached first and the surviving block remains a normal playable block.
+- Fixed obstacles remain unaffected.
