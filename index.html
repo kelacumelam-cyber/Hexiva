@@ -651,6 +651,7 @@
     }
 
     const LOCAL_SAVE_KEY = 'hexiva-save-v1';
+    const QA_COIN_GRANT_KEY = 'hexiva-qa-coin-grant-v1';
     const DAILY_GIFT_COOLDOWN_MS = 24 * 60 * 60 * 1000;
     const LEVEL_REWARD_COINS = 25;
     const HAMMER_PRICE = 75;
@@ -694,9 +695,18 @@
     function loadLocalState() {
       try {
         const raw = localStorage.getItem(LOCAL_SAVE_KEY);
-        if (!raw) return;
-        const data = JSON.parse(raw);
-        window.applyLoadedSave(data);
+        if (raw) {
+          const data = JSON.parse(raw);
+          window.applyLoadedSave(data);
+        }
+
+        // Temporary development grant: once per browser/profile, never per refresh.
+        if (!localStorage.getItem(QA_COIN_GRANT_KEY)) {
+          coins += 500;
+          localStorage.setItem(QA_COIN_GRANT_KEY, '1');
+          saveLocalState();
+          showHint("TEST: +500 Altın 🪙");
+        }
       } catch (e) {
         console.warn('Local load failed:', e);
       }
