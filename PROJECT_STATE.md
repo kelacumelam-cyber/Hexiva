@@ -264,3 +264,23 @@ Audit clarification:
 - level 33 was flagged by the route-only simulator because it is an authored swap-dependent puzzle,
 - route-only simulation does not activate swap/cycle mechanisms,
 - audit telemetry now separates mechanism-dependent stalls from true route stalls so these are not reported as generator failures.
+
+
+## V39 prosperity background checkpoint
+
+A first static environment background was added:
+- bright blue-to-warm horizon sky,
+- soft distant cloud shapes,
+- warm sunlight accent,
+- several distant floating green islands with rock undersides,
+- subtle terrace / garden / clean-architecture cues for a prosperity feel,
+- center readability veil keeps the puzzle area visually quiet.
+
+Performance constraints:
+- one static inline SVG layer only,
+- no background animation or requestAnimationFrame work,
+- no new CDN or image dependency,
+- pointer-events disabled on the background,
+- Three.js canvas now renders with transparent alpha over the static background.
+
+The board, camera, gameplay, touch handling, HUD and mechanics were not intentionally changed.
