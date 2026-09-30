@@ -344,3 +344,18 @@ Removed Font Awesome as an external runtime dependency.
 - sound toggle updates text content instead of icon-library classes,
 - obsolete sync-status icon class mutations were replaced by a no-op hook because the visible sync bubble had already been removed,
 - one CDN/offline failure point is gone.
+
+
+## V41 offline + Android packaging foundation
+
+A non-destructive packaging path was added without changing the live GitHub Pages runtime:
+- pinned local dependencies for Three.js 0.128.0, Tween.js 18.6.4, Tone.js 14.8.49 and Tailwind CSS 3.4.17,
+- offline build script creates `dist/` and rewrites runtime CDN references to local vendor files,
+- Google Fonts request is removed from the offline artifact,
+- Capacitor Android 8.5.2 is pinned,
+- Capacitor webDir points to `dist/`,
+- Android generation/sync scripts rebuild offline assets before syncing,
+- Android configuration script enforces portrait orientation on MainActivity,
+- generated `dist/`, `node_modules/` and `android/` remain outside source control.
+
+Current Android application ID is provisional: `com.hexiva.game`.
