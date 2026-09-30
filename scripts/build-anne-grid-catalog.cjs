@@ -44,13 +44,24 @@ function buildSpecial(finalLevel, specialIndex, acceptedLevels) {
   let attempt = 0;
 
   for (; attempt < MAX_ATTEMPTS; attempt++) {
+    const beforeConstructionRejects = Object.values(reasons).reduce(
+      (sum, value) => sum + value,
+      0,
+    );
     const candidate = draft(finalLevel, attempt, {
       anneGrid: true,
       specialIndex,
+      failureStats: reasons,
     });
     if (!candidate) {
-      reasons["construction-constraints"] =
-        (reasons["construction-constraints"] || 0) + 1;
+      const afterConstructionRejects = Object.values(reasons).reduce(
+        (sum, value) => sum + value,
+        0,
+      );
+      if (afterConstructionRejects === beforeConstructionRejects) {
+        reasons["construction-constraints"] =
+          (reasons["construction-constraints"] || 0) + 1;
+      }
       continue;
     }
 
