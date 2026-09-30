@@ -118,17 +118,27 @@ function draft(level, attempt, options = {}) {
   };
   // Mechanic cadence recurs and combines. Obstacle is paired with rearrangement:
   // a permanent wall alone cannot be necessary in a fixed-arrow removal-only puzzle.
-  let kind =
-    options.anneGrid
-      ? [
-          "redirectSwap",
-          "obstacleCycle",
-          "obstacle",
-          "redirectCycle",
-          "swap",
-          "cycle",
-        ][((options.specialIndex || level) - 1) % 6]
-      : level < 8
+  let kind;
+  if (options.anneGrid) {
+    const anneKinds = [
+      "redirectSwap",
+      "obstacleCycle",
+      "obstacle",
+      "redirectCycle",
+      "swap",
+      "cycle",
+    ];
+    const anneIndex = ((options.specialIndex || level) - 1) % anneKinds.length;
+    kind = anneKinds[anneIndex];
+
+    // Some large sparse chambers cannot physically support a necessary wall+cycle
+    // arrangement on every deterministic notch/rotation. Try the harder combination
+    // first, then fall back to a real cycle puzzle instead of stalling construction
+    // or accepting a decorative wall.
+    if (kind === "obstacleCycle" && attempt >= 120) kind = "cycle";
+  } else {
+    kind =
+      level < 8
         ? "plain"
         : [
             "plain",
@@ -140,6 +150,7 @@ function draft(level, attempt, options = {}) {
             "redirectSwap",
             "obstacleCycle",
           ][level % 8];
+  }
   const interiors = shuffle(
     cells.filter(
       (c) => P.D.filter((_, d) => ks.has(P.key(P.step(c, d)))).length >= 4,
