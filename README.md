@@ -1,29 +1,56 @@
-# Hexa Tap Away
+# Hexiva
 
-Mobile-first hexagonal tap-away puzzle game.
+Mobile-first 3D hexagonal tap-away puzzle game.
 
-This repository was reset on 2026-09-30 to use the current HTML/WebGL prototype as the new baseline. The previous Android/Godot experiment remains available in Git history but is no longer part of the current main tree.
+Live test build: https://kelacumelam-cyber.github.io/Hexiva/
 
 ## Current baseline
 
-- Main playable prototype: `index.html`
-- Three.js/WebGL rendering
-- Mobile-first board fitting and responsive scale
-- Colored hexagonal blocks with fixed visible arrow directions
-- A block always moves in the direction shown by its arrow
-- Internal pit / escape cells
-- Direction-changer mechanic V1
-- Temporary desktop test shortcuts:
-  - `A`: next level
-  - `S`: return to level 1
-- Debug shortcuts do not unlock or persist progression
+- Main playable build: `index.html`
+- Three.js / WebGL rendering
+- Portrait-first mobile presentation with responsive board fitting
+- Deterministic level identity: the same level number reproduces the same puzzle
+- Current catalog ceiling: 1000 levels, designed to expand further
+- Generator V2 for level 35+
+- Local browser persistence through `localStorage`
+- Optional cloud persistence when Firebase configuration is supplied
+- Starting economy: 0 coins, 1 hammer, 1 rotate
+- Level reward: 25 coins
+- Shop: +1 hammer for 75 coins, +1 rotate for 50 coins
+- Daily gift: +25 coins, +1 hammer, +1 rotate, once per 24 hours
 
-## Core design rule
+## Fundamental movement contract
 
-The game must never lie about movement. If an arrow points in a direction, the block moves in that direction. New mechanics may redirect a moving block only through a clearly visible board mechanism.
+A playable hex always moves in the direction of its visible arrow. Movement may change only through an explicit visible board mechanism. Hidden or misleading direction changes are not allowed.
 
-## Project direction
+## Implemented mechanics
 
-The project is not designed around a fixed 100-level limit. It should support hundreds or thousands of deterministic, solvable, varied levels without tying difficulty directly to the level number.
+- Internal escape pits
+- Traversable grey floor cells
+- Direction changer
+- Reversible two-arm swap mechanism on all three hex-grid axes
+- Collision-and-return movement for blocked blocks
+- Three-way cycle mechanism
+- Fixed obstacles
+- Visibly linked pairs
 
-See `PROJECT_STATE.md` for the current checkpoint and `docs/DESIGN_DECISIONS.md` for accepted design decisions.
+## Level philosophy
+
+Level number is identity, not a linear difficulty rating. Difficulty may rise or fall naturally. Boards should vary in topology, density, gaps, corridors, internal movement, and selective mechanic combinations while remaining deterministic and solvable.
+
+Levels 1–34 preserve the authored/test sequence. Level 35+ uses Generator V2 topology families and deterministic mechanic distribution.
+
+## Testing workflow
+
+After an approved checkpoint, the complete `index.html` is committed to `main`. GitHub Pages republishes automatically. Test by refreshing the same live URL; use Ctrl+F5 if a stale browser cache is shown.
+
+Standalone HTML/ZIP delivery is only a fallback.
+
+## Release work still pending
+
+- Android portrait/orientation packaging policy
+- Android/WebGL performance and crash-hardening pass
+- Broader automated solvability/stress validation across the generated catalog
+- Release/debug separation for QA keyboard shortcuts
+- Local bundling of external CDN dependencies before standalone APK packaging
+- Final visual/background polish
