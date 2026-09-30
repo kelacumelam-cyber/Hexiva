@@ -426,3 +426,9 @@ Detection includes:
 - Android Studio JBR on macOS.
 
 The selected JDK is injected into the Gradle process only for the build.
+
+
+## V41.9 Windows JDK vendor detection
+
+The debug APK helper now detects JDK 21+ installations under `Program Files/Eclipse Adoptium` and also derives a JDK home from the `java` executable currently resolved by PATH.
+This removes the previous vendor-directory blind spot that missed Temurin 21 even when `java -version` worked.
