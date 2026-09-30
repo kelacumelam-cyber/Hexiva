@@ -9,9 +9,7 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/tween.js/18.6.4/tween.umd.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/tone/14.8.49/Tone.js"></script>
-  <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700;800&display=swap" rel="stylesheet">
-
-  <script>
+<script>
     // Defensive local Tween fallback: keeps the game rendering if the CDN copy
     // of tween.js is unavailable. When the real library loads, this does nothing.
     if (typeof window.TWEEN === 'undefined') {
@@ -139,7 +137,7 @@
       -webkit-touch-callout: none;
       -webkit-tap-highlight-color: transparent;
       box-sizing: border-box;
-      font-family: 'Fredoka', cursive, sans-serif;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
     }
     
     html, body {
@@ -178,6 +176,12 @@
 
     .utility-strip {
       top: calc(max(0.75rem, env(safe-area-inset-top)) + 4.35rem);
+      z-index: 30;
+      touch-action: manipulation;
+    }
+
+    .utility-strip button {
+      touch-action: manipulation;
     }
 
     .utility-card {
@@ -241,7 +245,9 @@
       }
 
       .home-strip {
+        left: auto !important;
         right: max(0.55rem, env(safe-area-inset-right)) !important;
+        width: auto !important;
       }
 
       .utility-card,
@@ -261,8 +267,9 @@
       }
 
       #quick-sound-btn {
-        width: 38px;
-        height: 38px;
+        width: 44px;
+        height: 44px;
+        flex: 0 0 44px;
       }
 
       .booster-row {
@@ -299,8 +306,8 @@
       }
 
       #quick-sound-btn {
-        width: 34px;
-        height: 34px;
+        width: 44px;
+        height: 44px;
       }
 
       .booster-row {
