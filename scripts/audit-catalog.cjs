@@ -1,5 +1,6 @@
 const fs = require("fs"),
   vm = require("vm"),
+  crypto = require("crypto"),
   assert = require("assert/strict"),
   P = require("../src/puzzle-engine.js"),
   { reject } = require("./build-catalog.cjs");
@@ -10,7 +11,12 @@ const expectedCount =
 const isAnneGridPreview = catalogPath.includes("anne-grid-preview");
 const context = { window: {} };
 vm.createContext(context);
-vm.runInContext(fs.readFileSync(catalogPath, "utf8"), context);
+const catalogSource = fs.readFileSync(catalogPath, "utf8");
+const catalogSha256 = crypto
+  .createHash("sha256")
+  .update(catalogSource)
+  .digest("hex");
+vm.runInContext(catalogSource, context);
 const catalog = JSON.parse(JSON.stringify(context.window.HEXIVA_CATALOG));
 const html = fs.readFileSync("index.html", "utf8"),
   routeSource = html.slice(
@@ -189,6 +195,7 @@ if (isAnneGridPreview) {
 
 const summary = {
   generatorVersion: isAnneGridPreview ? "V43-ANNE-GRID-V1" : "V43",
+  catalogSha256,
   auditedLevels: catalog.length,
   anneGridLevels: specialLevels.length,
   anneGridCadenceViolations,
