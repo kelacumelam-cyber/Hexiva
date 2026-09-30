@@ -68,13 +68,22 @@ const FAMILY_LOBES = [
   [{ q: -3, r: -1 }, { q: -2, r: -2 }],
 ];
 
-function makeAnneGridShape(specialIndex, attempt = 0) {
+function makeAnneGridShape(specialIndex, attempt = 0, options = {}) {
   // Keep early attempts on the slot's preferred family, then rotate through the
-  // other chamber topologies. Mechanics stay fixed; geometry is allowed to vary
-  // so an obstacle/swap or redirect/cycle requirement is not permanently bound
-  // to one incompatible silhouette.
+  // other chamber topologies. Recently used special families may be excluded so
+  // generation effort is never spent on a candidate that the last-8 audit must reject.
   const familyBucket = Math.floor(attempt / 48);
-  const familyIndex = (specialIndex - 1 + familyBucket) % FAMILY_COUNT;
+  const preferredFamily =
+    (specialIndex - 1 + familyBucket) % FAMILY_COUNT;
+  const avoided = new Set(options.avoidFamilyIndexes || []);
+  let familyIndex = preferredFamily;
+  for (let offset = 0; offset < FAMILY_COUNT; offset++) {
+    const candidate = (preferredFamily + offset) % FAMILY_COUNT;
+    if (!avoided.has(candidate)) {
+      familyIndex = candidate;
+      break;
+    }
+  }
   const rotation =
     (Math.floor((specialIndex - 1) / FAMILY_COUNT) + attempt) % 6;
   let cells = baseDisk(3);
