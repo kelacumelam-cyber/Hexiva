@@ -779,3 +779,15 @@ Fix:
 - `scripts/verify-source.mjs` now guards the packaging configuration against regression.
 - The web speech recognition behavior in `index.html` is otherwise unchanged; the fix is intentionally limited to Android permission packaging.
 - After rebuilding the APK, Android should be able to present the microphone permission dialog when the voice feature first requests access.
+
+
+## V43.3.2 — Android native speech-recognition bridge
+
+The Android permission-only fix was insufficient: the APK could declare `RECORD_AUDIO`, but the voice feature still relied on the browser `SpeechRecognition` API inside Android WebView. That path is not a reliable native speech-recognition/permission flow.
+
+Fix:
+- Added `@capacitor-community/speech-recognition@7.0.1`, which provides native Android speech recognition and explicit `checkPermissions()` / `requestPermissions()` methods.
+- Android APK voice handling now prefers the native plugin, requests `RECORD_AUDIO` through the plugin, then performs the existing Turkish phrase matching.
+- The existing Web Speech API remains as the browser fallback, so the live web build is not intentionally changed.
+- The native call is one-shot and does not use partial results; this avoids unnecessary Android recognizer lifecycle complexity for the temporary family voice command.
+- The previous manifest declaration remains in place as defense-in-depth.
