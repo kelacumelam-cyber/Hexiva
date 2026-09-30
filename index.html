@@ -1302,7 +1302,9 @@
 
         const redirectGroup = new THREE.Group();
         redirectGroup.position.set(x, -0.03, z);
-        redirectGroup.rotation.y = Math.PI / 6;
+        // Keep the mechanism frame unrotated so the visible arrow matches dirIndex exactly.
+        // Individual decorative geometry already carries its own orientation.
+        redirectGroup.rotation.y = 0;
         boardGroup.add(redirectGroup);
 
         const pad = new THREE.Mesh(redirectPadGeometry, redirectBaseMaterial);
