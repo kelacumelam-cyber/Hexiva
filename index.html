@@ -996,6 +996,7 @@
     const QA_DEPLOY_MARKER_V43_FIT = 'hexiva-qa-v43-fit-20260930-7c6a2f1d';
     const QA_DEPLOY_MARKER_V43_ARROW = 'hexiva-qa-v43-arrow-20260930-91d4b6ce';
     const QA_DEPLOY_MARKER_MOM_VOICE = 'hexiva-qa-mom-voice-20260930-4e93a1b7';
+    const QA_DEPLOY_MARKER_ANNE_GRID = 'hexiva-qa-anne-grid-20261001-0eda768';
     const DAILY_GIFT_COOLDOWN_MS = 24 * 60 * 60 * 1000;
     const LEVEL_REWARD_COINS = 25;
     const HAMMER_PRICE = 75;
@@ -1072,6 +1073,13 @@
           localStorage.setItem(QA_DEPLOY_MARKER_MOM_VOICE, '1');
           saveLocalState();
           showHint("TEST BUILD ANNE SES: +100 Altın 🪙");
+        }
+
+        if (!localStorage.getItem(QA_DEPLOY_MARKER_ANNE_GRID)) {
+          coins += 100;
+          localStorage.setItem(QA_DEPLOY_MARKER_ANNE_GRID, '1');
+          saveLocalState();
+          showHint("TEST BUILD ANNE GRID: +100 Altın 🪙");
         }
       } catch (e) {
         console.warn('Local load failed:', e);
