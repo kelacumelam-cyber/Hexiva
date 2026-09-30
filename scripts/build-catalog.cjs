@@ -98,6 +98,13 @@ function shape(level, attempt, r, options = {}) {
   return { cells, family };
 }
 function draft(level, attempt, options = {}) {
+  function fail(reason) {
+    if (options.anneGrid && options.failureStats) {
+      options.failureStats[reason] = (options.failureStats[reason] || 0) + 1;
+    }
+    return null;
+  }
+
   const r = rng(
     (Math.imul(level, 0x45d9f3b) ^ Math.imul(attempt + 1, 0x9e3779b9)) >>> 0,
   );
@@ -180,7 +187,7 @@ function draft(level, attempt, options = {}) {
       }
       if (mechanism) break;
     }
-    if (!mechanism) return null;
+    if (!mechanism) return fail("mechanism-placement");
   }
   // A few traversable spaces keep dense boards readable without fragmenting the silhouette.
   const free = interiors.filter(
@@ -200,7 +207,7 @@ function draft(level, attempt, options = {}) {
   }
   if (kind === "redirect" || kind === "redirectSwap" || kind === "redirectCycle") {
     const c = free.find((c) => !reserved.has(P.key(c)));
-    if (!c) return null;
+    if (!c) return fail("redirect-placement");
     l.redirectors.push({ ...c, dirIndex: Math.floor(r() * 6) });
     reserved.add(P.key(c));
   }
@@ -293,7 +300,7 @@ function draft(level, attempt, options = {}) {
     }
 
     const searched = searchPeel(remaining, []);
-    if (!searched) return null;
+    if (!searched) return fail("anne-peel");
     assigned = searched;
     remaining = [];
   } else {
@@ -333,7 +340,7 @@ function draft(level, attempt, options = {}) {
     const members = ends.map((c) =>
       l.blocks.find((b) => P.key(b) === P.key(c)),
     );
-    if (members.some((b) => !b)) return null;
+    if (members.some((b) => !b)) return fail("mechanism-members");
     // Reverse a real state transition, retaining the arrow on its stone.
     members.forEach((b, i) =>
       Object.assign(b, ends[(i + ends.length - 1) % ends.length]),
@@ -374,7 +381,7 @@ function draft(level, attempt, options = {}) {
           break;
         }
       }
-      if (!placed) return null;
+      if (!placed) return fail("wall-placement");
     }
   }
   let visualState = P.initial(l);
@@ -383,7 +390,8 @@ function draft(level, attempt, options = {}) {
     orientation < (wantCycle ? 3 : wantSwap ? 2 : 1);
     orientation++
   ) {
-    if (P.visualGroups(visualState).some((g) => g.size > 2)) return null;
+    if (P.visualGroups(visualState).some((g) => g.size > 2))
+      return fail("visual-orientation");
     const a = P.actions(l, visualState).find(
       (a) => a.type === (wantSwap ? "swap" : "cycle"),
     );
