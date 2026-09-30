@@ -416,3 +416,11 @@ Movement polish:
 - edge escapes now travel only to the physical cliff lip and then fall vertically,
 - the previous forward launch beyond the edge was removed,
 - internal pit falls remain vertical.
+
+
+## V35.1 bugfix checkpoint
+
+User playtest fixes:
+- daily gift modal now has an explicit close button and can also be dismissed by tapping/clicking the backdrop,
+- victory reward display corrected from stale +100 text to the actual +25 reward,
+- edge escape timing corrected: a block now moves one complete grid step into the missing neighboring cell and only then drops vertically, so it visually clears the cliff before falling.
