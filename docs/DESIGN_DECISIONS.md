@@ -61,3 +61,7 @@ Accepted future behavior: a tapped hex should physically travel along its arrow 
 
 ### Shadow policy
 With the approved stronger top-down camera, dynamic cast shadows should remain disabled unless a later visual test clearly proves they improve readability. Depth should primarily come from geometry, bevels, base plates, lighting, and color separation.
+
+
+### Swap V1 safety rule
+The first swap implementation must use one fixed axis only. Its center cell remains a valid escape/drop space. The exchange is reversible by activating the same mechanism again, and arrows remain attached to their original hexes. Broader orientations and combinations come only after this proof is approved.
