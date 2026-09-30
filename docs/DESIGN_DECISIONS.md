@@ -94,3 +94,17 @@ The target is that levels feel structurally distinct rather than like the same p
 
 ### Reference-board policy
 V22 dense boards 29-31 are approved reference examples for future generator work. They are examples to preserve as quality targets, not templates to clone repeatedly.
+
+
+### Outward-arrow balance
+The level generator must substantially reduce excessive outward-facing arrows. A low-difficulty level should not become a trivial "tap all outward arrows" task.
+
+Difficulty should come from route structure, dependency chains, board topology, and mechanic placement—not from simply making arrows obvious or hidden.
+
+The generator should explicitly control:
+- outward-facing arrow ratio,
+- count of immediately playable blocks,
+- count of trivial direct escapes,
+- unlock/dependency depth.
+
+Very hard levels are allowed, but they must remain fair, deterministic, and solvable.
