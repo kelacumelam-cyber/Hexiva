@@ -69,8 +69,14 @@ const FAMILY_LOBES = [
 ];
 
 function makeAnneGridShape(specialIndex, attempt = 0) {
-  const familyIndex = (specialIndex - 1) % FAMILY_COUNT;
-  const rotation = (Math.floor((specialIndex - 1) / FAMILY_COUNT) + attempt) % 6;
+  // Keep early attempts on the slot's preferred family, then rotate through the
+  // other chamber topologies. Mechanics stay fixed; geometry is allowed to vary
+  // so an obstacle/swap or redirect/cycle requirement is not permanently bound
+  // to one incompatible silhouette.
+  const familyBucket = Math.floor(attempt / 48);
+  const familyIndex = (specialIndex - 1 + familyBucket) % FAMILY_COUNT;
+  const rotation =
+    (Math.floor((specialIndex - 1) / FAMILY_COUNT) + attempt) % 6;
   let cells = baseDisk(3);
 
   const removeSet = new Set(FAMILY_CUTS[familyIndex].map(key));
