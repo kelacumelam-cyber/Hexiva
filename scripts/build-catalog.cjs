@@ -276,17 +276,70 @@ function draft(level, attempt, options = {}) {
     // assignment impossible several steps later. Search only this special mode,
     // keep a strict node budget, and fail closed if no compliant peel is found.
     let searchNodes = 0;
-    const searchBudget = 3500;
+    const searchBudget = 12000;
+
+    function anneGridLeafIsViable(candidateAssigned) {
+      if (!mechanism) return true;
+
+      const dirs = wantSwap ? [mechanism.aDir, mechanism.bDir] : mechanism.dirs;
+      const ends = dirs.map((d) => P.step(mechanism, d));
+      const members = ends.map((cell) =>
+        candidateAssigned.find((b) => P.key(b) === P.key(cell)),
+      );
+      if (members.some((b) => !b)) return false;
+
+      const stagedBlocks = candidateAssigned.map((b) => ({ ...b }));
+      const stagedMembers = ends.map((cell) =>
+        stagedBlocks.find((b) => P.key(b) === P.key(cell)),
+      );
+      stagedMembers.forEach((b, i) =>
+        Object.assign(b, ends[(i + ends.length - 1) % ends.length]),
+      );
+
+      let visualState = stagedBlocks.map((b, id) => ({ ...b, id }));
+      for (
+        let orientation = 0;
+        orientation < (wantCycle ? 3 : wantSwap ? 2 : 1);
+        orientation++
+      ) {
+        if (P.visualGroups(visualState).some((g) => g.size > 2)) return false;
+        const action = P.actions(
+          { ...l, blocks: stagedBlocks },
+          visualState,
+        ).find((a) => a.type === (wantSwap ? "swap" : "cycle"));
+        if (action) visualState = P.apply(visualState, action);
+      }
+
+      if (kind === "obstacle" || kind === "obstacleCycle") {
+        const endpointKeys = new Set(ends.map(P.key));
+        const wallCandidates = l.footprint.filter(
+          (cell) =>
+            !endpointKeys.has(P.key(cell)) &&
+            !l.pits.some((x) => P.key(x) === P.key(cell)) &&
+            !l.redirectors.some((x) => P.key(x) === P.key(cell)) &&
+            stagedMembers.some((b) =>
+              P.trace({ ...l, blocks: stagedBlocks }, [], b).path.includes(
+                P.key(cell),
+              ),
+            ),
+        );
+        if (!wallCandidates.length) return false;
+      }
+
+      return true;
+    }
+
     function searchPeel(currentRemaining, currentAssigned) {
-      if (!currentRemaining.length) return currentAssigned;
+      if (!currentRemaining.length)
+        return anneGridLeafIsViable(currentAssigned) ? currentAssigned : null;
       if (++searchNodes > searchBudget) return null;
 
       const candidates = peelCandidates(currentRemaining, currentAssigned);
       if (!candidates.length) return null;
 
-      // Limit branching to the strongest local choices; backtracking handles
-      // greedy dead ends without turning each catalog candidate into an unbounded search.
-      for (const candidate of candidates.slice(0, 12)) {
+      // Limit branching, but keep enough alternatives for the final rearranged
+      // visual state and required-wall checks to influence the chosen assignment.
+      for (const candidate of candidates.slice(0, 18)) {
         const nextRemaining = currentRemaining.filter(
           (item) => item.id !== candidate.b.id,
         );
