@@ -65,3 +65,7 @@ With the approved stronger top-down camera, dynamic cast shadows should remain d
 
 ### Swap V1 safety rule
 The first swap implementation must use one fixed axis only. Its center cell remains a valid escape/drop space. The exchange is reversible by activating the same mechanism again, and arrows remain attached to their original hexes. Broader orientations and combinations come only after this proof is approved.
+
+
+### Swap visual checkpoint
+V19 swap visuals are accepted as a good working state, not final polish. Further beautification is deferred. Development may continue to additional swap orientations, preserving reversibility and the center escape/pit behavior.
