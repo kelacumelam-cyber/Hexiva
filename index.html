@@ -1161,6 +1161,14 @@
           saveLocalState();
           showHint("TEST BUILD TAKLA HIZI GERİ ALINDI: +100 Altın 🪙");
         }
+
+        const QA_DEPLOY_MARKER_TUMBLE_SPACING_V4 = 'hexiva-qa-tumble-spacing-v4-gold-100';
+        if (!localStorage.getItem(QA_DEPLOY_MARKER_TUMBLE_SPACING_V4)) {
+          coins += 100;
+          localStorage.setItem(QA_DEPLOY_MARKER_TUMBLE_SPACING_V4, '1');
+          saveLocalState();
+          showHint("TEST BUILD TAKLA ARALIĞI V4: +100 Altın 🪙");
+        }
       } catch (e) {
         console.warn('Local load failed:', e);
       }
@@ -2754,8 +2762,8 @@
 
         // Three plates form a visible travelling chain instead of spinning
         // on the same coordinate. On reverse, the lead order becomes 3→2→1.
-        const chainGap = 0.55;
-        const stagger = 110;
+        const chainGap = 0.66;
+        const stagger = 150;
         const cycles = Math.max(1, Math.round(duration / 260));
         const cycleDuration = Math.max(180, duration / cycles);
 
