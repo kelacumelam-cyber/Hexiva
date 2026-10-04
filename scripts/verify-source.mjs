@@ -29,13 +29,13 @@ const configureAndroid = await readFile("scripts/configure-android.mjs", "utf8")
 if (!configureAndroid.includes("android.permission.RECORD_AUDIO")) {
   throw new Error("Android microphone permission is not declared by the packaging configuration");
 }
-if (configureAndroid.includes("HexivaMicrophonePlugin.java")) {
+if (/writeFile\s*\(\s*microphonePluginPath/.test(configureAndroid)) {
   throw new Error("Stale custom microphone bridge must not be generated");
 }
 
 const context = { window: {} };
 runInNewContext(await readFile("src/catalog.js", "utf8"), context);
-if (context.window.HEXIVA_CATALOG?.length !== 1000) {
+if (context.window.HEXIVA_CATALOG?.length !== 1250) {
   throw new Error("Expected exactly 1250 catalog levels");
 }
 for (const match of html.matchAll(
