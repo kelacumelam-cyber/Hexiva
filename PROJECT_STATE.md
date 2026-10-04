@@ -908,3 +908,28 @@ Mobil cihaz geri bildirimi sonrası board ve alt kontrol yerleşimi daha düşü
 - QA checkpoint'i: `hexiva-qa-m12-viewport-v1-gold-100` (+100 altın, bir kez).
 
 Durum: kodlandı; yerel test ve gerçek M12 APK smoke testi bekliyor.
+
+
+## 2026-10-05 — Güvenli mobil checkpoint: Galaxy M12 gerçek cihaz kabulü
+
+Gerçek APK testi tamamlandı ve mevcut durum kullanıcı tarafından **şimdilik iyi** olarak kabul edildi.
+
+Doğrulanan checkpoint kapsamı:
+
+- Galaxy M12 gibi daha eski / düşük kullanılabilir ekran yüksekliğine sahip Android cihazlarda alt gezinme çubuğu görünürken oyun artık kullanılabilir durumda.
+- Alt 4 booster/hak kontrolü mevcut testte iç içe geçmeden kullanılabildi.
+- `visualViewport` tabanlı kullanılabilir alan hesabı gerçek cihazda sorun çıkarmadı.
+- Küçük footprint'li bölümlerin gereksiz büyümesine getirilen maksimum board ölçek tavanı kabul edildi.
+- Her 10 bölümdeki yoğun board varyantlarının mevcut otomatik küçülme davranışı korundu.
+- Takla animasyonunun fizik/zamanlama mantığı bu pass'te değiştirilmedi.
+- Android launcher icon build akışı artık ikon bulunamazsa fail-fast davranıyor; eski ikonla sessiz build alınmıyor.
+- Onaylı ikon proje köküne `hexiva_app_icon_cropped.png` adıyla konduğunda Android debug build başarıyla tamamlandı ve gerçek cihaz testi yapıldı.
+- Bu checkpoint sonrası yeni gameplay/yerleşim değişikliği yapılmadı.
+
+Bekleyen sonraki işler:
+
+- Daha uzun gerçek cihaz oturumunda FPS / ısınma / stabilite gözlemi.
+- İleride public/release hazırlığında geçici aile mikrofon özelliklerinin kaldırılması değerlendirilecek.
+- Gerekirse sonraki mobil turda yalnız ince yerleşim ayarı yapılacak; mevcut M12 davranışı referans korunmalı.
+
+**Checkpoint kararı:** mevcut mobil durum korunacak; yeni değişikliklerde bu checkpoint regresyon referansı olarak kullanılacak.
