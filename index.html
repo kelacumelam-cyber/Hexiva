@@ -1105,6 +1105,14 @@
           saveLocalState();
           showHint("TEST BUILD BOMBA MODELİ: +100 Altın 🪙");
         }
+
+        const QA_DEPLOY_MARKER_COLLISION_RETURN_V2 = 'hexiva-qa-collision-return-v2-gold-100';
+        if (!localStorage.getItem(QA_DEPLOY_MARKER_COLLISION_RETURN_V2)) {
+          coins += 100;
+          localStorage.setItem(QA_DEPLOY_MARKER_COLLISION_RETURN_V2, '1');
+          saveLocalState();
+          showHint("TEST BUILD ÇARP-GERİ DÖN V2: +100 Altın 🪙");
+        }
       } catch (e) {
         console.warn('Local load failed:', e);
       }
@@ -2865,11 +2873,15 @@
         const dirLen = Math.sqrt(finalDir.dx * finalDir.dx + finalDir.dz * finalDir.dz) || 1;
         const ux = finalDir.dx / dirLen;
         const uz = finalDir.dz / dirLen;
-        const bump = 0.16;
+
+        // Move until the two visible hex faces meet instead of stopping early.
+        // The playable hex uses 0.88 * HEX_RADIUS; its face apothem is r*cos(30°).
+        const blockFaceRadius = HEX_RADIUS * 0.88 * Math.cos(Math.PI / 6);
+        const contactAdvance = Math.max(0.18, dirLen - (blockFaceRadius * 2));
 
         outward.push({
-          x: previousWorld.x + ux * bump,
-          z: previousWorld.z + uz * bump,
+          x: previousWorld.x + ux * contactAdvance,
+          z: previousWorld.z + uz * contactAdvance,
           collision: true,
           blockerWorld
         });
@@ -2907,11 +2919,12 @@
         const dx = point.x - block.mesh.position.x;
         const dz = point.z - block.mesh.position.z;
         const distance = Math.sqrt(dx * dx + dz * dz);
-        const duration = Math.max(90, Math.min(220, 75 + distance * 40));
+        // Rebound is intentionally much faster than the outward swim.
+        const duration = Math.max(55, Math.min(145, 42 + distance * 27));
 
         new TWEEN.Tween(block.mesh.position)
           .to({ x: point.x, y: start.y, z: point.z }, duration)
-          .easing(TWEEN.Easing.Quadratic.Out)
+          .easing(TWEEN.Easing.Cubic.Out)
           .onComplete(() => returnAlongPath(index - 1))
           .start();
       }
@@ -2919,9 +2932,22 @@
       function runOutward(index) {
         if (index >= outward.length) {
           playSound('blocked');
-          // Tiny squash/impact before the rebound starts.
+          // Brief wall-touch compression, then an immediate fast push-off.
+          const pushBackTiltX = finalDir.dz / (Math.sqrt(finalDir.dx * finalDir.dx + finalDir.dz * finalDir.dz) || 1) * 0.06;
+          const pushBackTiltZ = -finalDir.dx / (Math.sqrt(finalDir.dx * finalDir.dx + finalDir.dz * finalDir.dz) || 1) * 0.06;
+
           new TWEEN.Tween(block.mesh.scale)
-            .to({ x: 1.05, y: 0.94, z: 1.05 }, 65)
+            .to({ x: 1.07, y: 0.90, z: 1.07 }, 55)
+            .easing(TWEEN.Easing.Quadratic.Out)
+            .yoyo(true)
+            .repeat(1)
+            .start();
+
+          new TWEEN.Tween(block.mesh.rotation)
+            .to({
+              x: block.mesh.rotation.x + pushBackTiltX,
+              z: block.mesh.rotation.z + pushBackTiltZ
+            }, 55)
             .easing(TWEEN.Easing.Quadratic.Out)
             .yoyo(true)
             .repeat(1)
@@ -2937,7 +2963,9 @@
         const dx = point.x - block.mesh.position.x;
         const dz = point.z - block.mesh.position.z;
         const distance = Math.sqrt(dx * dx + dz * dz);
-        const duration = Math.max(95, Math.min(260, 80 + distance * 42));
+        const duration = point.collision
+          ? Math.max(105, Math.min(285, 90 + distance * 46))
+          : Math.max(95, Math.min(260, 80 + distance * 42));
 
         new TWEEN.Tween(block.mesh.position)
           .to({ x: point.x, y: start.y, z: point.z }, duration)
