@@ -877,3 +877,17 @@ Owner local full test sonucu:
 - all 1250 catalog boards construct/cleanup smoke passed.
 
 Bomb V2 code/test checkpoint green. Real GitHub Pages gameplay smoke is next acceptance gate.
+
+
+## 2026-10-04 — Mobil oyun alanı ölçek hedefi
+
+Şimdilik uygulanmayacak; mobil cihaz testi sonrasına bırakılan görsel düzen hedefi:
+
+- oyun alanının genel ölçeği küçültülecek,
+- renkli altıgen bloklar ve gri taban/board birlikte orantılı küçültülecek,
+- amaç mobil ekranda daha fazla boşluk ve daha temiz kontrol yerleşimi elde etmek,
+- mevcut büyük blok/board ölçeğinin üç parçalı takla animasyonunun okunurluğunu olumsuz etkiliyor olabileceği not edildi,
+- takla mekaniğinin kendisine şu aşamada dokunulmayacak; karar gerçek mobil oynanış testinden sonra verilecek,
+- LEVEL/HAMLE göstergesi ve mevcut ayar/yardımcı düğmeler bu aşamada yerinde kalacak.
+
+Durum: hedef kaydedildi, uygulama beklemede.
