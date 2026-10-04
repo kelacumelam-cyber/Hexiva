@@ -1129,6 +1129,14 @@
           saveLocalState();
           showHint("TEST BUILD TAKLALI HAREKET: +100 Altın 🪙");
         }
+
+        const QA_DEPLOY_MARKER_CHAIN_TUMBLING_V2 = 'hexiva-qa-chain-tumbling-v2-gold-100';
+        if (!localStorage.getItem(QA_DEPLOY_MARKER_CHAIN_TUMBLING_V2)) {
+          coins += 100;
+          localStorage.setItem(QA_DEPLOY_MARKER_CHAIN_TUMBLING_V2, '1');
+          saveLocalState();
+          showHint("TEST BUILD SIRALI TAKLA V2: +100 Altın 🪙");
+        }
       } catch (e) {
         console.warn('Local load failed:', e);
       }
@@ -2699,53 +2707,66 @@
       const slices = [];
       for (let i = 0; i < 3; i++) {
         const slice = new THREE.Mesh(blockGeometry, block.mesh.material);
-        slice.scale.set(1, 0.27, 1);
-        slice.position.y = (i - 1) * 0.105;
+        slice.scale.set(1, 0.24, 1);
+        slice.position.y = 0;
         slice.castShadow = false;
         slice.receiveShadow = false;
         group.add(slice);
         slices.push(slice);
       }
 
-      // The arrow belongs to the resting block only. During motion the original
-      // mesh is hidden and the three plates become the whole moving visual.
+      // Resting arrow disappears for the whole journey. The three plates are
+      // the moving visual until they either return and merge or leave the board.
       block.mesh.visible = false;
 
       function tumbleSegment(dirIndex, duration, reverse = false) {
         const dir = HEX_DIRECTIONS[dirIndex];
         const len = Math.sqrt(dir.dx * dir.dx + dir.dz * dir.dz) || 1;
-        const ux = dir.dx / len;
-        const uz = dir.dz / len;
+        const sign = reverse ? -1 : 1;
+        const ux = (dir.dx / len) * sign;
+        const uz = (dir.dz / len) * sign;
         const axisX = uz;
         const axisZ = -ux;
-        const sign = reverse ? -1 : 1;
 
-        const cycles = Math.max(1, Math.round(duration / 180));
-        const cycleDuration = Math.max(110, duration / cycles);
-        const stagger = Math.min(42, cycleDuration * 0.22);
+        // Three plates form a visible travelling chain instead of spinning
+        // on the same coordinate. On reverse, the lead order becomes 3→2→1.
+        const chainGap = 0.46;
+        const stagger = 72;
+        const cycles = Math.max(1, Math.round(duration / 260));
+        const cycleDuration = Math.max(180, duration / cycles);
 
         slices.forEach((slice, index) => {
+          const rank = reverse ? (slices.length - 1 - index) : index;
+          const chainSlot = 1 - rank;
+
+          new TWEEN.Tween(slice.position)
+            .to({
+              x: ux * chainSlot * chainGap,
+              y: 0,
+              z: uz * chainSlot * chainGap
+            }, Math.min(130, duration * 0.32))
+            .easing(TWEEN.Easing.Quadratic.InOut)
+            .start();
+
           for (let cycle = 0; cycle < cycles; cycle++) {
-            const delay = cycle * cycleDuration + index * stagger;
-            const startRotX = slice.rotation.x + axisX * Math.PI * sign * cycle;
-            const startRotZ = slice.rotation.z + axisZ * Math.PI * sign * cycle;
-            const targetRotX = slice.rotation.x + axisX * Math.PI * sign * (cycle + 1);
-            const targetRotZ = slice.rotation.z + axisZ * Math.PI * sign * (cycle + 1);
+            const delay = cycle * cycleDuration + rank * stagger;
+            const targetRotX = slice.rotation.x + axisX * Math.PI * (cycle + 1);
+            const targetRotZ = slice.rotation.z + axisZ * Math.PI * (cycle + 1);
 
             new TWEEN.Tween(slice.rotation)
-              .to({ x: targetRotX, z: targetRotZ }, cycleDuration * 0.82)
+              .to({ x: targetRotX, z: targetRotZ }, cycleDuration * 0.78)
               .delay(delay)
               .easing(TWEEN.Easing.Linear.None)
               .start();
 
-            const lift = 0.08 + index * 0.018;
-            const lead = 0.07 + index * 0.025;
+            // Each plate rises and settles a moment after the one ahead of it,
+            // creating the sequential "takla atarak takip etme" rhythm.
             new TWEEN.Tween(slice.position)
               .to({
-                x: ux * lead * sign,
-                y: (index - 1) * 0.105 + lift,
-                z: uz * lead * sign
-              }, cycleDuration * 0.40)
+                x: ux * chainSlot * chainGap,
+                y: 0.16,
+                z: uz * chainSlot * chainGap
+              }, cycleDuration * 0.34)
               .delay(delay)
               .easing(TWEEN.Easing.Quadratic.Out)
               .yoyo(true)
@@ -2759,7 +2780,7 @@
         let completed = 0;
         slices.forEach(slice => {
           new TWEEN.Tween(slice.position)
-            .to({ x: 0, y: 0, z: 0 }, 120)
+            .to({ x: 0, y: 0, z: 0 }, 150)
             .easing(TWEEN.Easing.Quadratic.InOut)
             .onComplete(() => {
               completed++;
@@ -2772,7 +2793,7 @@
             .start();
 
           new TWEEN.Tween(slice.rotation)
-            .to({ x: 0, y: 0, z: 0 }, 120)
+            .to({ x: 0, y: 0, z: 0 }, 150)
             .easing(TWEEN.Easing.Quadratic.InOut)
             .start();
         });
@@ -2790,7 +2811,10 @@
       const dx = toX - fromX;
       const dz = toZ - fromZ;
       const distance = Math.sqrt(dx * dx + dz * dz);
-      return Math.max(95, Math.round(distance * 155));
+
+      // Deliberately calmer than the first prototype: the eye must be able to
+      // read plate 1, then 2, then 3 rolling through the same route.
+      return Math.max(180, Math.round(distance * 310));
     }
 
     function animateFlyAway(block, escapeInfo = null) {
