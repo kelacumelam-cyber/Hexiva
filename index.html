@@ -661,6 +661,11 @@
         <span class="utility-label text-[9px] font-black tracking-wider leading-none mt-1">SES</span>
       </button>
 
+      <button id="settings-btn" class="home-card game-btn side-card-btn p-1.5 rounded-xl flex flex-col items-center justify-center text-white text-center" aria-label="Ayarlar">
+        <span class="utility-icon text-2xl leading-none">⚙️</span>
+        <span class="utility-label text-[9px] font-black tracking-wider leading-none mt-1">AYAR</span>
+      </button>
+
     </div>
 
     <!-- Center Floating Action Hint / Toast Message -->
@@ -747,6 +752,41 @@
         <span>🏪</span>
         <span>DÜKKAN</span>
       </button>
+
+      <button id="menu-settings-btn" class="game-btn w-full py-3 bg-gradient-to-r from-slate-600 to-slate-700 rounded-2xl text-white font-bold text-base shadow-md border-2 border-white/80 flex items-center justify-center gap-2">
+        <span>⚙️</span>
+        <span>AYARLAR</span>
+      </button>
+    </div>
+  </div>
+
+  <div id="settings-modal" class="fixed inset-0 z-50 bg-black/70 backdrop-blur-sm hidden flex items-center justify-center p-4">
+    <div class="bg-white rounded-3xl p-5 w-full max-w-sm border-4 border-slate-400 shadow-2xl animate-pop">
+      <div class="flex items-center justify-between pb-3 border-b border-slate-200 mb-4">
+        <h2 class="text-xl font-black text-slate-800 flex items-center gap-2">
+          <span>⚙️</span> AYARLAR
+        </h2>
+        <button id="close-settings-btn" class="w-8 h-8 rounded-full bg-slate-200 text-slate-600 font-black flex items-center justify-center">✕</button>
+      </div>
+
+      <div class="space-y-5">
+        <div>
+          <div class="flex items-center justify-between mb-2">
+            <label for="sound-volume" class="font-black text-slate-800">Ses</label>
+            <span id="sound-volume-value" class="text-sm font-black text-indigo-600">70%</span>
+          </div>
+          <input id="sound-volume" type="range" min="0" max="100" step="5" value="70" class="w-full accent-indigo-600" />
+          <div class="text-xs text-slate-500 font-bold mt-1">Efekt seslerinin seviyesini ayarlar.</div>
+        </div>
+
+        <div class="flex items-center justify-between p-3 rounded-2xl bg-slate-50 border-2 border-slate-200">
+          <div>
+            <div class="font-black text-slate-800">Titreşim</div>
+            <div class="text-xs text-slate-500 font-bold">Engelle çarpışınca kısa titreşim.</div>
+          </div>
+          <button id="vibration-toggle" type="button" class="game-btn px-4 py-2 rounded-xl bg-emerald-500 text-white font-black text-sm">AÇIK</button>
+        </div>
+      </div>
     </div>
   </div>
 
@@ -943,8 +983,52 @@
 
   <script>
     let audioEnabled = true;
+    let audioVolume = 70;
+    let vibrationEnabled = true;
     let synth = null;
     let noiseSynth = null;
+    const SETTINGS_SAVE_KEY = 'hexiva-settings-v1';
+
+    function volumeToDb(value) {
+      if (value <= 0) return -60;
+      return -34 + (value / 100) * 28;
+    }
+
+    function applyAudioVolume() {
+      const db = volumeToDb(audioVolume);
+      if (synth) synth.volume.value = db;
+      if (noiseSynth) noiseSynth.volume.value = db - 2;
+    }
+
+    function saveSettings() {
+      try {
+        localStorage.setItem(SETTINGS_SAVE_KEY, JSON.stringify({
+          audioEnabled,
+          audioVolume,
+          vibrationEnabled
+        }));
+      } catch (e) {}
+    }
+
+    function loadSettings() {
+      try {
+        const raw = localStorage.getItem(SETTINGS_SAVE_KEY);
+        if (!raw) return;
+        const data = JSON.parse(raw);
+        if (typeof data.audioEnabled === 'boolean') audioEnabled = data.audioEnabled;
+        if (Number.isFinite(Number(data.audioVolume))) {
+          audioVolume = Math.max(0, Math.min(100, Number(data.audioVolume)));
+        }
+        if (typeof data.vibrationEnabled === 'boolean') vibrationEnabled = data.vibrationEnabled;
+      } catch (e) {}
+    }
+
+    function vibrateImpact() {
+      if (!vibrationEnabled) return;
+      try {
+        if (navigator.vibrate) navigator.vibrate(65);
+      } catch (e) {}
+    }
 
     function initAudio() {
       if (!synth && window.Tone) {
@@ -954,10 +1038,8 @@
             oscillator: { type: "triangle" },
             envelope: { attack: 0.005, decay: 0.08, sustain: 0.05, release: 0.15 }
           }).toDestination();
-          synth.volume.value = -7;
-
           noiseSynth = new Tone.MembraneSynth().toDestination();
-          noiseSynth.volume.value = -9;
+          applyAudioVolume();
         } catch (e) {
           console.warn("Audio Context init issue", e);
         }
@@ -1184,6 +1266,14 @@
           localStorage.setItem(QA_DEPLOY_MARKER_TUMBLE_PHASE_V6, '1');
           saveLocalState();
           showHint("TEST BUILD TAKLA FAZI V6: +100 Altın 🪙");
+        }
+
+        const QA_DEPLOY_MARKER_SETTINGS_HAPTICS_V1 = 'hexiva-qa-settings-haptics-v1-gold-100';
+        if (!localStorage.getItem(QA_DEPLOY_MARKER_SETTINGS_HAPTICS_V1)) {
+          coins += 100;
+          localStorage.setItem(QA_DEPLOY_MARKER_SETTINGS_HAPTICS_V1, '1');
+          saveLocalState();
+          showHint("TEST BUILD AYARLAR + TİTREŞİM: +100 Altın 🪙");
         }
       } catch (e) {
         console.warn('Local load failed:', e);
@@ -3118,6 +3208,7 @@
 
       function beginReturn() {
         playSound('blocked');
+        vibrateImpact();
 
         // Contact is only a brief "toslama"; the return keeps the same tumbling speed.
         new TWEEN.Tween(motion.group.scale)
@@ -4101,18 +4192,58 @@
       showHint("Günlük ödül alındı! 🎁");
     });
 
+    /* Settings */
+    const settingsModal = document.getElementById('settings-modal');
+    const soundVolumeInput = document.getElementById('sound-volume');
+    const soundVolumeValue = document.getElementById('sound-volume-value');
+    const vibrationToggle = document.getElementById('vibration-toggle');
+
+    function syncSettingsUI() {
+      soundVolumeInput.value = String(audioVolume);
+      soundVolumeValue.textContent = `${audioVolume}%`;
+      vibrationToggle.textContent = vibrationEnabled ? 'AÇIK' : 'KAPALI';
+      vibrationToggle.classList.toggle('bg-emerald-500', vibrationEnabled);
+      vibrationToggle.classList.toggle('bg-slate-500', !vibrationEnabled);
+      quickSoundIcon.textContent = audioEnabled && audioVolume > 0 ? '🔊' : '🔇';
+    }
+
+    function openSettings() {
+      initAudio();
+      syncSettingsUI();
+      settingsModal.classList.remove('hidden');
+    }
+
+    document.getElementById('settings-btn').addEventListener('click', openSettings);
+    document.getElementById('menu-settings-btn').addEventListener('click', openSettings);
+    document.getElementById('close-settings-btn').addEventListener('click', () => {
+      settingsModal.classList.add('hidden');
+    });
+
+    soundVolumeInput.addEventListener('input', () => {
+      audioVolume = Math.max(0, Math.min(100, Number(soundVolumeInput.value) || 0));
+      audioEnabled = audioVolume > 0;
+      applyAudioVolume();
+      saveSettings();
+      syncSettingsUI();
+    });
+
+    vibrationToggle.addEventListener('click', () => {
+      vibrationEnabled = !vibrationEnabled;
+      saveSettings();
+      syncSettingsUI();
+      if (vibrationEnabled) vibrateImpact();
+    });
+
     /* Sound Toggle */
     const quickSoundBtn = document.getElementById('quick-sound-btn');
     const quickSoundIcon = document.getElementById('quick-sound-icon');
     quickSoundBtn.addEventListener('click', () => {
       audioEnabled = !audioEnabled;
-      if (audioEnabled) {
-        quickSoundIcon.textContent = "🔊";
-        showHint("Ses Açık 🔊");
-      } else {
-        quickSoundIcon.textContent = "🔇";
-        showHint("Ses Kapalı 🔇");
-      }
+      if (audioEnabled && audioVolume <= 0) audioVolume = 70;
+      saveSettings();
+      applyAudioVolume();
+      syncSettingsUI();
+      showHint(audioEnabled ? "Ses Açık 🔊" : "Ses Kapalı 🔇");
     });
 
     let resizeScheduled = false;
@@ -4175,9 +4306,11 @@
     }
 
     window.onload = function () {
+      loadSettings();
       loadLocalState();
       updateUI();
       updateMenuUI();
+      syncSettingsUI();
       animate(0);
     };
   </script>
