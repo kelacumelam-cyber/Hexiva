@@ -3000,7 +3000,7 @@
       return [...targets];
     }
 
-    function animateBombCenter(q, r) {
+    function animateBombCenter(q, r, onDetonate) {
       const { x, z } = hexToWorld(q, r);
       const group = new THREE.Group();
       group.position.set(x, 0.10, z);
@@ -3011,13 +3011,13 @@
       const coreMaterial = new THREE.MeshPhongMaterial({
         color: 0x20242d,
         emissive: 0xff7a18,
-        emissiveIntensity: 0.45,
+        emissiveIntensity: 0.35,
         shininess: 80
       });
       const ringMaterial = new THREE.MeshBasicMaterial({
         color: 0xffb020,
         transparent: true,
-        opacity: 0.92
+        opacity: 0.70
       });
 
       const core = new THREE.Mesh(coreGeometry, coreMaterial);
@@ -3027,31 +3027,52 @@
       const ring = new THREE.Mesh(ringGeometry, ringMaterial);
       ring.rotation.x = Math.PI / 2;
       ring.position.y = 0.08;
-      ring.scale.set(0.30, 0.30, 0.30);
+      ring.scale.set(0.55, 0.55, 0.55);
       group.add(ring);
 
+      // One-second fuse: visible pulse first, blast afterwards.
       new TWEEN.Tween(core.scale)
-        .to({ x: 1.45, y: 1.45, z: 1.45 }, 110)
-        .easing(TWEEN.Easing.Back.Out)
+        .to({ x: 1.18, y: 1.18, z: 1.18 }, 210)
+        .easing(TWEEN.Easing.Quadratic.InOut)
         .yoyo(true)
-        .repeat(1)
+        .repeat(3)
+        .start();
+
+      new TWEEN.Tween(coreMaterial)
+        .to({ emissiveIntensity: 0.95 }, 220)
+        .easing(TWEEN.Easing.Quadratic.InOut)
+        .yoyo(true)
+        .repeat(3)
         .start();
 
       new TWEEN.Tween(ring.scale)
-        .to({ x: 3.7, y: 3.7, z: 3.7 }, 230)
-        .easing(TWEEN.Easing.Quadratic.Out)
+        .to({ x: 0.95, y: 0.95, z: 0.95 }, 850)
+        .easing(TWEEN.Easing.Quadratic.InOut)
         .onComplete(() => {
-          boardGroup.remove(group);
-          coreGeometry.dispose();
-          ringGeometry.dispose();
-          coreMaterial.dispose();
-          ringMaterial.dispose();
-        })
-        .start();
+          if (typeof onDetonate === 'function') onDetonate();
 
-      new TWEEN.Tween(ringMaterial)
-        .to({ opacity: 0 }, 230)
-        .easing(TWEEN.Easing.Quadratic.Out)
+          new TWEEN.Tween(ring.scale)
+            .to({ x: 3.7, y: 3.7, z: 3.7 }, 260)
+            .easing(TWEEN.Easing.Quadratic.Out)
+            .onComplete(() => {
+              boardGroup.remove(group);
+              coreGeometry.dispose();
+              ringGeometry.dispose();
+              coreMaterial.dispose();
+              ringMaterial.dispose();
+            })
+            .start();
+
+          new TWEEN.Tween(ringMaterial)
+            .to({ opacity: 0 }, 260)
+            .easing(TWEEN.Easing.Quadratic.Out)
+            .start();
+
+          new TWEEN.Tween(core.scale)
+            .to({ x: 1.55, y: 1.55, z: 1.55 }, 120)
+            .easing(TWEEN.Easing.Back.Out)
+            .start();
+        })
         .start();
     }
 
@@ -3067,31 +3088,36 @@
         return false;
       }
 
-      playSound('hammer');
-      animateBombCenter(q, r);
+      playSound('tap');
+      showHint("Bomba kuruldu… 💣");
 
-      targets.forEach(block => {
-        detachLinkedPairForSingleTargetBooster(block);
-        block.isRemoved = true;
-        block.isAnimating = true;
+      animateBombCenter(q, r, () => {
+        playSound('hammer');
 
-        new TWEEN.Tween(block.mesh.scale)
-          .to({ x: 1.18, y: 1.18, z: 1.18 }, 80)
-          .easing(TWEEN.Easing.Quadratic.Out)
-          .onComplete(() => {
-            new TWEEN.Tween(block.mesh.scale)
-              .to({ x: 0.02, y: 0.02, z: 0.02 }, 150)
-              .easing(TWEEN.Easing.Cubic.In)
-              .onComplete(() => {
-                boardGroup.remove(block.mesh);
-                checkLevelWin();
-              })
-              .start();
-          })
-          .start();
+        targets.forEach(block => {
+          detachLinkedPairForSingleTargetBooster(block);
+          block.isRemoved = true;
+          block.isAnimating = true;
+
+          new TWEEN.Tween(block.mesh.scale)
+            .to({ x: 1.18, y: 1.18, z: 1.18 }, 90)
+            .easing(TWEEN.Easing.Quadratic.Out)
+            .onComplete(() => {
+              new TWEEN.Tween(block.mesh.scale)
+                .to({ x: 0.02, y: 0.02, z: 0.02 }, 180)
+                .easing(TWEEN.Easing.Cubic.In)
+                .onComplete(() => {
+                  boardGroup.remove(block.mesh);
+                  checkLevelWin();
+                })
+                .start();
+            })
+            .start();
+        });
+
+        showHint(`${targets.length} blok patlatıldı! 💣`);
       });
 
-      showHint(`${targets.length} blok patlatıldı! 💣`);
       return true;
     }
 
