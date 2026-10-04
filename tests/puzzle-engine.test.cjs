@@ -135,15 +135,16 @@ test("fresh QA grant adds exactly 100 to existing coins and runs once", () => {
     code = html.slice(
       html.indexOf("    function loadLocalState()"),
       html.indexOf("    // Apply save data loaded from cloud"),
-    );
+    ),
+    qaKeys = [...new Set(code.match(/hexiva-qa-[a-z0-9-]+/g) || [])];
+
+  assert.ok(qaKeys.length > 0, "expected at least one QA marker");
+  const freshKey = qaKeys[qaKeys.length - 1];
   const store = new Map([
     ["hexiva-save-v1", JSON.stringify({ coins: 275 })],
-    ["hexiva-qa-deploy-marker-v42-6", "1"],
-    ["hexiva-qa-v43-20260930-c74f9e21", "1"],
-    ["hexiva-qa-v43-fit-20260930-7c6a2f1d", "1"],
-    ["hexiva-qa-v43-arrow-20260930-91d4b6ce", "1"],
-    ["hexiva-qa-mom-voice-20260930-4e93a1b7", "1"],
+    ...qaKeys.slice(0, -1).map((key) => [key, "1"]),
   ]);
+
   const c = {
     console,
     localStorage: {
@@ -154,14 +155,24 @@ test("fresh QA grant adds exactly 100 to existing coins and runs once", () => {
     saveLocalState: () => {},
     showHint: () => {},
   };
+
   vm.createContext(c);
   vm.runInContext(
-    "let coins=0;const LOCAL_SAVE_KEY='hexiva-save-v1';const QA_DEPLOY_MARKER_V43='hexiva-qa-v43-20260930-c74f9e21';const QA_DEPLOY_MARKER_V43_FIT='hexiva-qa-v43-fit-20260930-7c6a2f1d';const QA_DEPLOY_MARKER_V43_ARROW='hexiva-qa-v43-arrow-20260930-91d4b6ce';const QA_DEPLOY_MARKER_MOM_VOICE='hexiva-qa-mom-voice-20260930-4e93a1b7';const QA_DEPLOY_MARKER_ANNE_GRID='hexiva-qa-anne-grid-20261001-0eda768';window.applyLoadedSave=data=>{coins=data.coins};" +
+    "let coins=0;const LOCAL_SAVE_KEY='hexiva-save-v1';" +
+      "const QA_DEPLOY_MARKER_V43='hexiva-qa-v43-20260930-c74f9e21';" +
+      "const QA_DEPLOY_MARKER_V43_FIT='hexiva-qa-v43-fit-20260930-7c6a2f1d';" +
+      "const QA_DEPLOY_MARKER_V43_ARROW='hexiva-qa-v43-arrow-20260930-91d4b6ce';" +
+      "const QA_DEPLOY_MARKER_MOM_VOICE='hexiva-qa-mom-voice-20260930-4e93a1b7';" +
+      "const QA_DEPLOY_MARKER_ANNE_GRID='hexiva-qa-anne-grid-20261001-0eda768';" +
+      "window.applyLoadedSave=data=>{coins=data.coins};" +
       code +
       ";loadLocalState();globalThis.balance=coins;",
     c,
   );
+
   assert.equal(c.balance, 375);
+  assert.equal(store.get(freshKey), "1");
+
   store.set("hexiva-save-v1", JSON.stringify({ coins: 375 }));
   vm.runInContext("loadLocalState();globalThis.balance=coins;", c);
   assert.equal(c.balance, 375);
