@@ -1427,6 +1427,17 @@
       document.getElementById('moves-over-modal').classList.remove('hidden');
     }
 
+    function scheduleMovesOverCheck() {
+      setTimeout(() => {
+        if (levelCompleted || movesRemaining > 0) return;
+        if (blocks.some(block => block.isAnimating)) {
+          scheduleMovesOverCheck();
+          return;
+        }
+        showMovesOverModal();
+      }, 180);
+    }
+
     function consumeMove() {
       if (movesRemaining <= 0) {
         showMovesOverModal();
@@ -1436,9 +1447,7 @@
       updateUI();
 
       if (movesRemaining <= 0) {
-        setTimeout(() => {
-          if (!levelCompleted && movesRemaining <= 0) showMovesOverModal();
-        }, 600);
+        scheduleMovesOverCheck();
       }
       return true;
     }
@@ -3137,6 +3146,7 @@
 
     function animateFlyAway(block, escapeInfo = null) {
       block.isRemoved = true;
+      block.isAnimating = true;
       playSound('slide');
 
       const startY = block.mesh.position.y;
@@ -3215,6 +3225,7 @@
           .easing(TWEEN.Easing.Cubic.In)
           .onComplete(() => {
             motion.discard();
+            block.isAnimating = false;
             checkLevelWin();
           })
           .start();
