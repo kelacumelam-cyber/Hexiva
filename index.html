@@ -144,8 +144,8 @@
       margin: 0;
       padding: 0;
       width: 100%;
-      height: 100%;
-      min-height: 100dvh;
+      height: var(--hexiva-viewport-height, 100dvh);
+      min-height: var(--hexiva-viewport-height, 100dvh);
       overflow: hidden;
       overscroll-behavior: none;
       touch-action: none;
@@ -196,7 +196,13 @@
     }
 
     .booster-row {
-      padding-bottom: max(0.25rem, env(safe-area-inset-bottom));
+      padding-bottom: max(0.5rem, env(safe-area-inset-bottom));
+      flex-wrap: nowrap;
+    }
+
+    .booster-row > div {
+      flex: 0 0 auto;
+      min-width: 0;
     }
 
     @media (max-width: 430px) {
@@ -273,12 +279,15 @@
       }
 
       .booster-row {
-        gap: 0.38rem !important;
+        gap: clamp(0.22rem, 1.5vw, 0.38rem) !important;
+        padding-left: 0.25rem;
+        padding-right: 0.25rem;
       }
 
       .booster-card {
-        width: 58px !important;
-        height: 58px !important;
+        width: clamp(50px, 15vw, 58px) !important;
+        height: clamp(50px, 15vw, 58px) !important;
+        flex: 0 0 auto;
         border-width: 3px;
       }
 
@@ -315,13 +324,40 @@
       }
 
       .booster-card {
-        width: 54px !important;
-        height: 54px !important;
+        width: clamp(48px, 14.5vw, 52px) !important;
+        height: clamp(48px, 14.5vw, 52px) !important;
       }
 
       #status-hint {
         max-width: calc(100vw - 1.25rem);
         font-size: 0.7rem !important;
+      }
+    }
+
+    @media (max-height: 720px) and (pointer: coarse) {
+      .utility-card,
+      .home-card {
+        width: 42px;
+        height: 42px;
+      }
+
+      #quick-sound-btn {
+        width: 40px;
+        height: 40px;
+        flex-basis: 40px;
+      }
+
+      .booster-card {
+        width: 48px !important;
+        height: 48px !important;
+      }
+
+      .booster-card > span:first-child {
+        font-size: 1.35rem !important;
+      }
+
+      .booster-card > span:last-child {
+        font-size: 8px !important;
       }
     }
 
@@ -1346,6 +1382,14 @@
           saveLocalState();
           showHint("TEST BUILD HAMLE LİMİTİ: +100 Altın 🪙");
         }
+
+        const QA_DEPLOY_MARKER_M12_VIEWPORT_V1 = 'hexiva-qa-m12-viewport-v1-gold-100';
+        if (!localStorage.getItem(QA_DEPLOY_MARKER_M12_VIEWPORT_V1)) {
+          coins += 100;
+          localStorage.setItem(QA_DEPLOY_MARKER_M12_VIEWPORT_V1, '1');
+          saveLocalState();
+          showHint("TEST BUILD M12 UYUMU: +100 Altın 🪙");
+        }
       } catch (e) {
         console.warn('Local load failed:', e);
       }
@@ -1494,10 +1538,24 @@
     const scene = new THREE.Scene();
     scene.background = null;
 
+    function getLiveViewportSize() {
+      const vv = window.visualViewport;
+      return {
+        width: Math.max(1, Math.round(vv?.width || window.innerWidth || 1)),
+        height: Math.max(1, Math.round(vv?.height || window.innerHeight || 1))
+      };
+    }
+
+    function syncViewportCssVars() {
+      const { height } = getLiveViewportSize();
+      document.documentElement.style.setProperty('--hexiva-viewport-height', `${height}px`);
+    }
+
     // Mobile-first camera framing. Stronger top-down presentation while
     // preserving enough perspective to keep the chunky 3D block identity.
     function getFrustumSize() {
-      const aspect = window.innerWidth / window.innerHeight;
+      const viewport = getLiveViewportSize();
+      const aspect = viewport.width / viewport.height;
       if (aspect < 0.50) return 16.2; // Extra-tall phones
       if (aspect < 0.65) return 15.2; // Typical modern phones
       if (aspect < 0.85) return 14.6; // Wide phones / small tablets
@@ -1505,7 +1563,8 @@
     }
 
     let frustumSize = getFrustumSize();
-    let aspect = window.innerWidth / window.innerHeight;
+    const initialViewport = getLiveViewportSize();
+    let aspect = initialViewport.width / initialViewport.height;
 
     const camera = new THREE.OrthographicCamera(
       frustumSize * aspect / -2,
@@ -1540,7 +1599,7 @@
     });
     renderer.setClearColor(0x000000, 0);
 
-    renderer.setSize(window.innerWidth, window.innerHeight);
+    renderer.setSize(initialViewport.width, initialViewport.height);
     renderer.setPixelRatio(getSafePixelRatio());
     renderer.shadowMap.enabled = false;
     renderer.shadowMap.type = THREE.PCFSoftShadowMap;
@@ -2699,8 +2758,9 @@
     function fitBoardToMobileViewport() {
       if (!blocks.length) return;
 
-      const width = Math.max(1, window.innerWidth);
-      const height = Math.max(1, window.innerHeight);
+      const viewport = getLiveViewportSize();
+      const width = viewport.width;
+      const height = viewport.height;
       const pixelGap = Math.max(10, Math.min(18, height * 0.018));
 
       // Derive the usable puzzle lane from the UI that is actually on screen.
@@ -2736,8 +2796,15 @@
       // V43 contains legitimately tall/narrow silhouettes. The previous "minimum readable"
       // clamp forced those boards to overflow even after the fitter correctly calculated
       // a smaller required scale. Never enlarge a board past the size that actually fits.
+      // Dense boards may keep shrinking as much as needed, but small boards
+      // no longer grow to fill the whole phone. This makes block size steadier
+      // across the 1250-level catalog and leaves more breathing room on older phones.
+      const compactPhone = width < 370 || height < 720;
+      const maxBoardScale = width <= 430
+        ? (compactPhone ? 0.80 : 0.86)
+        : 0.94;
       const fitScale = Math.min(
-        1.0,
+        maxBoardScale,
         (safeWidth / boardWidth) * 0.97,
         (safeHeight / boardHeight) * 0.97
       );
@@ -2773,6 +2840,8 @@
       window.__hexaBoardFitStats = {
         level: currentLevel,
         scale: boardGroup.scale.x,
+        maxBoardScale,
+        viewport: { width, height },
         safeBounds: { left: safeLeft, right: safeRight, bottom: safeBottom, top: safeTop },
         boardBounds: {
           left: finalBounds.minX,
@@ -4469,18 +4538,26 @@
     });
 
     let resizeScheduled = false;
-    window.addEventListener('resize', () => {
+    function scheduleViewportResize() {
       if (resizeScheduled) return;
       resizeScheduled = true;
       requestAnimationFrame(() => {
         resizeScheduled = false;
+        syncViewportCssVars();
         onWindowResize();
       });
-    });
+    }
+
+    window.addEventListener('resize', scheduleViewportResize);
+    if (window.visualViewport) {
+      window.visualViewport.addEventListener('resize', scheduleViewportResize);
+      window.visualViewport.addEventListener('scroll', scheduleViewportResize);
+    }
 
     function onWindowResize() {
-      const width = Math.max(1, window.innerWidth);
-      const height = Math.max(1, window.innerHeight);
+      const viewport = getLiveViewportSize();
+      const width = viewport.width;
+      const height = viewport.height;
       frustumSize = getFrustumSize();
       aspect = width / height;
 
@@ -4527,7 +4604,10 @@
       renderer.render(scene, camera);
     }
 
+    syncViewportCssVars();
+
     window.onload = function () {
+      syncViewportCssVars();
       loadSettings();
       loadLocalState();
       updateUI();
