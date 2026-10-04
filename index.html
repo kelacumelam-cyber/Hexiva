@@ -273,12 +273,12 @@
       }
 
       .booster-row {
-        gap: 0.55rem !important;
+        gap: 0.38rem !important;
       }
 
       .booster-card {
-        width: 66px !important;
-        height: 66px !important;
+        width: 58px !important;
+        height: 58px !important;
         border-width: 3px;
       }
 
@@ -311,12 +311,12 @@
       }
 
       .booster-row {
-        gap: 0.4rem !important;
+        gap: 0.25rem !important;
       }
 
       .booster-card {
-        width: 61px !important;
-        height: 61px !important;
+        width: 54px !important;
+        height: 54px !important;
       }
 
       #status-hint {
@@ -648,7 +648,7 @@
     </div>
 
     <!-- Side Menu Buttons: Right Column -->
-    <div class="utility-strip home-strip absolute right-3 sm:right-4 flex flex-col gap-2.5 pointer-events-auto">
+    <div class="utility-strip home-strip absolute right-3 sm:right-4 flex flex-row items-center gap-2.5 pointer-events-auto">
       <!-- Home Button -->
       <button id="home-btn" class="home-card game-btn side-card-btn p-1.5 rounded-xl flex flex-col items-center justify-center text-white text-center">
         <span class="utility-icon text-2xl leading-none">🏡</span>
@@ -696,6 +696,14 @@
         <button id="bomb-btn" class="game-btn booster-card w-[72px] h-[72px] sm:w-20 sm:h-20 rounded-2xl flex flex-col items-center justify-center text-slate-900 active:scale-95">
           <span class="text-3xl filter drop-shadow">💣</span>
           <span class="text-[10px] font-black tracking-wider mt-0.5 text-slate-900">BOMBA</span>
+        </button>
+      </div>
+
+      <div class="relative flex flex-col items-center">
+        <div id="extra-move-count" class="booster-badge absolute -top-3.5 z-20 text-white font-black text-xs px-2.5 py-0.5 rounded-md min-w-[24px] text-center">0</div>
+        <button id="extra-move-btn" class="game-btn booster-card w-[72px] h-[72px] sm:w-20 sm:h-20 rounded-2xl flex flex-col items-center justify-center text-slate-900 active:scale-95">
+          <span class="text-3xl font-black leading-none filter drop-shadow">+5</span>
+          <span class="text-[10px] font-black tracking-wider mt-0.5 text-slate-900">HAMLE</span>
         </button>
       </div>
     </div>
@@ -1274,6 +1282,14 @@
           localStorage.setItem(QA_DEPLOY_MARKER_SETTINGS_HAPTICS_V1, '1');
           saveLocalState();
           showHint("TEST BUILD AYARLAR + TİTREŞİM: +100 Altın 🪙");
+        }
+
+        const QA_DEPLOY_MARKER_EXTRA_MOVE_UI_V1 = 'hexiva-qa-extra-move-ui-v1-gold-100';
+        if (!localStorage.getItem(QA_DEPLOY_MARKER_EXTRA_MOVE_UI_V1)) {
+          coins += 100;
+          localStorage.setItem(QA_DEPLOY_MARKER_EXTRA_MOVE_UI_V1, '1');
+          saveLocalState();
+          showHint("TEST BUILD +5 HAMLE ARAYÜZÜ: +100 Altın 🪙");
         }
       } catch (e) {
         console.warn('Local load failed:', e);
@@ -3727,6 +3743,7 @@
     const hammerBtn = document.getElementById('hammer-btn');
     const rotateBtn = document.getElementById('rotate-btn');
     const bombBtn = document.getElementById('bomb-btn');
+    const extraMoveBtn = document.getElementById('extra-move-btn');
 
     function resetBoosterState() {
       activeBooster = null;
@@ -3784,6 +3801,11 @@
         bombBtn.classList.add('booster-active');
         showHint("Bombayı koymak istediğin boş gri hücreye dokun! 💣");
       }
+    });
+
+    extraMoveBtn.addEventListener('click', () => {
+      initAudio();
+      showHint("+5 Hamle sistemi sonraki adımda bağlanacak. ➕");
     });
 
     function normalizeTurkishVoiceText(text) {
