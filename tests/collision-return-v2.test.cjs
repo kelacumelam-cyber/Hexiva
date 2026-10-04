@@ -15,4 +15,6 @@ test('movement uses sequential tumbling for blocked reverse and escape', () => {
   assert.match(source, /TWEEN\.Easing\.Linear\.None/);
   assert.match(source, /block\.mesh\.visible = false/);
   assert.match(source, /TEST BUILD TAKLALI HAREKET/);
+  assert.match(source, /slerpQuaternions/);
+  assert.match(source, /new THREE\.Vector3\(axisX, 0, axisZ\)\.normalize\(\)/);
 });
