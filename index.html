@@ -1113,6 +1113,14 @@
           saveLocalState();
           showHint("TEST BUILD ÇARP-GERİ DÖN V2: +100 Altın 🪙");
         }
+
+        const QA_DEPLOY_MARKER_LAYERED_BLOCKED_V1 = 'hexiva-qa-layered-blocked-v1-gold-100';
+        if (!localStorage.getItem(QA_DEPLOY_MARKER_LAYERED_BLOCKED_V1)) {
+          coins += 100;
+          localStorage.setItem(QA_DEPLOY_MARKER_LAYERED_BLOCKED_V1, '1');
+          saveLocalState();
+          showHint("TEST BUILD ÜÇ PARÇALI HAREKET: +100 Altın 🪙");
+        }
       } catch (e) {
         console.warn('Local load failed:', e);
       }
@@ -2836,6 +2844,72 @@
       runWaypoint(0);
     }
 
+    function createBlockedMotionVisual(block, dirIndex) {
+      const group = new THREE.Group();
+      group.position.copy(block.mesh.position);
+      boardGroup.add(group);
+
+      const slices = [];
+      for (let i = 0; i < 3; i++) {
+        const slice = new THREE.Mesh(blockGeometry, block.mesh.material);
+        slice.scale.set(1, 0.28, 1);
+        slice.position.y = (i - 1) * 0.105;
+        slice.castShadow = false;
+        slice.receiveShadow = false;
+        group.add(slice);
+        slices.push(slice);
+      }
+
+      block.mesh.visible = false;
+
+      function spread(nextDirIndex, amount = 1, duration = 125, onComplete = null) {
+        const dir = HEX_DIRECTIONS[nextDirIndex];
+        const len = Math.sqrt(dir.dx * dir.dx + dir.dz * dir.dz) || 1;
+        const ux = dir.dx / len;
+        const uz = dir.dz / len;
+        let completed = 0;
+
+        slices.forEach((slice, index) => {
+          const layer = index - 1;
+          new TWEEN.Tween(slice.position)
+            .to({
+              x: ux * layer * 0.20 * amount,
+              y: layer * 0.105 * amount,
+              z: uz * layer * 0.20 * amount
+            }, duration)
+            .easing(TWEEN.Easing.Quadratic.InOut)
+            .onComplete(() => {
+              completed++;
+              if (completed === slices.length && typeof onComplete === 'function') {
+                onComplete();
+              }
+            })
+            .start();
+        });
+      }
+
+      function close(onComplete) {
+        let completed = 0;
+        slices.forEach(slice => {
+          new TWEEN.Tween(slice.position)
+            .to({ x: 0, y: 0, z: 0 }, 125)
+            .easing(TWEEN.Easing.Quadratic.InOut)
+            .onComplete(() => {
+              completed++;
+              if (completed === slices.length) {
+                boardGroup.remove(group);
+                block.mesh.visible = true;
+                if (typeof onComplete === 'function') onComplete();
+              }
+            })
+            .start();
+        });
+      }
+
+      spread(dirIndex, 1, 125);
+      return { group, slices, spread, close };
+    }
+
     function animateBlocked(block, blockedInfo = null) {
       if (block.isAnimating) return;
       block.isAnimating = true;
@@ -2856,7 +2930,7 @@
         : block.dirIndex;
       const finalDir = HEX_DIRECTIONS[finalDirIndex];
 
-      // Build the outward path through any direction changers first.
+      const motion = createBlockedMotionVisual(block, start.dirIndex);
       const outward = routePoints
         .filter(p => p.type === 'redirect')
         .map(p => {
@@ -2864,9 +2938,7 @@
           return { x: w.x, z: w.z, redirect: p };
         });
 
-      // Stop just before the blocking hex, then add a small visible bump toward it.
       if (blockedInfo && blockedInfo.blocker) {
-        const blockerWorld = hexToWorld(blockedInfo.blocker.q, blockedInfo.blocker.r);
         const previousQ = blockedInfo.blocker.q - finalDir.dq;
         const previousR = blockedInfo.blocker.r - finalDir.dr;
         const previousWorld = hexToWorld(previousQ, previousR);
@@ -2874,19 +2946,15 @@
         const ux = finalDir.dx / dirLen;
         const uz = finalDir.dz / dirLen;
 
-        // Move until the two visible hex faces meet instead of stopping early.
-        // The playable hex uses 0.88 * HEX_RADIUS; its face apothem is r*cos(30°).
         const blockFaceRadius = HEX_RADIUS * 0.88 * Math.cos(Math.PI / 6);
         const contactAdvance = Math.max(0.18, dirLen - (blockFaceRadius * 2));
 
         outward.push({
           x: previousWorld.x + ux * contactAdvance,
           z: previousWorld.z + uz * contactAdvance,
-          collision: true,
-          blockerWorld
+          collision: true
         });
       } else {
-        // Defensive fallback for any future blocked state without a concrete blocker.
         const dirLen = Math.sqrt(finalDir.dx * finalDir.dx + finalDir.dz * finalDir.dz) || 1;
         outward.push({
           x: start.x + (finalDir.dx / dirLen) * 0.22,
@@ -2895,92 +2963,90 @@
         });
       }
 
-      const visitedPositions = [{ x: start.x, z: start.z }];
+      const visitedPositions = [{ x: start.x, z: start.z, dirIndex: start.dirIndex }];
+      const motionMsPerWorldUnit = 155;
 
-      function restoreAtStart() {
-        block.mesh.position.set(start.x, start.y, start.z);
-        block.dirIndex = start.dirIndex;
-        const originalAngle = -(HEX_DIRECTIONS[start.dirIndex].angleDeg * Math.PI / 180);
-        new TWEEN.Tween(block.arrowMesh.rotation)
-          .to({ y: originalAngle }, 110)
-          .easing(TWEEN.Easing.Quadratic.Out)
-          .onComplete(() => {
-            block.isAnimating = false;
-          })
-          .start();
+      function travelDuration(fromX, fromZ, toX, toZ) {
+        const dx = toX - fromX;
+        const dz = toZ - fromZ;
+        const distance = Math.sqrt(dx * dx + dz * dz);
+        return Math.max(85, Math.round(distance * motionMsPerWorldUnit));
+      }
+
+      function finishAtStart() {
+        motion.group.position.set(start.x, start.y, start.z);
+        motion.close(() => {
+          block.dirIndex = start.dirIndex;
+          const originalAngle = -(HEX_DIRECTIONS[start.dirIndex].angleDeg * Math.PI / 180);
+          block.arrowMesh.rotation.y = originalAngle;
+          block.isAnimating = false;
+        });
       }
 
       function returnAlongPath(index) {
         if (index < 0) {
-          restoreAtStart();
+          finishAtStart();
           return;
         }
-        const point = visitedPositions[index];
-        const dx = point.x - block.mesh.position.x;
-        const dz = point.z - block.mesh.position.z;
-        const distance = Math.sqrt(dx * dx + dz * dz);
-        // Rebound is intentionally much faster than the outward swim.
-        const duration = Math.max(55, Math.min(145, 42 + distance * 27));
 
-        new TWEEN.Tween(block.mesh.position)
+        const point = visitedPositions[index];
+        const duration = travelDuration(
+          motion.group.position.x,
+          motion.group.position.z,
+          point.x,
+          point.z
+        );
+
+        new TWEEN.Tween(motion.group.position)
           .to({ x: point.x, y: start.y, z: point.z }, duration)
-          .easing(TWEEN.Easing.Cubic.Out)
+          .easing(TWEEN.Easing.Linear.None)
           .onComplete(() => returnAlongPath(index - 1))
+          .start();
+      }
+
+      function beginReturn() {
+        playSound('blocked');
+
+        // A tiny contact compression only; the return itself is not a bounce.
+        new TWEEN.Tween(motion.group.scale)
+          .to({ x: 1.025, y: 0.96, z: 1.025 }, 55)
+          .easing(TWEEN.Easing.Quadratic.Out)
+          .yoyo(true)
+          .repeat(1)
+          .onComplete(() => {
+            motion.group.scale.set(1, 1, 1);
+            returnAlongPath(visitedPositions.length - 1);
+          })
           .start();
       }
 
       function runOutward(index) {
         if (index >= outward.length) {
-          playSound('blocked');
-          // Brief wall-touch compression, then an immediate fast push-off.
-          const pushBackTiltX = finalDir.dz / (Math.sqrt(finalDir.dx * finalDir.dx + finalDir.dz * finalDir.dz) || 1) * 0.06;
-          const pushBackTiltZ = -finalDir.dx / (Math.sqrt(finalDir.dx * finalDir.dx + finalDir.dz * finalDir.dz) || 1) * 0.06;
-
-          new TWEEN.Tween(block.mesh.scale)
-            .to({ x: 1.07, y: 0.90, z: 1.07 }, 55)
-            .easing(TWEEN.Easing.Quadratic.Out)
-            .yoyo(true)
-            .repeat(1)
-            .start();
-
-          new TWEEN.Tween(block.mesh.rotation)
-            .to({
-              x: block.mesh.rotation.x + pushBackTiltX,
-              z: block.mesh.rotation.z + pushBackTiltZ
-            }, 55)
-            .easing(TWEEN.Easing.Quadratic.Out)
-            .yoyo(true)
-            .repeat(1)
-            .onComplete(() => {
-              block.mesh.scale.set(1, 1, 1);
-              returnAlongPath(visitedPositions.length - 1);
-            })
-            .start();
+          beginReturn();
           return;
         }
 
         const point = outward[index];
-        const dx = point.x - block.mesh.position.x;
-        const dz = point.z - block.mesh.position.z;
-        const distance = Math.sqrt(dx * dx + dz * dz);
-        const duration = point.collision
-          ? Math.max(105, Math.min(285, 90 + distance * 46))
-          : Math.max(95, Math.min(260, 80 + distance * 42));
+        const duration = travelDuration(
+          motion.group.position.x,
+          motion.group.position.z,
+          point.x,
+          point.z
+        );
 
-        new TWEEN.Tween(block.mesh.position)
+        new TWEEN.Tween(motion.group.position)
           .to({ x: point.x, y: start.y, z: point.z }, duration)
-          .easing(point.collision ? TWEEN.Easing.Quadratic.In : TWEEN.Easing.Quadratic.InOut)
+          .easing(TWEEN.Easing.Linear.None)
           .onComplete(() => {
-            visitedPositions.push({ x: point.x, z: point.z });
+            visitedPositions.push({
+              x: point.x,
+              z: point.z,
+              dirIndex: point.redirect ? point.redirect.toDirIndex : finalDirIndex
+            });
+
             if (point.redirect) {
               activateRedirectorVisual(point.redirect.q, point.redirect.r);
-              block.dirIndex = point.redirect.toDirIndex;
-              const targetAngle = -(HEX_DIRECTIONS[block.dirIndex].angleDeg * Math.PI / 180);
-              new TWEEN.Tween(block.arrowMesh.rotation)
-                .to({ y: targetAngle }, 120)
-                .easing(TWEEN.Easing.Back.Out)
-                .onComplete(() => runOutward(index + 1))
-                .start();
+              motion.spread(point.redirect.toDirIndex, 1, 95, () => runOutward(index + 1));
             } else {
               runOutward(index + 1);
             }
@@ -2988,7 +3054,8 @@
           .start();
       }
 
-      runOutward(0);
+      // Let the three plates visibly separate before the actual travel begins.
+      setTimeout(() => runOutward(0), 115);
     }
 
     function rotateBlockDirection(block) {
