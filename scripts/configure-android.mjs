@@ -1,4 +1,4 @@
-import { access, mkdir, readFile, writeFile } from "node:fs/promises";
+import { access, cp, mkdir, readFile, writeFile } from "node:fs/promises";
 import path from "node:path";
 
 const root = process.cwd();
@@ -45,35 +45,6 @@ manifest = manifest.replace(activityPattern, (full, attrs) => {
   }
   return `<activity${attrs} android:screenOrientation="portrait">`;
 });
-
-const iconPayloadPath = path.join(root, "assets", "hexiva-app-icon.webp.b64");
-const iconResourceDir = path.join(androidRoot, "app", "src", "main", "res", "drawable-nodpi");
-const iconResourcePath = path.join(iconResourceDir, "hexiva_app_icon.webp");
-
-try {
-  const iconBase64 = (await readFile(iconPayloadPath, "utf8")).trim();
-  await mkdir(iconResourceDir, { recursive: true });
-  await writeFile(iconResourcePath, Buffer.from(iconBase64, "base64"));
-
-  manifest = manifest.replace(/<application\b([^>]*)>/, (full, attrs) => {
-    let next = attrs;
-    if (/android:icon=/.test(next)) {
-      next = next.replace(/android:icon="[^"]*"/, 'android:icon="@drawable/hexiva_app_icon"');
-    } else {
-      next += ' android:icon="@drawable/hexiva_app_icon"';
-    }
-    if (/android:roundIcon=/.test(next)) {
-      next = next.replace(/android:roundIcon="[^"]*"/, 'android:roundIcon="@drawable/hexiva_app_icon"');
-    } else {
-      next += ' android:roundIcon="@drawable/hexiva_app_icon"';
-    }
-    return `<application${next}>`;
-  });
-
-  console.log("Hexiva Android launcher icon configured.");
-} catch (error) {
-  throw new Error("Hexiva launcher icon could not be configured.", { cause: error });
-}
 
 // Launcher icon source is intentionally kept as a normal PNG during local
 // packaging instead of encoding a large binary into source code. The approved
@@ -127,11 +98,6 @@ async function configureLauncherIcon() {
   console.log(`Hexiva Android launcher icon configured from: ${source}`);
 }
 
-await configureLauncherIcon();
-
-await writeFile(manifestPath, manifest, "utf8");
-console.log("Android portrait orientation enforced.");
-
 async function pathExists(target) {
   try {
     await access(target);
@@ -140,6 +106,10 @@ async function pathExists(target) {
     return false;
   }
 }
+
+await configureLauncherIcon();
+await writeFile(manifestPath, manifest, "utf8");
+console.log("Android portrait orientation enforced.");
 
 async function configureSdkLocation() {
   const localPropertiesPath = path.join(androidRoot, "local.properties");
