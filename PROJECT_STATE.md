@@ -867,3 +867,13 @@ Yeni tests/bomb-v2.test.cjs:
 - runtime'ın boş taban + altı-komşu sözleşmesini kullanması.
 
 Bu checkpoint test ve gerçek web oynanış doğrulaması bekliyor.
+
+
+## 2026-10-04 — Bomb V2 test sonucu
+Owner local full test sonucu:
+- tests: 21
+- pass: 21
+- fail: 0
+- all 1250 catalog boards construct/cleanup smoke passed.
+
+Bomb V2 code/test checkpoint green. Real GitHub Pages gameplay smoke is next acceptance gate.
