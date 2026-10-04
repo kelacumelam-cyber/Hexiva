@@ -1137,6 +1137,14 @@
           saveLocalState();
           showHint("TEST BUILD SIRALI TAKLA V2: +100 Altın 🪙");
         }
+
+        const QA_DEPLOY_MARKER_DIAGONAL_TUMBLE_FIX = 'hexiva-qa-diagonal-tumble-fix-gold-100';
+        if (!localStorage.getItem(QA_DEPLOY_MARKER_DIAGONAL_TUMBLE_FIX)) {
+          coins += 100;
+          localStorage.setItem(QA_DEPLOY_MARKER_DIAGONAL_TUMBLE_FIX, '1');
+          saveLocalState();
+          showHint("TEST BUILD ÇAPRAZ TAKLA DÜZELTMESİ: +100 Altın 🪙");
+        }
       } catch (e) {
         console.warn('Local load failed:', e);
       }
@@ -2750,13 +2758,31 @@
 
           for (let cycle = 0; cycle < cycles; cycle++) {
             const delay = cycle * cycleDuration + rank * stagger;
-            const targetRotX = slice.rotation.x + axisX * Math.PI * (cycle + 1);
-            const targetRotZ = slice.rotation.z + axisZ * Math.PI * (cycle + 1);
+            // Rotate around one true 3D tumble axis. Tweening Euler X/Z
+            // independently looks acceptable vertically but breaks on diagonals.
+            const tumbleAxis = new THREE.Vector3(axisX, 0, axisZ).normalize();
+            const startQuaternion = slice.quaternion.clone();
+            const deltaQuaternion = new THREE.Quaternion().setFromAxisAngle(
+              tumbleAxis,
+              Math.PI
+            );
+            const targetQuaternion = startQuaternion.clone().premultiply(deltaQuaternion);
+            const rotationProgress = { t: 0 };
 
-            new TWEEN.Tween(slice.rotation)
-              .to({ x: targetRotX, z: targetRotZ }, cycleDuration * 0.78)
+            new TWEEN.Tween(rotationProgress)
+              .to({ t: 1 }, cycleDuration * 0.78)
               .delay(delay)
               .easing(TWEEN.Easing.Linear.None)
+              .onUpdate(() => {
+                slice.quaternion.slerpQuaternions(
+                  startQuaternion,
+                  targetQuaternion,
+                  rotationProgress.t
+                );
+              })
+              .onComplete(() => {
+                slice.quaternion.copy(targetQuaternion);
+              })
               .start();
 
             // Each plate rises and settles a moment after the one ahead of it,
