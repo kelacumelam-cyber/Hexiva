@@ -7,7 +7,7 @@ const required = [
   "function generateSolvableLevel",
   "function checkCanTapAway",
   "function animateFlyAway",
-  "function bombBlastBlock",
+  "function bombBlastAtCell",
   "window.__hexivaAuditCatalog",
   'id="game-canvas"',
   'id="hammer-btn"',
@@ -36,7 +36,7 @@ if (configureAndroid.includes("HexivaMicrophonePlugin.java")) {
 const context = { window: {} };
 runInNewContext(await readFile("src/catalog.js", "utf8"), context);
 if (context.window.HEXIVA_CATALOG?.length !== 1000) {
-  throw new Error("Expected exactly 1000 catalog levels");
+  throw new Error("Expected exactly 1250 catalog levels");
 }
 for (const match of html.matchAll(
   /<script(?![^>]*\bsrc=)(?![^>]*\btype=["']module["'])[^>]*>([\s\S]*?)<\/script>/gi,
@@ -44,5 +44,5 @@ for (const match of html.matchAll(
   new Function(match[1]);
 }
 console.log(
-  "Hexiva source sanity check passed (1000 catalog entries, inline scripts parsed).",
+  "Hexiva source sanity check passed (1250 catalog entries, inline scripts parsed).",
 );
