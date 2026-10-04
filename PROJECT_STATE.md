@@ -891,3 +891,20 @@ Bomb V2 code/test checkpoint green. Real GitHub Pages gameplay smoke is next acc
 - LEVEL/HAMLE göstergesi ve mevcut ayar/yardımcı düğmeler bu aşamada yerinde kalacak.
 
 Durum: hedef kaydedildi, uygulama beklemede.
+
+
+## 2026-10-04 — Compact Android / Galaxy M12 uyumluluk pass'i
+
+Mobil cihaz geri bildirimi sonrası board ve alt kontrol yerleşimi daha düşük kullanılabilir ekran alanlarına uyarlanmıştır.
+
+- Galaxy M12 benzeri eski/kompakt Android cihazlar alt gezinme çubuğu açıkken de hedef kabul edilir.
+- Düzen artık `visualViewport` varsa gerçek görünür genişlik/yüksekliği kullanır; CSS yüksekliği de bu canlı viewport ile senkronlanır.
+- Alt booster/hak satırı nowrap + shrink koruması kullanır; butonlar dar ekranlarda kontrollü küçülür, iç içe geçmez.
+- Düşük yükseklikli coarse-pointer cihazlarda yalnız çevresel UI biraz daha kompaktlaşır.
+- Yoğun board'ların mevcut otomatik küçülmesi korunur.
+- Küçük board'ların ekranı gereksiz doldurması engellendi: telefonlarda board ölçeğine maksimum tavan kondu.
+- Dar/kompakt telefonlarda maksimum board scale 0.80, diğer telefonlarda 0.86; daha büyük ekranlarda 0.94.
+- Takla mekaniğinin süre/fizik mantığı değiştirilmedi; yalnız ekrandaki genel board boyutu sınırlandı.
+- QA checkpoint'i: `hexiva-qa-m12-viewport-v1-gold-100` (+100 altın, bir kez).
+
+Durum: kodlandı; yerel test ve gerçek M12 APK smoke testi bekliyor.
