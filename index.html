@@ -806,7 +806,7 @@
             <span class="text-3xl">💣</span>
             <div>
               <div class="font-black text-slate-800 text-sm">1x Bomba</div>
-              <div class="text-xs text-slate-500">Seçilen tek bloğu temizler</div>
+              <div class="text-xs text-slate-500">Boş hücrenin 6 komşusunu patlatır</div>
             </div>
           </div>
           <button id="buy-bomb-btn" class="game-btn px-3 py-2 bg-amber-400 text-slate-900 font-black rounded-xl text-xs flex items-center gap-1 border border-white">🪙 125</button>
@@ -1613,6 +1613,7 @@
     let linkedPairByCell = new Map();
     let activeLinkVisuals = [];
     let activeSwapInteractives = [];
+    let activeBombBaseMeshes = [];
     let swapAnimating = false;
     const boardGroup = new THREE.Group();
     scene.add(boardGroup);
@@ -1632,6 +1633,7 @@
       linkedPairByCell = new Map();
       activeLinkVisuals = [];
       activeSwapInteractives = [];
+      activeBombBaseMeshes = [];
       swapAnimating = false;
 
       const generatedLevel = generateSolvableLevel(levelNum);
@@ -1664,6 +1666,8 @@
         floorPlate.position.set(x, -0.22, z);
         floorPlate.receiveShadow = false;
         floorPlate.castShadow = false;
+        floorPlate.userData.bombCell = { q: cell.q, r: cell.r };
+        activeBombBaseMeshes.push(floorPlate);
         boardGroup.add(floorPlate);
       });
 
@@ -1949,6 +1953,8 @@
         const baseMesh = new THREE.Mesh(basePlateGeometry, basePlateMaterial);
         baseMesh.position.set(x, -0.22, z);
         baseMesh.receiveShadow = false;
+        baseMesh.userData.bombCell = { q: item.q, r: item.r };
+        activeBombBaseMeshes.push(baseMesh);
         boardGroup.add(baseMesh);
 
         // 2. Playable Hex Block
@@ -2973,33 +2979,120 @@
       showHint("Blok Kırıldı! 🔨");
     }
 
-    function bombBlastBlock(targetBlock) {
-      playSound('hammer');
+    function getBombBlastTargets(q, r) {
+      const targets = new Set();
+      const cells = window.HexivaPuzzle.neighbours({ q, r });
 
-      // Bomb is intentionally a single-target booster.
-      // If the target belongs to a linked pair, detach the relationship first
-      // so the surviving member remains a normal playable block.
-      detachLinkedPairForSingleTargetBooster(targetBlock);
+      cells.forEach(cell => {
+        const block = findLiveBlockAt(cell.q, cell.r);
+        if (block) targets.add(block);
+      });
 
-      targetBlock.isRemoved = true;
-      targetBlock.isAnimating = true;
+      // A blast must never leave a linked pair in a half-linked state.
+      [...targets].forEach(block => {
+        const pair = getLinkedPairForBlock(block);
+        if (!pair) return;
+        const { aBlock, bBlock } = getLinkedPairBlocks(pair);
+        if (aBlock) targets.add(aBlock);
+        if (bBlock) targets.add(bBlock);
+      });
 
-      new TWEEN.Tween(targetBlock.mesh.scale)
-        .to({ x: 1.28, y: 1.28, z: 1.28 }, 90)
+      return [...targets];
+    }
+
+    function animateBombCenter(q, r) {
+      const { x, z } = hexToWorld(q, r);
+      const group = new THREE.Group();
+      group.position.set(x, 0.10, z);
+      boardGroup.add(group);
+
+      const coreGeometry = new THREE.SphereGeometry(0.22, 12, 8);
+      const ringGeometry = new THREE.TorusGeometry(0.30, 0.045, 8, 24);
+      const coreMaterial = new THREE.MeshPhongMaterial({
+        color: 0x20242d,
+        emissive: 0xff7a18,
+        emissiveIntensity: 0.45,
+        shininess: 80
+      });
+      const ringMaterial = new THREE.MeshBasicMaterial({
+        color: 0xffb020,
+        transparent: true,
+        opacity: 0.92
+      });
+
+      const core = new THREE.Mesh(coreGeometry, coreMaterial);
+      core.position.y = 0.18;
+      group.add(core);
+
+      const ring = new THREE.Mesh(ringGeometry, ringMaterial);
+      ring.rotation.x = Math.PI / 2;
+      ring.position.y = 0.08;
+      ring.scale.set(0.30, 0.30, 0.30);
+      group.add(ring);
+
+      new TWEEN.Tween(core.scale)
+        .to({ x: 1.45, y: 1.45, z: 1.45 }, 110)
+        .easing(TWEEN.Easing.Back.Out)
+        .yoyo(true)
+        .repeat(1)
+        .start();
+
+      new TWEEN.Tween(ring.scale)
+        .to({ x: 3.7, y: 3.7, z: 3.7 }, 230)
         .easing(TWEEN.Easing.Quadratic.Out)
         .onComplete(() => {
-          new TWEEN.Tween(targetBlock.mesh.scale)
-            .to({ x: 0.02, y: 0.02, z: 0.02 }, 150)
-            .easing(TWEEN.Easing.Cubic.In)
-            .onComplete(() => {
-              boardGroup.remove(targetBlock.mesh);
-              checkLevelWin();
-            })
-            .start();
+          boardGroup.remove(group);
+          coreGeometry.dispose();
+          ringGeometry.dispose();
+          coreMaterial.dispose();
+          ringMaterial.dispose();
         })
         .start();
 
-      showHint("Blok Patlatıldı! 💣");
+      new TWEEN.Tween(ringMaterial)
+        .to({ opacity: 0 }, 230)
+        .easing(TWEEN.Easing.Quadratic.Out)
+        .start();
+    }
+
+    function bombBlastAtCell(q, r) {
+      if (findLiveBlockAt(q, r)) {
+        showHint("Bomba yalnız boş gri hücreye konabilir! 💣");
+        return false;
+      }
+
+      const targets = getBombBlastTargets(q, r);
+      if (!targets.length) {
+        showHint("Bu hücrenin çevresinde patlatılacak blok yok.");
+        return false;
+      }
+
+      playSound('hammer');
+      animateBombCenter(q, r);
+
+      targets.forEach(block => {
+        detachLinkedPairForSingleTargetBooster(block);
+        block.isRemoved = true;
+        block.isAnimating = true;
+
+        new TWEEN.Tween(block.mesh.scale)
+          .to({ x: 1.18, y: 1.18, z: 1.18 }, 80)
+          .easing(TWEEN.Easing.Quadratic.Out)
+          .onComplete(() => {
+            new TWEEN.Tween(block.mesh.scale)
+              .to({ x: 0.02, y: 0.02, z: 0.02 }, 150)
+              .easing(TWEEN.Easing.Cubic.In)
+              .onComplete(() => {
+                boardGroup.remove(block.mesh);
+                checkLevelWin();
+              })
+              .start();
+          })
+          .start();
+      });
+
+      showHint(`${targets.length} blok patlatıldı! 💣`);
+      return true;
     }
 
     const raycaster = new THREE.Raycaster();
@@ -3013,6 +3106,23 @@
       mouse.y = -((clientY - rect.top) / rect.height) * 2 + 1;
 
       raycaster.setFromCamera(mouse, camera);
+
+      if (activeBooster === 'bomb') {
+        const bombHits = raycaster.intersectObjects(activeBombBaseMeshes, false);
+        if (bombHits.length > 0) {
+          const cell = bombHits[0].object.userData.bombCell;
+          if (cell && bombBlastAtCell(cell.q, cell.r)) {
+            bombCount--;
+            updateUI();
+            resetBoosterState();
+            triggerSave();
+          }
+          return;
+        }
+
+        showHint("Bombayı boş gri bir taban hücresine koy! 💣");
+        return;
+      }
 
       if (activeSwapInteractives.length) {
         const swapHits = raycaster.intersectObjects(activeSwapInteractives, true);
@@ -3069,15 +3179,6 @@
         if (activeBooster === 'rotate') {
           rotateBlockDirection(block);
           rotateCount--;
-          updateUI();
-          resetBoosterState();
-          triggerSave();
-          return;
-        }
-
-        if (activeBooster === 'bomb') {
-          bombBlastBlock(block);
-          bombCount--;
           updateUI();
           resetBoosterState();
           triggerSave();
@@ -3170,7 +3271,7 @@
         resetBoosterState();
         activeBooster = 'bomb';
         bombBtn.classList.add('booster-active');
-        showHint("Patlatmak istediğin bloğa dokun! 💣");
+        showHint("Bombayı koymak istediğin boş gri hücreye dokun! 💣");
       }
     });
 
