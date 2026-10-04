@@ -1153,6 +1153,14 @@
           saveLocalState();
           showHint("TEST BUILD TAKLA RİTMİ V3: +100 Altın 🪙");
         }
+
+        const QA_DEPLOY_MARKER_TUMBLE_SPEED_RESTORE = 'hexiva-qa-tumble-speed-restore-gold-100';
+        if (!localStorage.getItem(QA_DEPLOY_MARKER_TUMBLE_SPEED_RESTORE)) {
+          coins += 100;
+          localStorage.setItem(QA_DEPLOY_MARKER_TUMBLE_SPEED_RESTORE, '1');
+          saveLocalState();
+          showHint("TEST BUILD TAKLA HIZI GERİ ALINDI: +100 Altın 🪙");
+        }
       } catch (e) {
         console.warn('Local load failed:', e);
       }
@@ -2848,7 +2856,7 @@
 
       // Deliberately calmer than the first prototype: the eye must be able to
       // read plate 1, then 2, then 3 rolling through the same route.
-      return Math.max(210, Math.round(distance * 378));
+      return Math.max(180, Math.round(distance * 310));
     }
 
     function animateFlyAway(block, escapeInfo = null) {
