@@ -1089,6 +1089,14 @@
           saveLocalState();
           showHint("TEST BUILD BOMB V2: +1000 Altın 🪙");
         }
+
+        const QA_DEPLOY_MARKER_BOMB_FX_HALF_SECOND = 'hexiva-qa-bomb-fx-half-second-gold-100';
+        if (!localStorage.getItem(QA_DEPLOY_MARKER_BOMB_FX_HALF_SECOND)) {
+          coins += 100;
+          localStorage.setItem(QA_DEPLOY_MARKER_BOMB_FX_HALF_SECOND, '1');
+          saveLocalState();
+          showHint("TEST BUILD BOMBA EFEKTİ: +100 Altın 🪙");
+        }
       } catch (e) {
         console.warn('Local load failed:', e);
       }
@@ -3008,6 +3016,112 @@
       return [...targets];
     }
 
+    function animateBombExplosionEffect(q, r) {
+      const { x, z } = hexToWorld(q, r);
+      const group = new THREE.Group();
+      group.position.set(x, 0.20, z);
+      boardGroup.add(group);
+
+      // Lightweight stylized blast: a handful of reusable puffs + radial sparks.
+      // Lifetime is deliberately short (~0.5 s) so it reads with the disappearing hexes.
+      const puffGeometry = new THREE.SphereGeometry(0.16, 8, 6);
+      const sparkGeometry = new THREE.ConeGeometry(0.055, 0.34, 5);
+      const puffMaterials = [
+        new THREE.MeshBasicMaterial({ color: 0xff8a18, transparent: true, opacity: 0.96 }),
+        new THREE.MeshBasicMaterial({ color: 0xffc12b, transparent: true, opacity: 0.94 }),
+        new THREE.MeshBasicMaterial({ color: 0xff5a1f, transparent: true, opacity: 0.90 })
+      ];
+      const sparkMaterial = new THREE.MeshBasicMaterial({
+        color: 0xffd447,
+        transparent: true,
+        opacity: 0.95
+      });
+
+      const puffs = [];
+      const puffCount = 9;
+      for (let i = 0; i < puffCount; i++) {
+        const angle = (Math.PI * 2 * i) / puffCount + (i % 2) * 0.16;
+        const radius = i === 0 ? 0 : 0.18 + (i % 3) * 0.055;
+        const puff = new THREE.Mesh(
+          puffGeometry,
+          puffMaterials[i % puffMaterials.length]
+        );
+        puff.position.set(
+          Math.cos(angle) * radius,
+          0.05 + (i % 3) * 0.055,
+          Math.sin(angle) * radius
+        );
+        const scale = i === 0 ? 1.55 : 0.78 + (i % 4) * 0.14;
+        puff.scale.set(scale, scale, scale);
+        group.add(puff);
+        puffs.push({ mesh: puff, angle, radius });
+      }
+
+      const sparks = [];
+      const sparkCount = 10;
+      for (let i = 0; i < sparkCount; i++) {
+        const angle = (Math.PI * 2 * i) / sparkCount + 0.10;
+        const spark = new THREE.Mesh(sparkGeometry, sparkMaterial.clone());
+        spark.rotation.z = Math.PI / 2;
+        spark.rotation.y = -angle;
+        spark.position.set(
+          Math.cos(angle) * 0.30,
+          0.10 + (i % 2) * 0.05,
+          Math.sin(angle) * 0.30
+        );
+        group.add(spark);
+        sparks.push({ mesh: spark, angle });
+      }
+
+      group.scale.set(0.60, 0.60, 0.60);
+      new TWEEN.Tween(group.scale)
+        .to({ x: 1.35, y: 1.35, z: 1.35 }, 180)
+        .easing(TWEEN.Easing.Back.Out)
+        .start();
+
+      puffs.forEach(({ mesh, angle, radius }, index) => {
+        new TWEEN.Tween(mesh.position)
+          .to({
+            x: Math.cos(angle) * (radius + 0.22 + (index % 2) * 0.08),
+            y: mesh.position.y + 0.10,
+            z: Math.sin(angle) * (radius + 0.22 + (index % 2) * 0.08)
+          }, 420)
+          .easing(TWEEN.Easing.Quadratic.Out)
+          .start();
+        new TWEEN.Tween(mesh.material)
+          .to({ opacity: 0 }, 500)
+          .easing(TWEEN.Easing.Quadratic.In)
+          .start();
+      });
+
+      sparks.forEach(({ mesh, angle }, index) => {
+        new TWEEN.Tween(mesh.position)
+          .to({
+            x: Math.cos(angle) * (0.72 + (index % 3) * 0.08),
+            y: mesh.position.y + 0.06,
+            z: Math.sin(angle) * (0.72 + (index % 3) * 0.08)
+          }, 420)
+          .easing(TWEEN.Easing.Quadratic.Out)
+          .start();
+        new TWEEN.Tween(mesh.scale)
+          .to({ x: 0.35, y: 0.35, z: 0.35 }, 500)
+          .easing(TWEEN.Easing.Quadratic.In)
+          .start();
+        new TWEEN.Tween(mesh.material)
+          .to({ opacity: 0 }, 500)
+          .easing(TWEEN.Easing.Quadratic.In)
+          .start();
+      });
+
+      setTimeout(() => {
+        boardGroup.remove(group);
+        puffGeometry.dispose();
+        sparkGeometry.dispose();
+        puffMaterials.forEach(material => material.dispose());
+        sparks.forEach(({ mesh }) => mesh.material.dispose());
+      }, 540);
+    }
+
     function animateBombCenter(q, r, onDetonate) {
       const { x, z } = hexToWorld(q, r);
       const group = new THREE.Group();
@@ -3057,6 +3171,7 @@
         .to({ x: 0.95, y: 0.95, z: 0.95 }, 850)
         .easing(TWEEN.Easing.Quadratic.InOut)
         .onComplete(() => {
+          animateBombExplosionEffect(q, r);
           if (typeof onDetonate === 'function') onDetonate();
 
           new TWEEN.Tween(ring.scale)
