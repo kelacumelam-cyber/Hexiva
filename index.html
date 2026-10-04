@@ -617,8 +617,9 @@
       </div>
 
       <!-- Level Pill -->
-      <div class="level-badge px-6 py-1.5 rounded-xl">
-        <span id="level-display" class="text-white font-extrabold tracking-wider text-base sm:text-lg">LEVEL 1</span>
+      <div class="level-badge px-4 py-1 rounded-xl text-center leading-tight">
+        <span id="level-display" class="block text-white font-extrabold tracking-wider text-sm sm:text-base">LEVEL 1</span>
+        <span id="move-display" class="block text-amber-200 font-black text-[10px] sm:text-xs">HAMLE 0</span>
       </div>
 
       <!-- Restart Button (Red Circular Icon) -->
@@ -894,6 +895,20 @@
     </div>
   </div>
 
+  <div id="moves-over-modal" class="fixed inset-0 z-[55] bg-black/70 backdrop-blur-sm hidden flex items-center justify-center p-4">
+    <div class="bg-white rounded-3xl p-6 w-full max-w-xs text-center border-4 border-rose-400 shadow-2xl animate-pop">
+      <div class="text-5xl mb-2">😵</div>
+      <h2 class="text-2xl font-black text-slate-800 mb-1">HAMLE BİTTİ!</h2>
+      <p class="text-slate-500 font-bold text-sm mb-4">+5 hamle hakkı kullanabilir veya dükkândan alabilirsin.</p>
+      <button id="use-extra-move-modal-btn" class="game-btn w-full py-3 bg-gradient-to-r from-emerald-500 to-green-600 rounded-2xl text-white font-black text-base border-2 border-white mb-3">
+        +5 HAMLE KULLAN
+      </button>
+      <button id="moves-over-shop-btn" class="game-btn w-full py-3 bg-gradient-to-r from-amber-500 to-orange-500 rounded-2xl text-white font-black text-base border-2 border-white">
+        DÜKKANA GİT
+      </button>
+    </div>
+  </div>
+
   <div id="victory-modal" class="fixed inset-0 z-50 bg-black/70 backdrop-blur-sm hidden flex items-center justify-center p-4">
     <div class="bg-white rounded-3xl p-6 w-full max-w-xs text-center border-4 border-yellow-400 shadow-2xl animate-pop">
       <div class="text-5xl mb-2 animate-bounce">🎉</div>
@@ -982,6 +997,8 @@
           rotate: state.rotate,
           bomb: state.bomb,
           extraMoves: state.extraMoves || 0,
+          extraMoveDailyPurchases: state.extraMoveDailyPurchases || 0,
+          extraMovePurchaseDate: state.extraMovePurchaseDate || '',
           lastDailyClaim: state.lastDailyClaim || 0,
           lastPlayed: Date.now()
         }, { merge: true });
@@ -1105,6 +1122,7 @@
     const ROTATE_PRICE = 50;
     const BOMB_PRICE = 125;
     const EXTRA_MOVE_PRICE = 100;
+    const EXTRA_MOVE_DAILY_LIMIT = 5;
     const LEVEL_CATALOG_SIZE = 1250;
     const LEVEL_SELECTOR_MIN_PREVIEW = 40;
     const LEVEL_SELECTOR_AHEAD = 24;
@@ -1116,6 +1134,10 @@
     let rotateCount = 1;
     let bombCount = 1;
     let extraMoveCount = 0;
+    let extraMoveDailyPurchases = 0;
+    let extraMovePurchaseDate = '';
+    let movesRemaining = 0;
+    let movesInitial = 0;
     let lastDailyClaim = 0;
     let activeBooster = null; // 'hammer' | 'rotate' | 'bomb' | null
     let isGameActive = false;
@@ -1130,6 +1152,8 @@
         rotate: rotateCount,
         bomb: bombCount,
         extraMoves: extraMoveCount,
+        extraMoveDailyPurchases,
+        extraMovePurchaseDate,
         lastDailyClaim
       };
     }
@@ -1314,6 +1338,14 @@
           saveLocalState();
           showHint("TEST BUILD +5 HAMLE DÜKKANI: +100 Altın 🪙");
         }
+
+        const QA_DEPLOY_MARKER_MOVE_LIMIT_V1 = 'hexiva-qa-move-limit-v1-gold-100';
+        if (!localStorage.getItem(QA_DEPLOY_MARKER_MOVE_LIMIT_V1)) {
+          coins += 100;
+          localStorage.setItem(QA_DEPLOY_MARKER_MOVE_LIMIT_V1, '1');
+          saveLocalState();
+          showHint("TEST BUILD HAMLE LİMİTİ: +100 Altın 🪙");
+        }
       } catch (e) {
         console.warn('Local load failed:', e);
       }
@@ -1329,6 +1361,9 @@
       rotateCount = data.rotate !== undefined ? Math.max(0, Number(data.rotate) || 0) : rotateCount;
       bombCount = data.bomb !== undefined ? Math.max(0, Number(data.bomb) || 0) : bombCount;
       extraMoveCount = data.extraMoves !== undefined ? Math.max(0, Number(data.extraMoves) || 0) : extraMoveCount;
+      extraMoveDailyPurchases = data.extraMoveDailyPurchases !== undefined ? Math.max(0, Number(data.extraMoveDailyPurchases) || 0) : extraMoveDailyPurchases;
+      extraMovePurchaseDate = data.extraMovePurchaseDate || extraMovePurchaseDate;
+      normalizeExtraMoveDailyPurchases();
       lastDailyClaim = data.lastDailyClaim !== undefined ? data.lastDailyClaim : lastDailyClaim;
       updateUI();
       updateMenuUI();
@@ -1343,6 +1378,85 @@
       }
     }
 
+    function localDateKey() {
+      const d = new Date();
+      const y = d.getFullYear();
+      const m = String(d.getMonth() + 1).padStart(2, '0');
+      const day = String(d.getDate()).padStart(2, '0');
+      return `${y}-${m}-${day}`;
+    }
+
+    function normalizeExtraMoveDailyPurchases() {
+      const today = localDateKey();
+      if (extraMovePurchaseDate !== today) {
+        extraMovePurchaseDate = today;
+        extraMoveDailyPurchases = 0;
+      }
+    }
+
+    function calculateMoveLimit(generatedLevel) {
+      const blockCount = (generatedLevel.blocks || []).length;
+      const redirects = (generatedLevel.redirectors || []).length;
+      const swappers = (generatedLevel.swappers || []).length;
+      const cyclers = (generatedLevel.cyclers || []).length;
+      const obstacles = (generatedLevel.obstacles || []).length;
+      const linkedPairs = (generatedLevel.linkedPairs || []).length;
+      const pits = (generatedLevel.pits || []).length;
+
+      // Base budget tracks board size; mechanics add thinking/error allowance.
+      // It intentionally varies per level instead of scaling only by level number.
+      const mechanicWeight =
+        redirects * 1.6 +
+        swappers * 2.4 +
+        cyclers * 2.2 +
+        obstacles * 1.2 +
+        linkedPairs * 2.6 +
+        pits * 0.6;
+
+      const safetyBuffer = Math.max(6, Math.round(blockCount * 0.34));
+      const raw = blockCount + safetyBuffer + Math.round(mechanicWeight);
+      return Math.max(14, Math.min(85, raw));
+    }
+
+    function hideMovesOverModal() {
+      document.getElementById('moves-over-modal').classList.add('hidden');
+    }
+
+    function showMovesOverModal() {
+      if (levelCompleted || movesRemaining > 0) return;
+      document.getElementById('moves-over-modal').classList.remove('hidden');
+    }
+
+    function consumeMove() {
+      if (movesRemaining <= 0) {
+        showMovesOverModal();
+        return false;
+      }
+      movesRemaining -= 1;
+      updateUI();
+
+      if (movesRemaining <= 0) {
+        setTimeout(() => {
+          if (!levelCompleted && movesRemaining <= 0) showMovesOverModal();
+        }, 600);
+      }
+      return true;
+    }
+
+    function useExtraMovePack() {
+      if (extraMoveCount <= 0) {
+        showHint("Elinde +5 hamle hakkı yok. Dükkândan alabilirsin. ➕");
+        return false;
+      }
+      extraMoveCount -= 1;
+      movesRemaining += 5;
+      hideMovesOverModal();
+      updateUI();
+      triggerSave();
+      showHint("+5 Hamle Eklendi! ➕");
+      return true;
+    }
+
     function updateUI() {
       document.getElementById('coin-counter').innerText = coins.toLocaleString();
       document.getElementById('level-display').innerText = `LEVEL ${currentLevel}`;
@@ -1350,6 +1464,7 @@
       document.getElementById('rotate-count').innerText = rotateCount;
       document.getElementById('bomb-count').innerText = bombCount;
       document.getElementById('extra-move-count').innerText = extraMoveCount;
+      document.getElementById('move-display').innerText = `HAMLE ${movesRemaining}`;
     }
 
     function updateMenuUI() {
@@ -1872,6 +1987,9 @@
       swapAnimating = false;
 
       const generatedLevel = generateSolvableLevel(levelNum);
+      movesInitial = calculateMoveLimit(generatedLevel);
+      movesRemaining = movesInitial;
+      hideMovesOverModal();
       window.__hexaGeneratorStats = generatedLevel.generationStats || null;
       window.__hexaPatternKey = generatedLevel.patternKey;
       const levelData = generatedLevel.blocks;
@@ -3652,6 +3770,10 @@
 
     function handleInteraction(clientX, clientY) {
       if (!isGameActive) return;
+      if (movesRemaining <= 0) {
+        showMovesOverModal();
+        return;
+      }
 
       const rect = canvas.getBoundingClientRect();
       mouse.x = ((clientX - rect.left) / rect.width) * 2 - 1;
@@ -3688,6 +3810,7 @@
             swapObj = hit.userData && hit.userData.swapMechanism;
           }
           if (swapObj) {
+            if (!consumeMove()) return;
             activateSwapMechanism(swapObj);
             return;
           }
@@ -3699,6 +3822,7 @@
             cycleObj = hit.userData && hit.userData.cycleMechanism;
           }
           if (cycleObj) {
+            if (!consumeMove()) return;
             activateCycleMechanism(cycleObj);
             return;
           }
@@ -3737,6 +3861,7 @@
           return;
         }
 
+        if (!consumeMove()) return;
         playSound('tap');
 
         if (getLinkedPairForBlock(block)) {
@@ -3830,7 +3955,17 @@
 
     extraMoveBtn.addEventListener('click', () => {
       initAudio();
-      showHint("+5 Hamle sistemi sonraki adımda bağlanacak. ➕");
+      useExtraMovePack();
+    });
+
+    document.getElementById('use-extra-move-modal-btn').addEventListener('click', () => {
+      initAudio();
+      if (!useExtraMovePack()) openShop();
+    });
+
+    document.getElementById('moves-over-shop-btn').addEventListener('click', () => {
+      hideMovesOverModal();
+      openShop();
     });
 
     function normalizeTurkishVoiceText(text) {
@@ -4141,8 +4276,18 @@
 
     /* Shop Logic */
     const shopModal = document.getElementById('shop-modal');
+    function updateExtraMoveShopButton() {
+      normalizeExtraMoveDailyPurchases();
+      const btn = document.getElementById('buy-extra-move-btn');
+      const remaining = Math.max(0, EXTRA_MOVE_DAILY_LIMIT - extraMoveDailyPurchases);
+      btn.disabled = remaining <= 0;
+      btn.classList.toggle('opacity-50', remaining <= 0);
+      btn.innerText = remaining > 0 ? `🪙 100 · ${remaining}/5` : 'GÜNLÜK LİMİT';
+    }
+
     function openShop() {
       initAudio();
+      updateExtraMoveShopButton();
       shopModal.classList.remove('hidden');
     }
     document.getElementById('shop-btn').addEventListener('click', openShop);
@@ -4179,10 +4324,20 @@
     });
 
     document.getElementById('buy-extra-move-btn').addEventListener('click', () => {
+      normalizeExtraMoveDailyPurchases();
+      if (extraMoveDailyPurchases >= EXTRA_MOVE_DAILY_LIMIT) {
+        showHint("Bugünkü +5 hamle satın alma limitine ulaştın. ➕");
+        updateExtraMoveShopButton();
+        return;
+      }
       if (coins < EXTRA_MOVE_PRICE) { showHint("Yetersiz altın! 🪙"); return; }
+
       coins -= EXTRA_MOVE_PRICE;
       extraMoveCount += 1;
+      extraMoveDailyPurchases += 1;
+      extraMovePurchaseDate = localDateKey();
       updateUI();
+      updateExtraMoveShopButton();
       triggerSave();
       showHint("+5 Hamle Hakkı Eklendi! ➕");
     });
