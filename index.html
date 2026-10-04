@@ -1169,6 +1169,14 @@
           saveLocalState();
           showHint("TEST BUILD TAKLA ARALIĞI V4: +100 Altın 🪙");
         }
+
+        const QA_DEPLOY_MARKER_TUMBLE_SPACING_V5 = 'hexiva-qa-tumble-spacing-v5-gold-100';
+        if (!localStorage.getItem(QA_DEPLOY_MARKER_TUMBLE_SPACING_V5)) {
+          coins += 100;
+          localStorage.setItem(QA_DEPLOY_MARKER_TUMBLE_SPACING_V5, '1');
+          saveLocalState();
+          showHint("TEST BUILD TAKLA ARALIĞI V5: +100 Altın 🪙");
+        }
       } catch (e) {
         console.warn('Local load failed:', e);
       }
@@ -2762,8 +2770,8 @@
 
         // Three plates form a visible travelling chain instead of spinning
         // on the same coordinate. On reverse, the lead order becomes 3→2→1.
-        const chainGap = 0.66;
-        const stagger = 150;
+        const chainGap = 0.74;
+        const stagger = 180;
         const cycles = Math.max(1, Math.round(duration / 260));
         const cycleDuration = Math.max(180, duration / cycles);
 
@@ -2864,7 +2872,7 @@
 
       // Deliberately calmer than the first prototype: the eye must be able to
       // read plate 1, then 2, then 3 rolling through the same route.
-      return Math.max(180, Math.round(distance * 310));
+      return Math.max(165, Math.round(distance * 270));
     }
 
     function animateFlyAway(block, escapeInfo = null) {
