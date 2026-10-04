@@ -10,6 +10,9 @@
   ];
   const key = (c) => `${c.q},${c.r}`;
   const step = (c, d) => ({ q: c.q + D[d][0], r: c.r + D[d][1] });
+  function neighbours(c) {
+    return D.map(([dq, dr]) => ({ q: c.q + dq, r: c.r + dr }));
+  }
   const cache = new WeakMap();
   function trace(level, blocks, block, ignore = {}) {
     let env = cache.get(level);
@@ -516,6 +519,7 @@
     D,
     key,
     step,
+    neighbours,
     trace,
     initial,
     actions,
