@@ -9,6 +9,9 @@ test('dynamic move limit and +5 recovery flow are wired', () => {
   assert.match(source, /function calculateMoveLimit\(generatedLevel\)/);
   assert.match(source, /movesRemaining = movesInitial/);
   assert.match(source, /function consumeMove\(\)/);
+  assert.match(source, /function scheduleMovesOverCheck\(\)/);
+  assert.match(source, /blocks\.some\(block => block\.isAnimating\)/);
+  assert.match(source, /block\.isAnimating = true;\s*playSound\('slide'\)/);
   assert.match(source, /function useExtraMovePack\(\)/);
   assert.match(source, /EXTRA_MOVE_DAILY_LIMIT = 5/);
   assert.match(source, /EXTRA_MOVE_PRICE = 100/);
