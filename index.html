@@ -1177,6 +1177,14 @@
           saveLocalState();
           showHint("TEST BUILD TAKLA ARALIĞI V5: +100 Altın 🪙");
         }
+
+        const QA_DEPLOY_MARKER_TUMBLE_PHASE_V6 = 'hexiva-qa-tumble-phase-v6-gold-100';
+        if (!localStorage.getItem(QA_DEPLOY_MARKER_TUMBLE_PHASE_V6)) {
+          coins += 100;
+          localStorage.setItem(QA_DEPLOY_MARKER_TUMBLE_PHASE_V6, '1');
+          saveLocalState();
+          showHint("TEST BUILD TAKLA FAZI V6: +100 Altın 🪙");
+        }
       } catch (e) {
         console.warn('Local load failed:', e);
       }
@@ -2789,9 +2797,14 @@
             .start();
 
           for (let cycle = 0; cycle < cycles; cycle++) {
-            const delay = cycle * cycleDuration + rank * stagger;
-            // Rotate around one true 3D tumble axis. Tweening Euler X/Z
-            // independently looks acceptable vertically but breaks on diagonals.
+            // Keep the 180 ms ordering cue, but compress it into the current
+            // travel segment so the last plate never keeps animating after
+            // the group has already reached its destination.
+            const requestedPhase = rank * stagger;
+            const phase = Math.min(requestedPhase, cycleDuration * 0.30);
+            const delay = cycle * cycleDuration + phase;
+            const remaining = Math.max(90, cycleDuration - phase);
+
             const tumbleAxis = new THREE.Vector3(axisX, 0, axisZ).normalize();
             const startQuaternion = slice.quaternion.clone();
             const deltaQuaternion = new THREE.Quaternion().setFromAxisAngle(
@@ -2802,7 +2815,7 @@
             const rotationProgress = { t: 0 };
 
             new TWEEN.Tween(rotationProgress)
-              .to({ t: 1 }, cycleDuration * 0.78)
+              .to({ t: 1 }, remaining * 0.78)
               .delay(delay)
               .easing(TWEEN.Easing.Quadratic.InOut)
               .onUpdate(() => {
@@ -2817,14 +2830,12 @@
               })
               .start();
 
-            // Each plate rises and settles a moment after the one ahead of it,
-            // creating the sequential "takla atarak takip etme" rhythm.
             new TWEEN.Tween(slice.position)
               .to({
                 x: ux * chainSlot * chainGap,
                 y: 0.16,
                 z: uz * chainSlot * chainGap
-              }, cycleDuration * 0.34)
+              }, remaining * 0.34)
               .delay(delay)
               .easing(TWEEN.Easing.Quadratic.Out)
               .yoyo(true)
@@ -2872,7 +2883,7 @@
 
       // Deliberately calmer than the first prototype: the eye must be able to
       // read plate 1, then 2, then 3 rolling through the same route.
-      return Math.max(165, Math.round(distance * 270));
+      return Math.max(145, Math.round(distance * 225));
     }
 
     function animateFlyAway(block, escapeInfo = null) {
