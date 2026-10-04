@@ -859,6 +859,17 @@
           </div>
           <button id="buy-bomb-btn" class="game-btn px-3 py-2 bg-amber-400 text-slate-900 font-black rounded-xl text-xs flex items-center gap-1 border border-white">🪙 125</button>
         </div>
+
+        <div class="flex items-center justify-between p-3 bg-emerald-50 border-2 border-emerald-200 rounded-2xl">
+          <div class="flex items-center gap-3">
+            <span class="text-3xl font-black text-emerald-600">+5</span>
+            <div>
+              <div class="font-black text-slate-800 text-sm">+5 Hamle Hakkı</div>
+              <div class="text-xs text-slate-500">Hamlen bittiğinde 5 ek hamle verir</div>
+            </div>
+          </div>
+          <button id="buy-extra-move-btn" class="game-btn px-3 py-2 bg-amber-400 text-slate-900 font-black rounded-xl text-xs flex items-center gap-1 border border-white">🪙 100</button>
+        </div>
       </div>
     </div>
   </div>
@@ -970,6 +981,7 @@
           hammer: state.hammer,
           rotate: state.rotate,
           bomb: state.bomb,
+          extraMoves: state.extraMoves || 0,
           lastDailyClaim: state.lastDailyClaim || 0,
           lastPlayed: Date.now()
         }, { merge: true });
@@ -1092,6 +1104,7 @@
     const HAMMER_PRICE = 75;
     const ROTATE_PRICE = 50;
     const BOMB_PRICE = 125;
+    const EXTRA_MOVE_PRICE = 100;
     const LEVEL_CATALOG_SIZE = 1250;
     const LEVEL_SELECTOR_MIN_PREVIEW = 40;
     const LEVEL_SELECTOR_AHEAD = 24;
@@ -1102,6 +1115,7 @@
     let hammerCount = 1;
     let rotateCount = 1;
     let bombCount = 1;
+    let extraMoveCount = 0;
     let lastDailyClaim = 0;
     let activeBooster = null; // 'hammer' | 'rotate' | 'bomb' | null
     let isGameActive = false;
@@ -1115,6 +1129,7 @@
         hammer: hammerCount,
         rotate: rotateCount,
         bomb: bombCount,
+        extraMoves: extraMoveCount,
         lastDailyClaim
       };
     }
@@ -1291,6 +1306,14 @@
           saveLocalState();
           showHint("TEST BUILD +5 HAMLE ARAYÜZÜ: +100 Altın 🪙");
         }
+
+        const QA_DEPLOY_MARKER_EXTRA_MOVE_SHOP_V1 = 'hexiva-qa-extra-move-shop-v1-gold-100';
+        if (!localStorage.getItem(QA_DEPLOY_MARKER_EXTRA_MOVE_SHOP_V1)) {
+          coins += 100;
+          localStorage.setItem(QA_DEPLOY_MARKER_EXTRA_MOVE_SHOP_V1, '1');
+          saveLocalState();
+          showHint("TEST BUILD +5 HAMLE DÜKKANI: +100 Altın 🪙");
+        }
       } catch (e) {
         console.warn('Local load failed:', e);
       }
@@ -1305,6 +1328,7 @@
       hammerCount = data.hammer !== undefined ? Math.max(0, Number(data.hammer) || 0) : hammerCount;
       rotateCount = data.rotate !== undefined ? Math.max(0, Number(data.rotate) || 0) : rotateCount;
       bombCount = data.bomb !== undefined ? Math.max(0, Number(data.bomb) || 0) : bombCount;
+      extraMoveCount = data.extraMoves !== undefined ? Math.max(0, Number(data.extraMoves) || 0) : extraMoveCount;
       lastDailyClaim = data.lastDailyClaim !== undefined ? data.lastDailyClaim : lastDailyClaim;
       updateUI();
       updateMenuUI();
@@ -1325,6 +1349,7 @@
       document.getElementById('hammer-count').innerText = hammerCount;
       document.getElementById('rotate-count').innerText = rotateCount;
       document.getElementById('bomb-count').innerText = bombCount;
+      document.getElementById('extra-move-count').innerText = extraMoveCount;
     }
 
     function updateMenuUI() {
@@ -4151,6 +4176,15 @@
       updateUI();
       triggerSave();
       showHint("+1 Bomba Eklendi! 💣");
+    });
+
+    document.getElementById('buy-extra-move-btn').addEventListener('click', () => {
+      if (coins < EXTRA_MOVE_PRICE) { showHint("Yetersiz altın! 🪙"); return; }
+      coins -= EXTRA_MOVE_PRICE;
+      extraMoveCount += 1;
+      updateUI();
+      triggerSave();
+      showHint("+5 Hamle Hakkı Eklendi! ➕");
     });
 
     /* Daily Gift Logic */
