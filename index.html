@@ -3128,13 +3128,33 @@
       group.position.set(x, 0.10, z);
       boardGroup.add(group);
 
-      const coreGeometry = new THREE.SphereGeometry(0.22, 12, 8);
+      const coreGeometry = new THREE.SphereGeometry(0.24, 14, 10);
+      const outlineGeometry = new THREE.TorusGeometry(0.255, 0.026, 8, 28);
+      const fuseGeometry = new THREE.CylinderGeometry(0.032, 0.038, 0.24, 8);
+      const sparkGeometry = new THREE.SphereGeometry(0.055, 8, 6);
       const ringGeometry = new THREE.TorusGeometry(0.30, 0.045, 8, 24);
+
       const coreMaterial = new THREE.MeshPhongMaterial({
-        color: 0x20242d,
-        emissive: 0xff7a18,
-        emissiveIntensity: 0.35,
-        shininess: 80
+        color: 0x6d28d9,
+        emissive: 0x32105f,
+        emissiveIntensity: 0.30,
+        shininess: 95
+      });
+      const outlineMaterial = new THREE.MeshBasicMaterial({
+        color: 0x172033,
+        transparent: true,
+        opacity: 0.95
+      });
+      const fuseMaterial = new THREE.MeshPhongMaterial({
+        color: 0x2b3448,
+        emissive: 0x141a25,
+        emissiveIntensity: 0.18,
+        shininess: 45
+      });
+      const sparkMaterial = new THREE.MeshBasicMaterial({
+        color: 0xff8a18,
+        transparent: true,
+        opacity: 0.96
       });
       const ringMaterial = new THREE.MeshBasicMaterial({
         color: 0xffb020,
@@ -3145,6 +3165,22 @@
       const core = new THREE.Mesh(coreGeometry, coreMaterial);
       core.position.y = 0.18;
       group.add(core);
+
+      // Dark rim makes the in-board model read like the booster icon family.
+      const outline = new THREE.Mesh(outlineGeometry, outlineMaterial);
+      outline.rotation.x = Math.PI / 2;
+      outline.position.y = 0.18;
+      outline.scale.set(1.02, 1.02, 1.02);
+      group.add(outline);
+
+      const fuse = new THREE.Mesh(fuseGeometry, fuseMaterial);
+      fuse.position.set(0.10, 0.42, -0.02);
+      fuse.rotation.z = -0.72;
+      group.add(fuse);
+
+      const spark = new THREE.Mesh(sparkGeometry, sparkMaterial);
+      spark.position.set(0.18, 0.52, -0.02);
+      group.add(spark);
 
       const ring = new THREE.Mesh(ringGeometry, ringMaterial);
       ring.rotation.x = Math.PI / 2;
@@ -3161,10 +3197,24 @@
         .start();
 
       new TWEEN.Tween(coreMaterial)
-        .to({ emissiveIntensity: 0.95 }, 220)
+        .to({ emissiveIntensity: 0.72 }, 220)
         .easing(TWEEN.Easing.Quadratic.InOut)
         .yoyo(true)
         .repeat(3)
+        .start();
+
+      new TWEEN.Tween(spark.scale)
+        .to({ x: 1.65, y: 1.65, z: 1.65 }, 150)
+        .easing(TWEEN.Easing.Back.Out)
+        .yoyo(true)
+        .repeat(5)
+        .start();
+
+      new TWEEN.Tween(sparkMaterial)
+        .to({ opacity: 0.38 }, 150)
+        .easing(TWEEN.Easing.Quadratic.InOut)
+        .yoyo(true)
+        .repeat(5)
         .start();
 
       new TWEEN.Tween(ring.scale)
@@ -3180,8 +3230,14 @@
             .onComplete(() => {
               boardGroup.remove(group);
               coreGeometry.dispose();
+              outlineGeometry.dispose();
+              fuseGeometry.dispose();
+              sparkGeometry.dispose();
               ringGeometry.dispose();
               coreMaterial.dispose();
+              outlineMaterial.dispose();
+              fuseMaterial.dispose();
+              sparkMaterial.dispose();
               ringMaterial.dispose();
             })
             .start();
