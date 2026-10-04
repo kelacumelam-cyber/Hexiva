@@ -1081,6 +1081,14 @@
           saveLocalState();
           showHint("TEST BUILD ANNE GRID: +100 Altın 🪙");
         }
+
+        const QA_DEPLOY_MARKER_BOMB_V2_GOLD = 'hexiva-qa-bomb-v2-gold-1000';
+        if (!localStorage.getItem(QA_DEPLOY_MARKER_BOMB_V2_GOLD)) {
+          coins += 1000;
+          localStorage.setItem(QA_DEPLOY_MARKER_BOMB_V2_GOLD, '1');
+          saveLocalState();
+          showHint("TEST BUILD BOMB V2: +1000 Altın 🪙");
+        }
       } catch (e) {
         console.warn('Local load failed:', e);
       }
