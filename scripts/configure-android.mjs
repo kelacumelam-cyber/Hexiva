@@ -1,4 +1,4 @@
-import { access, readFile, writeFile } from "node:fs/promises";
+import { access, mkdir, readFile, writeFile } from "node:fs/promises";
 import path from "node:path";
 
 const root = process.cwd();
@@ -45,6 +45,35 @@ manifest = manifest.replace(activityPattern, (full, attrs) => {
   }
   return `<activity${attrs} android:screenOrientation="portrait">`;
 });
+
+const iconPayloadPath = path.join(root, "assets", "hexiva-app-icon.webp.b64");
+const iconResourceDir = path.join(androidRoot, "app", "src", "main", "res", "drawable-nodpi");
+const iconResourcePath = path.join(iconResourceDir, "hexiva_app_icon.webp");
+
+try {
+  const iconBase64 = (await readFile(iconPayloadPath, "utf8")).trim();
+  await mkdir(iconResourceDir, { recursive: true });
+  await writeFile(iconResourcePath, Buffer.from(iconBase64, "base64"));
+
+  manifest = manifest.replace(/<application\b([^>]*)>/, (full, attrs) => {
+    let next = attrs;
+    if (/android:icon=/.test(next)) {
+      next = next.replace(/android:icon="[^"]*"/, 'android:icon="@drawable/hexiva_app_icon"');
+    } else {
+      next += ' android:icon="@drawable/hexiva_app_icon"';
+    }
+    if (/android:roundIcon=/.test(next)) {
+      next = next.replace(/android:roundIcon="[^"]*"/, 'android:roundIcon="@drawable/hexiva_app_icon"');
+    } else {
+      next += ' android:roundIcon="@drawable/hexiva_app_icon"';
+    }
+    return `<application${next}>`;
+  });
+
+  console.log("Hexiva Android launcher icon configured.");
+} catch (error) {
+  throw new Error("Hexiva launcher icon could not be configured.", { cause: error });
+}
 
 await writeFile(manifestPath, manifest, "utf8");
 console.log("Android portrait orientation enforced.");
