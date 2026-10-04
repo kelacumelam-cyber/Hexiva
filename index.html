@@ -1097,6 +1097,14 @@
           saveLocalState();
           showHint("TEST BUILD BOMBA EFEKTİ: +100 Altın 🪙");
         }
+
+        const QA_DEPLOY_MARKER_BOMB_MODEL_V2 = 'hexiva-qa-bomb-model-v2-gold-100';
+        if (!localStorage.getItem(QA_DEPLOY_MARKER_BOMB_MODEL_V2)) {
+          coins += 100;
+          localStorage.setItem(QA_DEPLOY_MARKER_BOMB_MODEL_V2, '1');
+          saveLocalState();
+          showHint("TEST BUILD BOMBA MODELİ: +100 Altın 🪙");
+        }
       } catch (e) {
         console.warn('Local load failed:', e);
       }
