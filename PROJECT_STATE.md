@@ -841,3 +841,29 @@ Resolution:
 - `configure-android.mjs` now deletes any stale `HexivaMicrophonePlugin.java` and restores the generated Capacitor `MainActivity`.
 - Source verification now fails if the stale custom bridge generation returns.
 - The existing `RECORD_AUDIO` manifest declaration remains.
+
+
+## 2026-10-04 — Bomb V2 checkpoint adayı
+Yeni aile oynanış pass'i üç ayrı sıraya bölündü:
+1. Bomb V2
+2. collision-return V2
+3. üç katmanlı hareket görseli
+
+Bomb V2 kodlandı; sonraki fazlara henüz dokunulmadı.
+
+Bomb V2 sözleşmesi:
+- bomba artık renkli bloğa değil boş gri taban hücresine yerleştirilir,
+- merkez hücrenin 6 kenar komşusundaki canlı oynanabilir bloklar hedeflenir,
+- sabit engeller patlama hedefi değildir,
+- merkez hücre doluysa bomba kullanılmaz,
+- komşularda patlatılabilir blok yoksa bomba harcanmaz,
+- linked pair üyesi patlamaya yakalanırsa yarım bağlı durum bırakmamak için çift ilişki güvenli biçimde çözülür ve canlı eş de blast hedeflerine dahil edilir,
+- patlama merkezi kısa bir bomba/ring görseli ile okunur,
+- booster/shop açıklaması yeni davranışa güncellendi.
+
+Yeni tests/bomb-v2.test.cjs:
+- tam 6 benzersiz komşu,
+- komşuluğun simetrisi,
+- runtime'ın boş taban + altı-komşu sözleşmesini kullanması.
+
+Bu checkpoint test ve gerçek web oynanış doğrulaması bekliyor.
