@@ -1145,6 +1145,14 @@
           saveLocalState();
           showHint("TEST BUILD ÇAPRAZ TAKLA DÜZELTMESİ: +100 Altın 🪙");
         }
+
+        const QA_DEPLOY_MARKER_TUMBLE_RHYTHM_V3 = 'hexiva-qa-tumble-rhythm-v3-gold-100';
+        if (!localStorage.getItem(QA_DEPLOY_MARKER_TUMBLE_RHYTHM_V3)) {
+          coins += 100;
+          localStorage.setItem(QA_DEPLOY_MARKER_TUMBLE_RHYTHM_V3, '1');
+          saveLocalState();
+          showHint("TEST BUILD TAKLA RİTMİ V3: +100 Altın 🪙");
+        }
       } catch (e) {
         console.warn('Local load failed:', e);
       }
@@ -1450,7 +1458,7 @@
     const redirectChevronMaterial = new THREE.MeshPhongMaterial({
       color: 0xff7fca,
       emissive: 0xffd7ef,
-      emissiveIntensity: 0.16,
+      emissiveIntensity: 0.22,
       shininess: 95
     });
 
@@ -2738,8 +2746,8 @@
 
         // Three plates form a visible travelling chain instead of spinning
         // on the same coordinate. On reverse, the lead order becomes 3→2→1.
-        const chainGap = 0.46;
-        const stagger = 72;
+        const chainGap = 0.55;
+        const stagger = 110;
         const cycles = Math.max(1, Math.round(duration / 260));
         const cycleDuration = Math.max(180, duration / cycles);
 
@@ -2772,7 +2780,7 @@
             new TWEEN.Tween(rotationProgress)
               .to({ t: 1 }, cycleDuration * 0.78)
               .delay(delay)
-              .easing(TWEEN.Easing.Linear.None)
+              .easing(TWEEN.Easing.Quadratic.InOut)
               .onUpdate(() => {
                 slice.quaternion.slerpQuaternions(
                   startQuaternion,
@@ -2840,7 +2848,7 @@
 
       // Deliberately calmer than the first prototype: the eye must be able to
       // read plate 1, then 2, then 3 rolling through the same route.
-      return Math.max(180, Math.round(distance * 310));
+      return Math.max(210, Math.round(distance * 378));
     }
 
     function animateFlyAway(block, escapeInfo = null) {
