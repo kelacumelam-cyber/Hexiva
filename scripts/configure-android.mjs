@@ -1,4 +1,4 @@
-import { access, cp, mkdir, readFile, writeFile } from "node:fs/promises";
+import { access, cp, mkdir, readFile, readdir, writeFile } from "node:fs/promises";
 import path from "node:path";
 
 const root = process.cwd();
@@ -52,14 +52,24 @@ manifest = manifest.replace(activityPattern, (full, attrs) => {
 async function configureLauncherIcon() {
   const candidates = [
     path.join(root, "assets", "hexiva-app-icon.png"),
-    path.join(root, "hexiva_app_icon_cropped.png"),
-    process.env.USERPROFILE
-      ? path.join(process.env.USERPROFILE, "Downloads", "hexiva_app_icon_cropped.png")
-      : null,
-    process.env.USERPROFILE
-      ? path.join(process.env.USERPROFILE, "Downloads", "hexiva_app_icon_256.png")
-      : null
-  ].filter(Boolean);
+    path.join(root, "hexiva_app_icon_cropped.png")
+  ];
+
+  const downloadsDir = process.env.USERPROFILE
+    ? path.join(process.env.USERPROFILE, "Downloads")
+    : null;
+
+  if (downloadsDir && await pathExists(downloadsDir)) {
+    const entries = await readdir(downloadsDir);
+    const matching = entries
+      .filter(name => /^hexiva_app_icon_(?:cropped|256)(?:\s*\(\d+\))?\.png$/i.test(name))
+      .sort((a, b) => {
+        const aPreferred = /cropped/i.test(a) ? 0 : 1;
+        const bPreferred = /cropped/i.test(b) ? 0 : 1;
+        return aPreferred - bPreferred || a.localeCompare(b);
+      });
+    for (const name of matching) candidates.push(path.join(downloadsDir, name));
+  }
 
   let source = null;
   for (const candidate of candidates) {
@@ -70,15 +80,15 @@ async function configureLauncherIcon() {
   }
 
   if (!source) {
-    console.warn(
-      "Hexiva launcher icon not found yet. Put hexiva_app_icon_cropped.png in the project root, assets/, or Downloads before the final APK build."
+    throw new Error(
+      "Hexiva launcher icon not found. Put hexiva_app_icon_cropped.png in the project root, assets/, or Windows Downloads before building the APK."
     );
-    return;
   }
 
   const drawableDir = path.join(androidRoot, "app", "src", "main", "res", "drawable-nodpi");
+  const iconTarget = path.join(drawableDir, "hexiva_app_icon.png");
   await mkdir(drawableDir, { recursive: true });
-  await cp(source, path.join(drawableDir, "hexiva_app_icon.png"));
+  await cp(source, iconTarget);
 
   manifest = manifest.replace(/<application\b([^>]*)>/, (full, attrs) => {
     let next = attrs;
@@ -95,7 +105,8 @@ async function configureLauncherIcon() {
     return `<application${next}>`;
   });
 
-  console.log(`Hexiva Android launcher icon configured from: ${source}`);
+  console.log("Hexiva Android launcher icon source:", source);
+  console.log("Hexiva Android launcher icon target:", iconTarget);
 }
 
 async function pathExists(target) {
